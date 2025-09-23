@@ -1,4 +1,7 @@
-module tradingcard::tradingcard_titles {
+module tradingcard::gadget_gameplay_items_titles {
+    public struct TopSecretGadgetPhone has drop {}
+    public struct Brella has drop {}
+    public struct Mallet has drop {}
     public struct Legs has drop {}
     public struct Hand has drop {}
     public struct Arms has drop {}
@@ -8,9 +11,6 @@ module tradingcard::tradingcard_titles {
     public struct Skates has drop {}
     public struct Coat has drop {}
     public struct LeftArm has drop {}
-    public struct TopSecretGadgetPhone has drop {}
-    public struct Mallet has drop {}
-    public struct Brella has drop {}
     public struct Binoculars has drop {}
     public struct RedMagnifyingGlass has drop {}
     public struct Emergency has drop {}
@@ -164,5 +164,10 @@ module tradingcard::tradingcard_titles {
     public struct Shoehorn has drop {}
     public struct Sponge has drop {}
     public struct Squeegee has drop {}
-}
 
+
+
+
+
+
+}

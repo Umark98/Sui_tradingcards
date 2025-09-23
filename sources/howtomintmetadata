@@ -1,0 +1,46 @@
+; type arguments:
+; Type0
+; 0xe8a558b1226334411718041ed46644c88d808d2a10ae75fa8b818ac40b78fbc6::gadget_gameplay_items::TradingCard<0xe8a558b1226334411718041ed46644c88d808d2a10ae75fa8b818ac40b78fbc6::gadget_gameplay_items_titles::Yoyo>
+; arguments:
+; Arg0
+; 0x56ed1cd5d738e16999a6eb065d90dd9fe48f2a4fc8b5d7bfbe182653548ca145
+; Arg1
+; 1
+; Arg2
+; [1,2,3]
+; Arg3
+; 10
+; Arg4
+; "InspectorGadgetGame"
+; Arg5
+; "Limited edition Inspector Gadget gameplay item."
+; Arg6
+; ["Common","UnCommon","EPIC"]
+; Arg7
+; ["None","Boost","Health"]
+; Arg8
+; 6
+; Arg9
+; "Platform"
+; Arg10
+; 500
+; Arg11
+; "GADGET_COIN"
+; Arg12
+; [100, 200, 500]
+; Arg13
+; "First Edition"
+; Arg14
+; "Season 1"
+; Arg15
+; true
+; Arg16
+; ["https://image-cdn.hypb.st/https%3A%2F%2Fhypebeast.com%2Fimage%2F2021%2F10%2Fbored-ape-yacht-club-nft-3-4-million-record-sothebys-metaverse-0.jpg?w=960&cbr=1&q=90&fit=max","https://example.com/media/primary2.png","https://example.com/media/primary3.png"]
+; Arg17
+; ["https://image-cdn.hypb.st/https%3A%2F%2Fhypebeast.com%2Fimage%2F2021%2F10%2Fbored-ape-yacht-club-nft-3-4-million-record-sothebys-metaverse-0.jpg?w=960&cbr=1&q=90&fit=max","https://example.com/media/primary2.png","https://example.com/media/primary3.png"]
+; Arg18
+; [1, 2, 3]
+; Arg19
+; "TradingCard"
+; Arg20
+; 1

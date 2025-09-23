@@ -1,14 +1,27 @@
-module tradingcard::collectable_gameplay_items {
-    use std::string::{ String, utf8 };
-    use sui::vec_map::{ Self, VecMap };
-    use tradingcard::cap::{AdminCap, TransferCap};
 
+
+module tradingcard::gadget_gameplay_items {
+    use std::string::{ String, utf8 };
+    // use std::type_name;
+    use sui::vec_map::{ Self, VecMap };
+    // use sui::token::{ Self, Token, TokenPolicy };
+    // use gamisodes::g_bucks::G_BUCKS;
+    // use gamisodes::gadget_coin::GADGET_COIN;
+    // use gamisodes::gadget_gem::GADGET_GEM;
+    use tradingcard::cap::AdminCap;
+    use tradingcard::cap::TransferCap;
+
+    const EInvalidToken: u64 = 0;
     const EInvalidAmount: u64 = 1;
     const EMintSupplyEnded: u64 = 2;
     const EAssetNotTransferrable: u64 = 3;
+    const ENotUpgradeable: u64 = 4;
     const EVecLengthMismatch: u64 = 5;
 
-    public struct TradingCard<phantom T> has key {
+    public struct TradingCard<phantom T> has drop {}
+   
+
+    public struct GadgetGameplayItem<phantom T> has key {
         id: UID,
         title: String,
         level: u16,
@@ -21,11 +34,14 @@ module tradingcard::collectable_gameplay_items {
         mint_number: u64
     }
 
-    public struct TradingCardMetadata<phantom T> has key {
+    public struct GadgetGameplayItemMetadata<phantom T> has key {
         id: UID,
         version: u16,
         mint_supply: Option<u64>,
         current_supply: u64,
+        // ig_coin_price: VecMap<u16, u64>,
+        // ig_gem_price: VecMap<u16, u64>,
+        // gbucks_price: VecMap<u16, u64>,
         game: Option<String>,
         description: String,
         rarity: VecMap<u16, String>,
@@ -33,6 +49,8 @@ module tradingcard::collectable_gameplay_items {
         episode_utility: Option<u64>,
         transferability: String,
         royalty: u16,
+        unlock_currency: Option<String>,
+        unlock_threshold: VecMap<u16, u64>,
         edition: Option<String>,
         set: Option<String>,
         upgradeable: bool,
@@ -48,6 +66,9 @@ module tradingcard::collectable_gameplay_items {
         version: u16,
         keys: vector<u16>,
         mint_supply: Option<u64>,
+        // ig_coin_price_values: vector<u64>,
+        // ig_gem_price_values: vector<u64>,
+        // gbucks_price_values: vector<u64>,
         game: Option<String>,
         description: String,
         rarity_values: vector<String>,
@@ -55,6 +76,8 @@ module tradingcard::collectable_gameplay_items {
         episode_utility: Option<u64>,
         transferability: String,
         royalty: u16,
+        unlock_currency: Option<String>,
+        unlock_threshold_values: vector<u64>,
         edition: Option<String>,
         set: Option<String>,
         upgradeable: bool,
@@ -65,11 +88,14 @@ module tradingcard::collectable_gameplay_items {
         season: Option<u16>,
         ctx: &mut TxContext
     ) {
-        let metadata = TradingCardMetadata<T> {
+        let metadata = GadgetGameplayItemMetadata<T> {
             id: object::new(ctx),
             version,
             mint_supply,
             current_supply: 0,
+            // ig_coin_price: create_vecmap(keys, ig_coin_price_values),
+            // ig_gem_price: create_vecmap(keys, ig_gem_price_values),
+            // gbucks_price: create_vecmap(keys, gbucks_price_values),
             game,
             description,
             rarity: create_vecmap(keys, rarity_values),
@@ -77,6 +103,8 @@ module tradingcard::collectable_gameplay_items {
             episode_utility,
             transferability,
             royalty,
+            unlock_currency,
+            unlock_threshold: create_vecmap(keys, unlock_threshold_values),
             edition,
             set,
             upgradeable,
@@ -92,18 +120,17 @@ module tradingcard::collectable_gameplay_items {
 
     public fun mint_and_transfer<T>(
         _: &AdminCap,
-        item_metadata: &mut TradingCardMetadata<T>,
+        item_metadata: &mut GadgetGameplayItemMetadata<T>,
         title: String,
         level: u16,
         metadata: ID,
         recipient: address,
-        ctx: &mut TxContext) 
-    {
+        ctx: &mut TxContext
+    ) {
         let mut current_supply = item_metadata.current_supply;
 
         if (item_metadata.mint_supply.is_some()) {
             let mint_supply = *std::option::borrow(&item_metadata.mint_supply);
-
             assert!(current_supply < mint_supply, EMintSupplyEnded);
         };
 
@@ -115,8 +142,7 @@ module tradingcard::collectable_gameplay_items {
         let media_url_primary = *item_metadata.media_urls_primary.get(&level);
         let media_url_display = *item_metadata.media_urls_display.get(&level);
 
-        
-        let trading_card = TradingCard<T> {
+        let inspector_gadget = GadgetGameplayItem<T> {
             id: object::new(ctx),
             title,
             level,
@@ -129,30 +155,81 @@ module tradingcard::collectable_gameplay_items {
             mint_number: current_supply
         };
 
-        transfer::transfer(trading_card, recipient);
+        transfer::transfer(inspector_gadget, recipient);
     }
 
-    public fun transfer<T>(_: &TransferCap, asset: TradingCard<T>, metadata: &TradingCardMetadata<T>, recipient: address) {
-        assert!(metadata.transferability == utf8(b"Platform"), EAssetNotTransferrable);
 
+
+
+
+    // public fun upgrade_gameplay_item<T, Y>(
+    //     asset: &mut GadgetGameplayItem<T>, 
+    //     metadata: &GadgetGameplayItemMetadata<T>, 
+    //     token: Token<Y>, 
+    //     policy: &mut TokenPolicy<Y>, 
+    //     ctx: &mut TxContext
+    // ){
+    //     assert!(metadata.upgradeable == true, ENotUpgradeable);
+    //     let level = level(asset);
+    //     let token_type = type_name::get<Y>();
+    //     let price: u64;
+    //     if (token_type == type_name::get<G_BUCKS>()) {
+    //         price = *metadata.gbucks_price.get(level);
+    //     }
+    //     else if (token_type == type_name::get<GADGET_COIN>()) {
+    //         price = *metadata.ig_coin_price.get(level);
+    //     }
+    //     else if (token_type == type_name::get<GADGET_GEM>()) {
+    //         price = *metadata.ig_gem_price.get(level);
+    //     }
+    //     else {
+    //         abort EInvalidToken
+    //     };
+    //     assert!(token.value() == price, EInvalidAmount);
+    //     let spend_request = token::spend(token, ctx);
+    //     token::confirm_request_mut(policy, spend_request, ctx); 
+    //     asset.level = *level + 1;
+    //     asset.rank = *metadata.ranks.get(&asset.level);
+    //     asset.enhancement = *metadata.enhancements.get(&asset.level);
+    //     asset.media_url_primary = *metadata.media_urls_primary.get(&asset.level);
+    //     asset.media_url_display = *metadata.media_urls_display.get(&asset.level);
+    // }
+
+    public fun update_price<T>(_: &AdminCap, metadata: &mut GadgetGameplayItemMetadata<T>, token: String, level: u16, new_price: u64) {
+        // let price: &mut u64;
+        // if (token == utf8(b"G_BUCKS")) {
+        //     price = metadata.gbucks_price.get_mut(&level);
+        // }
+        // else if (token == utf8(b"GADGET_COIN")) {
+        //     price = metadata.ig_coin_price.get_mut(&level);
+        // }
+        // else if (token == utf8(b"GADGET_GEM")) {
+        //     price = metadata.ig_gem_price.get_mut(&level);
+        // }
+        // else {
+        //     abort EInvalidToken
+        // };
+        // *price = new_price;
+    }
+
+    public fun transfer<T>(_: &TransferCap, asset: GadgetGameplayItem<T>, metadata: &GadgetGameplayItemMetadata<T>, recipient: address) {
+        assert!(metadata.transferability == utf8(b"Platform"), EAssetNotTransferrable);
         transfer::transfer(asset, recipient);
     }
 
-    public fun level<T>(asset: &TradingCard<T>) : &u16 {
+    public fun level<T>(asset: &GadgetGameplayItem<T>) : &u16 {
         &asset.level
     }
 
     fun create_vecmap<V: copy + drop>(keys: vector<u16>, values: vector<V>) : VecMap<u16, V> {
         let len = keys.length();
         assert!(len == values.length(), EVecLengthMismatch);
-
         let mut data = vec_map::empty<u16, V>();
         let mut i = 0;
         while (i < len) {
             add_internal(&mut data, keys[i], values[i]);
             i = i + 1;
         };
-
         data
     }
 
