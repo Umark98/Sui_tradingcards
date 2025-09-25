@@ -1,8 +1,5 @@
-
-
 module tradingcard::gadget_gameplay_items {
     use std::string::{ String, utf8 };
-    // use std::type_name;
     use sui::vec_map::{ Self, VecMap };
     // use sui::token::{ Self, Token, TokenPolicy };
     // use gamisodes::g_bucks::G_BUCKS;
@@ -13,14 +10,12 @@ module tradingcard::gadget_gameplay_items {
 
     const EInvalidToken: u64 = 0;
     const EInvalidAmount: u64 = 1;
-    const EMintSupplyEnded: u64 = 2;
     const EAssetNotTransferrable: u64 = 3;
     const ENotUpgradeable: u64 = 4;
     const EVecLengthMismatch: u64 = 5;
 
     public struct TradingCard<phantom T> has drop {}
    
-
     public struct GadgetGameplayItem<phantom T> has key {
         id: UID,
         title: String,
@@ -31,14 +26,12 @@ module tradingcard::gadget_gameplay_items {
         media_url_primary: String,
         media_url_display: String,
         metadata: ID,
-        mint_number: u64
+        minted_number: u64,
     }
 
     public struct GadgetGameplayItemMetadata<phantom T> has key {
         id: UID,
         version: u16,
-        mint_supply: Option<u64>,
-        current_supply: u64,
         // ig_coin_price: VecMap<u16, u64>,
         // ig_gem_price: VecMap<u16, u64>,
         // gbucks_price: VecMap<u16, u64>,
@@ -65,7 +58,6 @@ module tradingcard::gadget_gameplay_items {
         _: &AdminCap,
         version: u16,
         keys: vector<u16>,
-        mint_supply: Option<u64>,
         // ig_coin_price_values: vector<u64>,
         // ig_gem_price_values: vector<u64>,
         // gbucks_price_values: vector<u64>,
@@ -91,8 +83,6 @@ module tradingcard::gadget_gameplay_items {
         let metadata = GadgetGameplayItemMetadata<T> {
             id: object::new(ctx),
             version,
-            mint_supply,
-            current_supply: 0,
             // ig_coin_price: create_vecmap(keys, ig_coin_price_values),
             // ig_gem_price: create_vecmap(keys, ig_gem_price_values),
             // gbucks_price: create_vecmap(keys, gbucks_price_values),
@@ -124,18 +114,10 @@ module tradingcard::gadget_gameplay_items {
         title: String,
         level: u16,
         metadata: ID,
+        minted_number: u64,
         recipient: address,
         ctx: &mut TxContext
     ) {
-        let mut current_supply = item_metadata.current_supply;
-
-        if (item_metadata.mint_supply.is_some()) {
-            let mint_supply = *std::option::borrow(&item_metadata.mint_supply);
-            assert!(current_supply < mint_supply, EMintSupplyEnded);
-        };
-
-        current_supply = current_supply + 1;
-
         let rank = *item_metadata.ranks.get(&level);
         let rarity = *item_metadata.rarity.get(&level);
         let enhancement = *item_metadata.enhancements.get(&level);
@@ -152,15 +134,11 @@ module tradingcard::gadget_gameplay_items {
             media_url_primary,
             media_url_display,
             metadata,
-            mint_number: current_supply
+            minted_number,
         };
 
         transfer::transfer(inspector_gadget, recipient);
     }
-
-
-
-
 
     // public fun upgrade_gameplay_item<T, Y>(
     //     asset: &mut GadgetGameplayItem<T>, 
