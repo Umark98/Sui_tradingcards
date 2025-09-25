@@ -5,7 +5,9 @@
   "main": "index.js",
   "type": "module",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "mint-metadata": "ts-node src/mint_metadata.ts",
+    "mint-and-transfer": "ts-node src/mint_and_transfer.ts"
   },
   "keywords": [],
   "author": "",

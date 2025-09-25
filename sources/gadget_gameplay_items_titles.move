@@ -1,169 +1,169 @@
 module tradingcard::gadget_gameplay_items_titles {
-    public struct TopSecretGadgetPhone has drop {}
-    public struct Brella has drop {}
-    public struct Mallet has drop {}
-    public struct Legs has drop {}
-    public struct Hand has drop {}
-    public struct Arms has drop {}
-    public struct Neck has drop {}
-    public struct RightArm has drop {}
-    public struct Copter has drop {}
-    public struct Skates has drop {}
-    public struct Coat has drop {}
-    public struct LeftArm has drop {}
-    public struct Binoculars has drop {}
-    public struct RedMagnifyingGlass has drop {}
-    public struct Emergency has drop {}
-    public struct Flashlight has drop {}
-    public struct Key has drop {}
-    public struct Laser has drop {}
-    public struct LeftCuff has drop {}
-    public struct LeftEar has drop {}
-    public struct Phone has drop {}
-    public struct RightCuff has drop {}
-    public struct RightLeg has drop {}
-    public struct Screwdriver has drop {}
-    public struct Skis has drop {}
-    public struct Spring has drop {}
-    public struct Tie has drop {}
-    public struct WaterGun has drop {}
-    public struct Badge has drop {}
-    public struct BallpointPen has drop {}
-    public struct BlackMagnifyingGlass has drop {}
-    public struct Card has drop {}
-    public struct Ears has drop {}
-    public struct LeftLeg has drop {}
-    public struct MagnetShoes has drop {}
-    public struct PlasticFlySwatter has drop {}
-    public struct RedBlowDryer has drop {}
-    public struct Respirator has drop {}
-    public struct RightEar has drop {}
-    public struct RocketSkates has drop {}
-    public struct Sail has drop {}
-    public struct SteelMagnifyingGlass has drop {}
-    public struct TwoHands has drop {}
-    public struct Whistle has drop {}
-    public struct WhiteHandkerchief has drop {}
-    public struct WorkLight has drop {}
-    public struct YellowHandkerchief has drop {}
-    public struct AlarmClock has drop {}
-    public struct BoatPropellerFan has drop {}
-    public struct BolloBalls has drop {}
-    public struct Daisies has drop {}
-    public struct FirecrackerSkates has drop {}
-    public struct Geraniums has drop {}
-    public struct HandheldFlashlight has drop {}
-    public struct IceSkates has drop {}
-    public struct IdentificationPaper has drop {}
-    public struct LeftArmRetractor has drop {}
-    public struct LightBulb has drop {}
-    public struct Magnet has drop {}
-    public struct Pencil has drop {}
-    public struct Peonies has drop {}
-    public struct PinkHandkerchief has drop {}
-    public struct RedHandleScissors has drop {}
-    public struct SafetyScissors has drop {}
-    public struct Saw has drop {}
-    public struct SeltzerBottle has drop {}
-    public struct Superbells has drop {}
-    public struct WaterCannon has drop {}
-    public struct SmallCamera has drop {}
-    public struct NorthPoleCompass has drop {}
-    public struct PocketWatchOnChain has drop {}
-    public struct Radar has drop {}
-    public struct Shears has drop {}
-    public struct LongShovel has drop {}
-    public struct Teeth has drop {}
-    public struct Candy has drop {}
-    public struct HandOfCards has drop {}
-    public struct Keyboard has drop {}
-    public struct Notepad has drop {}
-    public struct PoliceId has drop {}
-    public struct SpiceShaker has drop {}
-    public struct Telescope has drop {}
-    public struct AmazonFan has drop {}
-    public struct Daffodils has drop {}
-    public struct FlashbulbCamera has drop {}
-    public struct FlightSafetyLiterature has drop {}
-    public struct Primroses has drop {}
-    public struct Pulley has drop {}
-    public struct SmallMallet has drop {}
-    public struct WeldingMask has drop {}
-    public struct BlueStripedHandkerchief has drop {}
-    public struct DemagnetizedCompass has drop {}
-    public struct FeatherDuster has drop {}
-    public struct MapOfSouthAfrica has drop {}
-    public struct Net has drop {}
-    public struct PortableTv has drop {}
-    public struct TwoLeftCuffs has drop {}
-    public struct BlackDuster has drop {}
-    public struct EverestIslandFan has drop {}
-    public struct LeftSkate has drop {}
-    public struct Megaphone has drop {}
-    public struct Note has drop {}
-    public struct OilCan has drop {}
-    public struct StrawHat has drop {}
-    public struct TelescopingLegs has drop {}
-    public struct Coin has drop {}
-    public struct DistressSignalFlag has drop {}
-    public struct LeftBinocular has drop {}
-    public struct MetalFlySwatter has drop {}
-    public struct PoolTube has drop {}
-    public struct WaterSkiPropeller has drop {}
-    public struct Wrench has drop {}
-    public struct CopterSpare has drop {}
-    public struct DeskLamp has drop {}
-    public struct EgyptFan has drop {}
-    public struct FountainPen has drop {}
-    public struct PizzaChefHat has drop {}
-    public struct PrototypeRadar has drop {}
-    public struct Scissors has drop {}
-    public struct Toothbrush has drop {}
-    public struct BucketOfWater has drop {}
-    public struct CountDraculasHauntedCastleTouristBrochure has drop {}
-    public struct FingerprintDustingKit has drop {}
-    public struct Flippers has drop {}
-    public struct Lighter has drop {}
-    public struct PocketWatch has drop {}
-    public struct RedCup has drop {}
-    public struct Yoyo has drop {}
-    public struct BlueBlowDryer has drop {}
-    public struct Bone has drop {}
-    public struct CarMechanicFan has drop {}
-    public struct FishNet has drop {}
-    public struct HatTip has drop {}
-    public struct PaperFan has drop {}
-    public struct Parachute has drop {}
-    public struct PlasticFan has drop {}
-    public struct Clippers has drop {}
-    public struct FlashcubeCamera has drop {}
-    public struct HeadWheel has drop {}
-    public struct Match has drop {}
-    public struct RightArmRetractor has drop {}
-    public struct Spoon has drop {}
-    public struct SurrenderFlag has drop {}
-    public struct TrickFlower has drop {}
-    public struct BeachShovel has drop {}
-    public struct DuckCall has drop {}
-    public struct GadgetMobileKeys has drop {}
-    public struct GardeningShovel has drop {}
-    public struct RedDottedHandkerchief has drop {}
-    public struct RedDuster has drop {}
-    public struct WinnerFlag has drop {}
-    public struct CanOpener has drop {}
-    public struct ChopSticks has drop {}
-    public struct Fork has drop {}
-    public struct MapOfTibet has drop {}
-    public struct PinkEnvelope has drop {}
-    public struct Roses has drop {}
-    public struct Toothpaste has drop {}
-    public struct Doll has drop {}
-    public struct FiveHands has drop {}
-    public struct KitchenKnife has drop {}
-    public struct Pot has drop {}
-    public struct Shoehorn has drop {}
-    public struct Sponge has drop {}
-    public struct Squeegee has drop {}
+    // public struct TopSecretGadgetPhone has drop {}
+    // public struct Brella has drop {}
+    // public struct Mallet has drop {}
+    // public struct Legs has drop {}
+    // public struct Hand has drop {}
+    // public struct Arms has drop {}
+    // public struct Neck has drop {}
+    // public struct RightArm has drop {}
+    // public struct Copter has drop {}
+    // public struct Skates has drop {}
+    // public struct Coat has drop {}
+    // public struct LeftArm has drop {}
+    // public struct Binoculars has drop {}
+    // public struct RedMagnifyingGlass has drop {}
+    // public struct Emergency has drop {}
+    // public struct Flashlight has drop {}
+    // public struct Key has drop {}
+    // public struct Laser has drop {}
+    // public struct LeftCuff has drop {}
+    // public struct LeftEar has drop {}
+    // public struct Phone has drop {}
+    // public struct RightCuff has drop {}
+    // public struct RightLeg has drop {}
+    // public struct Screwdriver has drop {}
+    // public struct Skis has drop {}
+    // public struct Spring has drop {}
+    // public struct Tie has drop {}
+    // public struct WaterGun has drop {}
+    // public struct Badge has drop {}
+    // public struct BallpointPen has drop {}
+    // public struct BlackMagnifyingGlass has drop {}
+    // public struct Card has drop {}
+    // public struct Ears has drop {}
+    // public struct LeftLeg has drop {}
+    // public struct MagnetShoes has drop {}
+    // public struct PlasticFlySwatter has drop {}
+    // public struct RedBlowDryer has drop {}
+    // public struct Respirator has drop {}
+    // public struct RightEar has drop {}
+    // public struct RocketSkates has drop {}
+    // public struct Sail has drop {}
+    // public struct SteelMagnifyingGlass has drop {}
+    // public struct TwoHands has drop {}
+    // public struct Whistle has drop {}
+    // public struct WhiteHandkerchief has drop {}
+    // public struct WorkLight has drop {}
+     public struct YellowHandkerchief has drop {}
+    // public struct AlarmClock has drop {}
+    // public struct BoatPropellerFan has drop {}
+    // public struct BolloBalls has drop {}
+    // public struct Daisies has drop {}
+    // public struct FirecrackerSkates has drop {}
+    // public struct Geraniums has drop {}
+    // public struct HandheldFlashlight has drop {}
+    // public struct IceSkates has drop {}
+    // public struct IdentificationPaper has drop {}
+    // public struct LeftArmRetractor has drop {}
+    // public struct LightBulb has drop {}
+    // public struct Magnet has drop {}
+    // public struct Pencil has drop {}
+    // public struct Peonies has drop {}
+    // public struct PinkHandkerchief has drop {}
+    // public struct RedHandleScissors has drop {}
+    // public struct SafetyScissors has drop {}
+    // public struct Saw has drop {}
+    // public struct SeltzerBottle has drop {}
+    // public struct Superbells has drop {}
+    // public struct WaterCannon has drop {}
+    // public struct SmallCamera has drop {}
+    // public struct NorthPoleCompass has drop {}
+    // public struct PocketWatchOnChain has drop {}
+    // public struct Radar has drop {}
+    // public struct Shears has drop {}
+    // public struct LongShovel has drop {}
+    // public struct Teeth has drop {}
+    // public struct Candy has drop {}
+    // public struct HandOfCards has drop {}
+    // public struct Keyboard has drop {}
+    // public struct Notepad has drop {}
+    // public struct PoliceId has drop {}
+    // public struct SpiceShaker has drop {}
+    // public struct Telescope has drop {}
+    // public struct AmazonFan has drop {}
+    // public struct Daffodils has drop {}
+    // public struct FlashbulbCamera has drop {}
+    // public struct FlightSafetyLiterature has drop {}
+    // public struct Primroses has drop {}
+    // public struct Pulley has drop {}
+    // public struct SmallMallet has drop {}
+    // public struct WeldingMask has drop {}
+    // public struct BlueStripedHandkerchief has drop {}
+    // public struct DemagnetizedCompass has drop {}
+    // public struct FeatherDuster has drop {}
+    // public struct MapOfSouthAfrica has drop {}
+    // public struct Net has drop {}
+    // public struct PortableTv has drop {}
+    // public struct TwoLeftCuffs has drop {}
+    // public struct BlackDuster has drop {}
+    // public struct EverestIslandFan has drop {}
+    // public struct LeftSkate has drop {}
+    // public struct Megaphone has drop {}
+    // public struct Note has drop {}
+    // public struct OilCan has drop {}
+    // public struct StrawHat has drop {}
+    // public struct TelescopingLegs has drop {}
+    // public struct Coin has drop {}
+    // public struct DistressSignalFlag has drop {}
+    // public struct LeftBinocular has drop {}
+    // public struct MetalFlySwatter has drop {}
+    // public struct PoolTube has drop {}
+    // public struct WaterSkiPropeller has drop {}
+     public struct Wrench has drop {}
+    // public struct CopterSpare has drop {}
+    // public struct DeskLamp has drop {}
+    // public struct EgyptFan has drop {}
+    // public struct FountainPen has drop {}
+    // public struct PizzaChefHat has drop {}
+    // public struct PrototypeRadar has drop {}
+    // public struct Scissors has drop {}
+    // public struct Toothbrush has drop {}
+    // public struct BucketOfWater has drop {}
+    // public struct CountDraculasHauntedCastleTouristBrochure has drop {}
+    // public struct FingerprintDustingKit has drop {}
+    // public struct Flippers has drop {}
+    // public struct Lighter has drop {}
+    // public struct PocketWatch has drop {}
+    // public struct RedCup has drop {}
+     public struct Yoyo has drop {}
+    // public struct BlueBlowDryer has drop {}
+    // public struct Bone has drop {}
+    // public struct CarMechanicFan has drop {}
+    // public struct FishNet has drop {}
+    // public struct HatTip has drop {}
+    // public struct PaperFan has drop {}
+    // public struct Parachute has drop {}
+    // public struct PlasticFan has drop {}
+    // public struct Clippers has drop {}
+    // public struct FlashcubeCamera has drop {}
+    // public struct HeadWheel has drop {}
+    // public struct Match has drop {}
+    // public struct RightArmRetractor has drop {}
+    // public struct Spoon has drop {}
+    // public struct SurrenderFlag has drop {}
+    // public struct TrickFlower has drop {}
+    // public struct BeachShovel has drop {}
+    // public struct DuckCall has drop {}
+    // public struct GadgetMobileKeys has drop {}
+    // public struct GardeningShovel has drop {}
+    // public struct RedDottedHandkerchief has drop {}
+    // public struct RedDuster has drop {}
+    // public struct WinnerFlag has drop {}
+    // public struct CanOpener has drop {}
+    // public struct ChopSticks has drop {}
+    // public struct Fork has drop {}
+    // public struct MapOfTibet has drop {}
+    // public struct PinkEnvelope has drop {}
+    // public struct Roses has drop {}
+    // public struct Toothpaste has drop {}
+    // public struct Doll has drop {}
+    // public struct FiveHands has drop {}
+    // public struct KitchenKnife has drop {}
+    // public struct Pot has drop {}
+    // public struct Shoehorn has drop {}
+    // public struct Sponge has drop {}
+    // public struct Squeegee has drop {}
 
 
 
