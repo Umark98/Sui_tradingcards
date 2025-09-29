@@ -14,12 +14,11 @@ module tradingcard::trading_card_genesis {
 
     public struct Genesis<phantom T> has key {
         id: UID,
-        mint_number: u16,
+        mint_number: u64
     }
 
     public fun mint_and_transfer<T>(
-        _: &AdminCap,  
-        mint_number: u16,
+        _: &AdminCap, 
         recipient: address,
         ctx: &mut TxContext
     ) {
@@ -27,12 +26,16 @@ module tradingcard::trading_card_genesis {
 
         let nfts = Genesis<T> {
             id: object::new(ctx),
-            mint_number,
+            mint_number: 0
         };
         transfer::transfer(nfts, recipient);
     }
 
-    public fun mint_number<T>(nfts: &Genesis<T>): u16 {
+    public fun mint_number<T>(nfts: &Genesis<T>) : u64 {
         nfts.mint_number
+    }
+
+    public fun add_field<T>(_: &AdminCap) {
+        assert!(package::version() == 1, EWrongVersion);
     }
 }
