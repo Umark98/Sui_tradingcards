@@ -1,0 +1,35 @@
+{
+  "name": "my-app",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "build:vercel": "bash scripts/install-sui-cli.sh && next build",
+    "start": "next start",
+    "lint": "eslint",
+    "install-sui": "bash scripts/install-sui-cli.sh"
+  },
+  "dependencies": {
+    "@mysten/sui": "^1.38.0",
+    "@mysten/wallet-kit": "^0.8.6",
+    "dotenv": "^17.2.2",
+    "next": "15.5.2",
+    "next-auth": "^4.24.11",
+    "pg": "^8.16.3",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0"
+  },
+  "devDependencies": {
+    "@eslint/eslintrc": "^3",
+    "@headlessui/react": "^1.7.17",
+    "@tailwindcss/postcss": "^4",
+    "@types/node": "^20",
+    "@types/react": "^18.2.0",
+    "@types/react-dom": "^18.2.0",
+    "eslint": "^9",
+    "eslint-config-next": "15.5.2",
+    "tailwindcss": "^4",
+    "typescript": "^5"
+  }
+}

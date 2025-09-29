@@ -1,0 +1,26 @@
+{
+  "version": 2,
+  "builds": [
+    {
+      "src": "package.json",
+      "use": "@vercel/next"
+    }
+  ],
+  "functions": {
+    "app/api/admin/publish-contracts/route.ts": {
+      "maxDuration": 300
+    },
+    "app/api/admin/publish-contracts/build/route.ts": {
+      "maxDuration": 300
+    },
+    "app/api/admin/mint-metadata/route.ts": {
+      "maxDuration": 60
+    },
+    "app/api/admin/mint-card/route.ts": {
+      "maxDuration": 60
+    }
+  },
+  "env": {
+    "SUI_CLI_PATH": "/usr/local/bin/sui"
+  }
+}
