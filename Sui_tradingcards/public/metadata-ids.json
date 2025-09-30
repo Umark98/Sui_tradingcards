@@ -1,34 +1,34 @@
 {
-  "AlarmClock": {
-    "objectId": "0x56c067c14f6d96cfcebb81922c26e6ebb7bc7c385c9040958ed24a3142ca9846",
-    "objectType": "0x7a805a16c7c1ff4441840fee3658d08fca018fc293164c5e96cbaf9649b7bc53::gadget_gameplay_items::GadgetGameplayItemMetadata<0x7a805a16c7c1ff4441840fee3658d08fca018fc293164c5e96cbaf9649b7bc53::gadget_gameplay_items::TradingCard<0x7a805a16c7c1ff4441840fee3658d08fca018fc293164c5e96cbaf9649b7bc53::gadget_gameplay_items_titles::AlarmClock>>",
-    "timestamp": "2025-09-26T13:50:10.845Z",
+  "Legs": {
+    "objectId": "0x6f2607d08d60d6c3ec05390ad2c59d0efc86eac0447744cecf5758bb12ab6603",
+    "objectType": "0x2::display::Display<0xf8abee1fcfa09d0753b63c9d33c6abbe36123cc9dd1380c5a94f1d9a5add7b45::gadget_gameplay_items::GadgetGameplayItem<0xf8abee1fcfa09d0753b63c9d33c6abbe36123cc9dd1380c5a94f1d9a5add7b45::gadget_gameplay_items::TradingCard<0xf8abee1fcfa09d0753b63c9d33c6abbe36123cc9dd1380c5a94f1d9a5add7b45::gadget_gameplay_items_titles::Legs>>>",
+    "timestamp": "2025-09-30T05:31:02.573Z",
     "version": 1,
-    "description": "Alarmclock",
+    "description": "Inspector Gadget Legs trading card",
     "imageUrl": "https://media.istockphoto.com/id/517188688/photo/mountain-landscape.jpg?s=612x612&w=0&k=20&c=A63koPKaCyIwQWOTFBRWXj_PwCrR4cEoOw2S9Q7yVl8="
   },
-  "AmazonFan": {
-    "objectId": "0x8b2225b6e5b1b5873a70198075a3f8712fd71e3747fbbeda53026b5401052bc3",
-    "objectType": "0x7a805a16c7c1ff4441840fee3658d08fca018fc293164c5e96cbaf9649b7bc53::gadget_gameplay_items::GadgetGameplayItemMetadata<0x7a805a16c7c1ff4441840fee3658d08fca018fc293164c5e96cbaf9649b7bc53::gadget_gameplay_items::TradingCard<0x7a805a16c7c1ff4441840fee3658d08fca018fc293164c5e96cbaf9649b7bc53::gadget_gameplay_items_titles::AmazonFan>>",
-    "timestamp": "2025-09-26T14:21:59.767Z",
+  "Mallet": {
+    "objectId": "0x88df7ca27c1746d7b6dbb0a60775ef415e6639be1d2131b870b1d9b98da57177",
+    "objectType": "0x2::display::Display<0xf8abee1fcfa09d0753b63c9d33c6abbe36123cc9dd1380c5a94f1d9a5add7b45::gadget_gameplay_items::GadgetGameplayItem<0xf8abee1fcfa09d0753b63c9d33c6abbe36123cc9dd1380c5a94f1d9a5add7b45::gadget_gameplay_items::TradingCard<0xf8abee1fcfa09d0753b63c9d33c6abbe36123cc9dd1380c5a94f1d9a5add7b45::gadget_gameplay_items_titles::Mallet>>>",
+    "timestamp": "2025-09-30T05:31:02.573Z",
     "version": 1,
-    "description": "test2",
+    "description": "Inspector Gadget Mallet trading card",
     "imageUrl": "https://media.istockphoto.com/id/517188688/photo/mountain-landscape.jpg?s=612x612&w=0&k=20&c=A63koPKaCyIwQWOTFBRWXj_PwCrR4cEoOw2S9Q7yVl8="
   },
-  "BeachShovel": {
-    "objectId": "0x10e39ca33d9c4d50a8072279830e095baea3879e31a6d64e17b4a5656af623aa",
-    "objectType": "0x7a805a16c7c1ff4441840fee3658d08fca018fc293164c5e96cbaf9649b7bc53::gadget_gameplay_items::GadgetGameplayItemMetadata<0x7a805a16c7c1ff4441840fee3658d08fca018fc293164c5e96cbaf9649b7bc53::gadget_gameplay_items::TradingCard<0x7a805a16c7c1ff4441840fee3658d08fca018fc293164c5e96cbaf9649b7bc53::gadget_gameplay_items_titles::BeachShovel>>",
-    "timestamp": "2025-09-26T15:35:40.109Z",
+  "TopSecretGadgetPhone": {
+    "objectId": "0xa95682e7fb18ca62e0b08e7790748b9cf34ab01b200e8a0085738621f28f8094",
+    "objectType": "0x2::display::Display<0xf8abee1fcfa09d0753b63c9d33c6abbe36123cc9dd1380c5a94f1d9a5add7b45::gadget_gameplay_items::GadgetGameplayItem<0xf8abee1fcfa09d0753b63c9d33c6abbe36123cc9dd1380c5a94f1d9a5add7b45::gadget_gameplay_items::TradingCard<0xf8abee1fcfa09d0753b63c9d33c6abbe36123cc9dd1380c5a94f1d9a5add7b45::gadget_gameplay_items_titles::TopSecretGadgetPhone>>>",
+    "timestamp": "2025-09-30T05:31:02.573Z",
     "version": 1,
-    "description": "test3",
-    "imageUrl": "https://cdn.i-scmp.com/sites/default/files/styles/768x768/public/d8/images/canvas/2024/04/24/a94e2d09-2f19-4bd2-a13f-6d6eff58684c_eadcc3b5.jpg?itok=X0MrjxZs&v=1713940582"
+    "description": "Inspector Gadget Top Secret Gadget Phone trading card",
+    "imageUrl": "https://media.istockphoto.com/id/517188688/photo/mountain-landscape.jpg?s=612x612&w=0&k=20&c=A63koPKaCyIwQWOTFBRWXj_PwCrR4cEoOw2S9Q7yVl8="
   },
-  "BlackDuster": {
-    "objectId": "0x594ba14b4fa1d097ffdd477296b7cd453d36812a1cd615e926821d4e8c6353a7",
-    "objectType": "0x7a805a16c7c1ff4441840fee3658d08fca018fc293164c5e96cbaf9649b7bc53::gadget_gameplay_items::GadgetGameplayItemMetadata<0x7a805a16c7c1ff4441840fee3658d08fca018fc293164c5e96cbaf9649b7bc53::gadget_gameplay_items::TradingCard<0x7a805a16c7c1ff4441840fee3658d08fca018fc293164c5e96cbaf9649b7bc53::gadget_gameplay_items_titles::BlackDuster>>",
-    "timestamp": "2025-09-26T15:38:21.001Z",
+  "Brella": {
+    "objectId": "0xac279b58910c69020a47c9609385df4d7ded6589aeb967f36b26abf214fba643",
+    "objectType": "0x2::display::Display<0xf8abee1fcfa09d0753b63c9d33c6abbe36123cc9dd1380c5a94f1d9a5add7b45::gadget_gameplay_items::GadgetGameplayItem<0xf8abee1fcfa09d0753b63c9d33c6abbe36123cc9dd1380c5a94f1d9a5add7b45::gadget_gameplay_items::TradingCard<0xf8abee1fcfa09d0753b63c9d33c6abbe36123cc9dd1380c5a94f1d9a5add7b45::gadget_gameplay_items_titles::Brella>>>",
+    "timestamp": "2025-09-30T05:31:02.573Z",
     "version": 1,
-    "description": "display test",
-    "imageUrl": "https://cdn.i-scmp.com/sites/default/files/styles/768x768/public/d8/images/canvas/2024/04/24/a94e2d09-2f19-4bd2-a13f-6d6eff58684c_eadcc3b5.jpg?itok=X0MrjxZs&v=1713940582"
+    "description": "Inspector Gadget Brella trading card",
+    "imageUrl": "https://media.istockphoto.com/id/517188688/photo/mountain-landscape.jpg?s=612x612&w=0&k=20&c=A63koPKaCyIwQWOTFBRWXj_PwCrR4cEoOw2S9Q7yVl8="
   }
 }

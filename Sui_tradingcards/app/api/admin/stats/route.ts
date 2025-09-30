@@ -53,7 +53,7 @@ export async function GET() {
       const stats = {
         totalConfigurations: parseInt(configResult.rows[0].total),
         totalMinted: parseInt(mintResult.rows[0].total),
-        cardsByType: cardsByTypeResult.rows.reduce((acc, row) => {
+        cardsByType: cardsByTypeResult.rows.reduce((acc: any, row: any) => {
           // Use collection name to differentiate between similar type names
           let key = row.type_name;
           

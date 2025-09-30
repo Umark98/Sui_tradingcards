@@ -25,15 +25,16 @@ if (!PACKAGE_ID || !ADMIN_CAP_ID) {
 // Constants for the Move module
 const MODULE_NAME = 'gadget_gameplay_items';
 const FUNCTION_NAME = 'mint_and_transfer';
-const TYPE_T = `${PACKAGE_ID}::${MODULE_NAME}::TradingCard<${PACKAGE_ID}::gadget_gameplay_items_titles::YellowHandkerchief>`;
+const CARD_TYPE = process.env.CARD_TYPE || 'YellowHandkerchief'; // Set this in environment
+const TYPE_T = `${PACKAGE_ID}::${MODULE_NAME}::TradingCard<${PACKAGE_ID}::gadget_gameplay_items_titles::${CARD_TYPE}>`;
 
-// Replace with actual values after running mint_metadata
-const METADATA_OBJECT_ID = '0x7610c46dcae00cbbc60426693a25a87a58926ff8388701c11dee5f9f184d4393'; // Replace with actual ID from mint_metadata
+// Load from environment variables or use defaults
+const METADATA_OBJECT_ID = process.env.METADATA_OBJECT_ID || ''; // Set this after running mint_metadata
 const metadata_id = METADATA_OBJECT_ID; // Same as METADATA_OBJECT_ID for the metadata ID parameter
-const title = 'Example Yoyo Card';
-const level = 1;
-const minted_number = 12001;
-const recipient = '0x0994d90f976c70874d7f1eeff961ec4174885b7068a18c0a3a4655eb86ad9b6d'; // Replace with actual recipient address
+const title = process.env.CARD_TITLE || 'Example Trading Card';
+const level = parseInt(process.env.CARD_LEVEL || '1');
+const minted_number = parseInt(process.env.MINTED_NUMBER || '1');
+const recipient = process.env.RECIPIENT_ADDRESS || ''; // Must be set in environment
 
 // Setup client
 const client = new SuiClient({

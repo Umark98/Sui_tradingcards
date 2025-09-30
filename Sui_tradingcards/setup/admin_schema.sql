@@ -52,7 +52,7 @@ INSERT INTO card_configurations (
     card_type, object_id, description, levels
 ) VALUES (
     'Brella',
-    '0x7a805a16c7c1ff4441840fee3658d08fca018fc293164c5e96cbaf9649b7bc53',
+    '[DYNAMIC_PACKAGE_ID]',
     'Inspector Gadget''s iconic umbrella gadget',
     '[
         {"level": 1, "rarity": "Common", "enhancement": "Basic", "mediaUrlPrimary": "", "mediaUrlDisplay": "", "rank": 1},

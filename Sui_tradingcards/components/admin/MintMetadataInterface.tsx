@@ -3,7 +3,12 @@
 import { useState, useEffect } from 'react';
 import { useWalletKit } from '@mysten/wallet-kit';
 import { Transaction } from '@mysten/sui/transactions';
-import { SuiClient, getFullnodeUrl } from '@mysten/sui/client';
+import { useContractAddresses } from '@/hooks/useContractAddresses';
+import { useAvailableCardTypes } from '@/hooks/useMetadata';
+import { transactionHandler } from '@/utils/transactionUtils';
+import { FormField, SelectField, InputField } from '@/components/common/FormField';
+import { StatusMessage, LoadingSpinner } from '@/components/common/StatusMessage';
+import { Button } from '@/components/common/Button';
 
 interface MetadataLevel {
   key: number;
@@ -41,39 +46,15 @@ interface MintMetadataRequest {
 export default function MintMetadataInterface() {
   const { currentAccount, currentWallet } = useWalletKit();
   
-  // Initialize Sui client
-  const client = new SuiClient({ url: getFullnodeUrl('testnet') });
-  
   // Form state
   const [cardType, setCardType] = useState('');
   const [version, setVersion] = useState(1);
   // Keys are derived from levels array
   const [game, setGame] = useState('');
   
-  
-  // Contract addresses from published contracts
-  const [contractAddresses, setContractAddresses] = useState<{
-    packageId: string;
-    adminCapId: string;
-  } | null>(null);
-
-  // Load contract addresses from published contracts
-  const loadContractAddresses = async () => {
-    try {
-      const response = await fetch('/contract-objects.json');
-      if (response.ok) {
-        const data = await response.json();
-        if (data.packageId && data.adminCapId) {
-          setContractAddresses({
-            packageId: data.packageId,
-            adminCapId: data.adminCapId
-          });
-        }
-      }
-    } catch (error) {
-      console.error('Failed to load contract addresses:', error);
-    }
-  };
+  // Custom hooks
+  const { contractAddresses, loading: contractLoading, error: contractError, refetch: refetchContracts } = useContractAddresses();
+  const { metadata: availableCardTypes, loading: loadingMetadata, error: metadataError, refetch: refetchMetadata } = useAvailableCardTypes();
   const [description, setDescription] = useState('');
   const [episodeUtility, setEpisodeUtility] = useState<number | undefined>();
   const [transferability, setTransferability] = useState('Platform');
@@ -98,62 +79,33 @@ export default function MintMetadataInterface() {
   const [existingMetadata, setExistingMetadata] = useState<any>(null);
   const [showConfirmDialog, setShowConfirmDialog] = useState(false);
 
-  // Load contract addresses on component mount
+  // Listen for metadata updates from other components
   useEffect(() => {
-    loadContractAddresses();
-  }, []);
+    const handleMetadataUpdate = () => {
+      refetchMetadata();
+    };
+    
+    window.addEventListener('metadataUpdated', handleMetadataUpdate);
+    
+    return () => {
+      window.removeEventListener('metadataUpdated', handleMetadataUpdate);
+    };
+  }, [refetchMetadata]);
 
-  // Check for existing metadata
+  // Check for existing frontend metadata (to prevent duplicates)
   const checkExistingMetadata = async (cardType: string) => {
     try {
-      const response = await fetch('/api/admin/metadata-ids');
+      const response = await fetch('/api/admin/frontend-metadata-ids');
       if (response.ok) {
         const metadataIds = await response.json();
         return metadataIds[cardType] || null;
       }
     } catch (error) {
-      console.error('Error checking existing metadata:', error);
+      console.error('Error checking existing frontend metadata:', error);
     }
     return null;
   };
 
-  // Available Inspector Gadget card types (all 159 items from the Move contract)
-  const CARD_TYPES = [
-    'AlarmClock', 'AmazonFan', 'Arms', 'Badge', 'BallpointPen', 'BeachShovel',
-    'Binoculars', 'BlackDuster', 'BlackMagnifyingGlass', 'BlueBlowDryer',
-    'BlueStripedHandkerchief', 'BoatPropellerFan', 'BolloBalls', 'Bone',
-    'Brella', 'BucketOfWater', 'CanOpener', 'Candy', 'Card', 'CarMechanicFan',
-    'ChopSticks', 'Clippers', 'Coat', 'Coin', 'Copter', 'CopterSpare',
-    'CountDraculasHauntedCastleTouristBrochure', 'Daffodils', 'Daisies',
-    'DemagnetizedCompass', 'DeskLamp', 'DistressSignalFlag', 'Doll',
-    'DuckCall', 'Ears', 'EgyptFan', 'Emergency', 'EverestIslandFan',
-    'FeatherDuster', 'FingerprintDustingKit', 'FirecrackerSkates', 'FishNet',
-    'FiveHands', 'FlashbulbCamera', 'FlashcubeCamera', 'Flashlight',
-    'FlightSafetyLiterature', 'Flippers', 'Fork', 'FountainPen',
-    'GadgetMobileKeys', 'GardeningShovel', 'Geraniums', 'Hand', 'HandOfCards',
-    'HandheldFlashlight', 'HatTip', 'HeadWheel', 'IceSkates',
-    'IdentificationPaper', 'Key', 'Keyboard', 'KitchenKnife', 'Laser',
-    'LeftArm', 'LeftArmRetractor', 'LeftBinocular', 'LeftCuff', 'LeftEar',
-    'LeftLeg', 'LeftSkate', 'LightBulb', 'Lighter', 'LongShovel', 'Magnet',
-    'MagnetShoes', 'Mallet', 'MapOfSouthAfrica', 'MapOfTibet', 'Match',
-    'Megaphone', 'MetalFlySwatter', 'Neck', 'Net', 'NorthPoleCompass', 'Note',
-    'Notepad', 'OilCan', 'PaperFan', 'Parachute', 'Pencil', 'Peonies',
-    'PinkEnvelope', 'PinkHandkerchief', 'PizzaChefHat', 'PlasticFan',
-    'PlasticFlySwatter', 'PocketWatch', 'PocketWatchOnChain', 'PoliceId',
-    'PoolTube', 'Pot', 'Primroses', 'PrototypeRadar', 'Pulley', 'Radar',
-    'RedBlowDryer', 'RedCup', 'RedDottedHandkerchief', 'RedDuster',
-    'RedHandleScissors', 'RedMagnifyingGlass', 'Respirator', 'RightArm',
-    'RightArmRetractor', 'RightCuff', 'RightEar', 'RightLeg', 'RocketSkates',
-    'Roses', 'SafetyScissors', 'Sail', 'Saw', 'Scissors', 'Screwdriver',
-    'Shears', 'Shoehorn', 'Skates', 'Skis', 'SmallCamera', 'SmallMallet',
-    'Sponge', 'Spoon', 'Spring', 'Squeegee', 'SteelMagnifyingGlass',
-    'StrawHat', 'Superbells', 'SurrenderFlag', 'Teeth', 'Telescope',
-    'TelescopingLegs', 'Tie', 'Toothbrush', 'Toothpaste',
-    'TopSecretGadgetPhone', 'TrickFlower', 'TwoHands', 'TwoLeftCuffs',
-    'WaterCannon', 'WaterGun', 'WaterSkiPropeller', 'WeldingMask',
-    'WhiteHandkerchief', 'WinnerFlag', 'WorkLight', 'Wrench',
-    'YellowHandkerchief', 'Yoyo'
-  ];
 
   const addLevel = () => {
     const newKey = Math.max(...levels.map(l => l.key)) + 1;
@@ -255,14 +207,14 @@ export default function MintMetadataInterface() {
       tx.setGasBudget(10000000);
 
       // Sign the transaction using the connected wallet
-      // Check if the wallet supports signTransaction feature
-      if (!currentWallet.features['sui:signTransaction']) {
-        throw new Error('signTransaction feature is not supported by the current wallet');
+      // Check if the wallet supports signTransactionBlock feature
+      if (!currentWallet.features['sui:signTransactionBlock']) {
+        throw new Error('signTransactionBlock feature is not supported by the current wallet');
       }
       
-      const signTransaction = currentWallet.features['sui:signTransaction'].signTransaction;
+      const signTransaction = currentWallet.features['sui:signTransactionBlock'].signTransactionBlock;
       const signedTransaction = await signTransaction({
-        transaction: tx,
+        transactionBlock: tx,
         account: currentAccount,
       });
 
@@ -295,8 +247,8 @@ export default function MintMetadataInterface() {
         rankValues: levels.map(l => l.rank),
         subType: subType,
         season: season,
-        transactionBytes: signedTransaction.transaction || signedTransaction.transactionBytes || signedTransaction.bytes || tx.serialize(),
-        signature: signedTransaction.signature
+          transactionBytes: signedTransaction.transactionBlockBytes || tx.serialize(),
+          signature: signedTransaction.signature
       };
       
       console.log('Sending request data:', requestData);
@@ -378,83 +330,65 @@ export default function MintMetadataInterface() {
           <h4 className="text-lg font-semibold text-gray-800 mb-4">Metadata Configuration</h4>
           
           <div className="space-y-4">
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Card Type *
-              </label>
-              <select
+            <FormField label="Card Type" required>
+              <SelectField
                 value={cardType}
-                onChange={(e) => setCardType(e.target.value)}
-                className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                required
-              >
-                <option value="">Choose a card type</option>
-                {CARD_TYPES.map(type => (
-                  <option key={type} value={type}>{type}</option>
-                ))}
-              </select>
-            </div>
-
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Description *
-              </label>
-              <textarea
-                value={description}
-                onChange={(e) => setDescription(e.target.value)}
-                className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                rows={3}
-                placeholder="Describe this trading card..."
-                required
+                onChange={setCardType}
+                options={Object.keys(availableCardTypes).map(type => ({
+                  value: type,
+                  label: type
+                }))}
+                placeholder="Choose a card type"
+                loading={loadingMetadata}
+                disabled={Object.keys(availableCardTypes).length === 0 && !loadingMetadata}
               />
-            </div>
+              {Object.keys(availableCardTypes).length === 0 && !loadingMetadata && (
+                <p className="text-sm text-green-600 mt-1">
+                  ✅ All available card types already have metadata created. No new metadata needed unless you publish a new package.
+                </p>
+              )}
+            </FormField>
+
+            <FormField label="Description" required>
+              <InputField
+                type="textarea"
+                value={description}
+                onChange={setDescription}
+                placeholder="Describe this trading card..."
+                rows={3}
+              />
+            </FormField>
 
             <div className="grid grid-cols-2 gap-4">
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Version
-                </label>
-                <input
+              <FormField label="Version">
+                <InputField
                   type="number"
-                  value={version || ''}
-                  onChange={(e) => {
-                    const value = parseInt(e.target.value);
-                    setVersion(isNaN(value) ? 1 : value);
+                  value={version}
+                  onChange={(value) => {
+                    const numValue = parseInt(value);
+                    setVersion(isNaN(numValue) ? 1 : numValue);
                   }}
-                  className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                  min="1"
                 />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Royalty (basis points)
-                </label>
-                <input
+              </FormField>
+              <FormField label="Royalty (basis points)">
+                <InputField
                   type="number"
-                  value={royalty || ''}
-                  onChange={(e) => {
-                    const value = parseInt(e.target.value);
-                    setRoyalty(isNaN(value) ? 500 : value);
+                  value={royalty}
+                  onChange={(value) => {
+                    const numValue = parseInt(value);
+                    setRoyalty(isNaN(numValue) ? 500 : numValue);
                   }}
-                  className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                  min="0"
-                  max="10000"
                 />
-              </div>
+              </FormField>
             </div>
 
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Game
-              </label>
-              <input
-                type="text"
+            <FormField label="Game">
+              <InputField
                 value={game}
-                onChange={(e) => setGame(e.target.value)}
-                className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                onChange={setGame}
                 placeholder="Inspector Gadget Game"
               />
-            </div>
+            </FormField>
 
             <div className="grid grid-cols-2 gap-4">
               <div>
@@ -693,6 +627,26 @@ export default function MintMetadataInterface() {
           </div>
         </div>
       )}
+
+      {/* Instructions */}
+      <div className="bg-blue-50 border border-blue-200 rounded-lg p-6">
+        <h4 className="text-lg font-semibold text-blue-800 mb-3">How to Use</h4>
+        <div className="text-blue-700 text-sm space-y-2">
+          <p><strong>1. Smart Filtering:</strong> Only card types without existing metadata are shown in the dropdown.</p>
+          <p><strong>2. Create Metadata:</strong> Fill in the form and click "Create Metadata" to mint metadata for the selected card type.</p>
+          <p><strong>3. Use in Minting:</strong> After creating metadata, use the "Mint and Transfer" tab to mint actual cards.</p>
+          <p><strong>4. Package Updates:</strong> When you publish a new package, new card types will appear here for metadata creation.</p>
+        </div>
+        
+        <div className="mt-4 bg-white border border-blue-200 rounded-lg p-4">
+          <h5 className="font-semibold text-blue-800 mb-2">💡 Smart Behavior</h5>
+          <div className="text-blue-700 text-sm space-y-1">
+            <p>• Card types with existing metadata are automatically hidden</p>
+            <p>• If all card types have metadata, the form will show a completion message</p>
+            <p>• This prevents duplicate metadata creation for the same package</p>
+          </div>
+        </div>
+      </div>
     </div>
   );
 }

@@ -68,9 +68,11 @@ Ensure your database connection is properly configured in `service/pool.ts`.
 
 ### 3. Contract Integration
 The admin panel is configured to work with your deployed Sui contracts:
-- **Package ID**: `0x7a805a16c7c1ff4441840fee3658d08fca018fc293164c5e96cbaf9649b7bc53`
-- **Admin Cap**: `0x7a805a16c7c1ff4441840fee3658d08fca018fc293164c5e96cbaf9649b7bc53`
-- **Counter**: `0x7a805a16c7c1ff4441840fee3658d08fca018fc293164c5e96cbaf9649b7bc53`
+- **Package ID**: `[DYNAMIC - Updated after contract publishing]`
+- **Admin Cap**: `[DYNAMIC - Updated after contract publishing]`
+- **Publisher ID**: `[DYNAMIC - Updated after contract publishing]`
+
+> **Note**: Contract addresses are automatically updated when you publish contracts through the admin panel. The system uses dynamic contract address management to ensure all components use the correct addresses.
 
 ## 📋 Usage Guide
 

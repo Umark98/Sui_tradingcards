@@ -25,7 +25,8 @@ if (!PACKAGE_ID || !ADMIN_CAP_ID) {
 // Constants for the Move module
 const MODULE_NAME = 'gadget_gameplay_items';
 const FUNCTION_NAME = 'mint_metadata';
-const TYPE_T = `${PACKAGE_ID}::${MODULE_NAME}::TradingCard<${PACKAGE_ID}::gadget_gameplay_items_titles::YellowHandkerchief>`;
+const CARD_TYPE = process.env.CARD_TYPE || 'YellowHandkerchief'; // Set this in environment
+const TYPE_T = `${PACKAGE_ID}::${MODULE_NAME}::TradingCard<${PACKAGE_ID}::gadget_gameplay_items_titles::${CARD_TYPE}>`;
 
 // Hardcoded arguments based on provided example
 const version = 1;

@@ -1,0 +1,10 @@
+{
+  "genesisCardTypes": [
+    "CommemorativeCard1",
+    "CommemorativeCard2", 
+    "CommemorativeCard3",
+    "CommemorativeCard4"
+  ],
+  "description": "Genesis card types defined in the trading_card_genesis contract",
+  "contractModule": "tradingcard::trading_card_genesis"
+}

@@ -1,8 +1,8 @@
-// module tradingcard::gadget_gameplay_items_titles {
-//     public struct TopSecretGadgetPhone has drop {}
-//     public struct Brella has drop {}
-//     public struct Mallet has drop {}
-//     public struct Legs has drop {}
+module tradingcard::gadget_gameplay_items_titles {
+    public struct TopSecretGadgetPhone has drop {}
+    public struct Brella has drop {}
+    public struct Mallet has drop {}
+    public struct Legs has drop {}
 //     public struct Hand has drop {}
 //     public struct Arms has drop {}
 //     public struct Neck has drop {}
@@ -170,4 +170,4 @@
 
 
 
-// }
+}

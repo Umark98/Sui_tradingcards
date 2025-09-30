@@ -7,11 +7,10 @@ import { getCurrentContractAddresses } from '@/lib/contract-addresses';
 const SUI_NETWORK = getFullnodeUrl('testnet');
 const client = new SuiClient({ url: SUI_NETWORK });
 
-// Contract addresses - will be updated after contract publishing
+// Contract addresses - loaded from .env.local (updated after contract publishing)
+// Environment variables take priority as they are the most current
 const PACKAGE_ID = process.env.PACKAGE_ID || '';
 const ADMIN_CAP_ID = process.env.ADMIN_CAP_ID || '';
-
-// Note: Using centralized contract address utility from lib/contract-addresses.ts
 
 interface MintCardRequest {
   cardType: string;

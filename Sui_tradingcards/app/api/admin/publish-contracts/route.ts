@@ -197,7 +197,7 @@ export async function POST(request: NextRequest) {
       }
       
       // Update package IDs in existing metadata using centralized utility
-      const updatedMetadata = {};
+      const updatedMetadata: Record<string, any> = {};
       Object.entries(existingMetadata).forEach(([cardType, metadata]: [string, any]) => {
         if (metadata.objectType) {
           // Use centralized utility to update package ID
@@ -234,8 +234,10 @@ export async function POST(request: NextRequest) {
       const envContent = existingContent
         .replace(/PACKAGE_ID=.*/g, '')
         .replace(/ADMIN_CAP_ID=.*/g, '')
+        .replace(/PUBLISHER_ID=.*/g, '')
+        .replace(/UPGRADE_CAP_ID=.*/g, '')
         .trim() + 
-        `\n# Contract Addresses (updated after publishing)\nPACKAGE_ID=${packageID}\nADMIN_CAP_ID=${adminCapObject?.objectId}\n`;
+        `\n# Contract Addresses (updated after publishing)\nPACKAGE_ID=${packageID}\nADMIN_CAP_ID=${adminCapObject?.objectId}\nPUBLISHER_ID=${publisherObject?.objectId}\nUPGRADE_CAP_ID=${upgradeCapObject?.objectId}\n`;
       
       fs.writeFileSync(envPath, envContent, 'utf-8');
 
@@ -244,7 +246,7 @@ export async function POST(request: NextRequest) {
         const { exec } = require('child_process');
         const updateScriptPath = path.join(process.cwd(), 'scripts', 'update-documentation.js');
         
-        exec(`node ${updateScriptPath}`, (error, stdout, stderr) => {
+        exec(`node ${updateScriptPath}`, (error: any, stdout: any, stderr: any) => {
           if (error) {
             console.log('Documentation update failed:', error.message);
           } else {

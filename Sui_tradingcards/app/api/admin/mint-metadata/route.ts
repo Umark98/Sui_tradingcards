@@ -10,7 +10,8 @@ import { getCurrentContractAddresses, generateObjectType } from '@/lib/contract-
 const SUI_NETWORK = getFullnodeUrl('testnet');
 const client = new SuiClient({ url: SUI_NETWORK });
 
-// Contract addresses - will be updated after contract publishing
+// Contract addresses - loaded from .env.local (updated after contract publishing)
+// Environment variables take priority as they are the most current
 const PACKAGE_ID = process.env.PACKAGE_ID || '';
 const ADMIN_CAP_ID = process.env.ADMIN_CAP_ID || '';
 
@@ -98,7 +99,7 @@ export async function POST(request: NextRequest) {
       
       // Save metadata ID to JSON file
       if (metadataObject && metadataObject.reference?.objectId) {
-        const metadataFilePath = path.join(process.cwd(), 'public', 'metadata-ids.json');
+        const metadataFilePath = path.join(process.cwd(), 'public', 'frontend-metadata-ids.json');
         
         // Read existing metadata IDs
         let existingMetadata = {};
@@ -116,7 +117,7 @@ export async function POST(request: NextRequest) {
           ...existingMetadata,
           [metadataData.cardType]: {
             objectId: metadataObject.reference.objectId,
-            objectType: metadataObject.objectType || generateObjectType(metadataData.cardType),
+            objectType: (metadataObject as any).objectType || generateObjectType(metadataData.cardType),
             timestamp: new Date().toISOString(),
             version: metadataData.version,
             description: metadataData.description,
@@ -138,7 +139,7 @@ export async function POST(request: NextRequest) {
         console.log('File written to:', metadataFilePath);
       } else {
         console.log('No metadata object found in created objects');
-        console.log('Available object types:', createdObjects?.map(obj => obj.objectType));
+        console.log('Available object types:', createdObjects?.map((obj: any) => obj.objectType));
       }
       
       return NextResponse.json({

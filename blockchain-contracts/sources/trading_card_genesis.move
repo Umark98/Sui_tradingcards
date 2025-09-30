@@ -19,6 +19,7 @@ module tradingcard::trading_card_genesis {
 
     public fun mint_and_transfer<T>(
         _: &AdminCap, 
+        mint_number: u64,
         recipient: address,
         ctx: &mut TxContext
     ) {
@@ -26,7 +27,7 @@ module tradingcard::trading_card_genesis {
 
         let nfts = Genesis<T> {
             id: object::new(ctx),
-            mint_number: 0
+            mint_number
         };
         transfer::transfer(nfts, recipient);
     }

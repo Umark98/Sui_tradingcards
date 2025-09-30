@@ -102,7 +102,7 @@ export async function GET(request: NextRequest) {
             last: user.last_owned
           }
         })),
-        recentActivity: recentActivityResult.rows.map(activity => ({
+        recentActivity: recentActivityResult.rows.map((activity: any) => ({
           nftId: activity.nft_id,
           serialNumber: activity.nft_serial_number,
           userEmail: activity.user_email,
@@ -122,7 +122,7 @@ export async function GET(request: NextRequest) {
   } catch (error) {
     console.error('Error fetching card details:', error);
     return NextResponse.json(
-      { error: 'Failed to fetch card details', details: error.message },
+      { error: 'Failed to fetch card details', details: error instanceof Error ? error.message : 'Unknown error' },
       { status: 500 }
     );
   }

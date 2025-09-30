@@ -4,44 +4,58 @@
  */
 
 import * as fs from 'fs';
+import * as path from 'path';
 
 export interface ContractAddresses {
   packageId: string;
   adminCapId: string;
-  upgradeCapId?: string;
-  publisherId?: string;
+  upgradeCapId: string;
+  publisherId: string;
   timestamp?: string;
   network?: string;
 }
 
 /**
- * Get current contract addresses from contract-objects.json
- * Falls back to environment variables if file doesn't exist
+ * Get current contract addresses from .env.local (priority) or contract-objects.json
+ * Environment variables take priority as they are updated after contract publishing
  */
 export function getCurrentContractAddresses(): ContractAddresses {
+  // Priority 1: Environment variables from .env.local (updated after publishing)
+  if (process.env.PACKAGE_ID && process.env.ADMIN_CAP_ID && process.env.PUBLISHER_ID && process.env.UPGRADE_CAP_ID) {
+    return {
+      packageId: process.env.PACKAGE_ID,
+      adminCapId: process.env.ADMIN_CAP_ID,
+      publisherId: process.env.PUBLISHER_ID,
+      upgradeCapId: process.env.UPGRADE_CAP_ID,
+      network: 'testnet'
+    };
+  }
+
+  // Priority 2: Fallback to contract-objects.json
   try {
-    // Use relative path that works in both development and production
     const contractObjectsPath = path.join(process.cwd(), 'public', 'contract-objects.json');
     if (fs.existsSync(contractObjectsPath)) {
       const data = fs.readFileSync(contractObjectsPath, 'utf-8');
       const contractData = JSON.parse(data);
       return {
-        packageId: contractData.packageId || process.env.PACKAGE_ID || '',
-        adminCapId: contractData.adminCapId || process.env.ADMIN_CAP_ID || '',
-        upgradeCapId: contractData.upgradeCapId,
-        publisherId: contractData.publisherId,
+        packageId: contractData.packageId || '',
+        adminCapId: contractData.adminCapId || '',
+        publisherId: contractData.publisherId || '',
+        upgradeCapId: contractData.upgradeCapId || '',
         timestamp: contractData.timestamp,
-        network: contractData.network
+        network: contractData.network || 'testnet'
       };
     }
   } catch (error) {
-    console.log('Error reading contract-objects.json, using env variables');
+    console.log('Error reading contract-objects.json:', error);
   }
   
-  // Fallback to environment variables
+  // Priority 3: Empty fallback
   return {
-    packageId: process.env.PACKAGE_ID || '',
-    adminCapId: process.env.ADMIN_CAP_ID || '',
+    packageId: '',
+    adminCapId: '',
+    publisherId: '',
+    upgradeCapId: '',
     network: 'testnet'
   };
 }
@@ -95,6 +109,8 @@ export function validateContractAddresses(): { valid: boolean; missing: string[]
   
   if (!addresses.packageId) missing.push('packageId');
   if (!addresses.adminCapId) missing.push('adminCapId');
+  if (!addresses.publisherId) missing.push('publisherId');
+  if (!addresses.upgradeCapId) missing.push('upgradeCapId');
   
   return {
     valid: missing.length === 0,

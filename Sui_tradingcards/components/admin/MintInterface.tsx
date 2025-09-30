@@ -3,7 +3,12 @@
 import { useState, useEffect } from 'react';
 import { useWalletKit } from '@mysten/wallet-kit';
 import { Transaction } from '@mysten/sui/transactions';
-import { SuiClient, getFullnodeUrl } from '@mysten/sui/client';
+import { useContractAddresses } from '@/hooks/useContractAddresses';
+import { useFrontendMetadata } from '@/hooks/useMetadata';
+import { transactionHandler } from '@/utils/transactionUtils';
+import { FormField, SelectField, InputField } from '@/components/common/FormField';
+import { StatusMessage, LoadingSpinner } from '@/components/common/StatusMessage';
+import { Button } from '@/components/common/Button';
 
 interface MintCardRequest {
   cardType: string;
@@ -17,9 +22,6 @@ interface MintCardRequest {
 
 export default function MintInterface() {
   const { currentAccount, currentWallet } = useWalletKit();
-  
-  // Initialize Sui client
-  const client = new SuiClient({ url: getFullnodeUrl('testnet') });
   
   // Form state
   const [cardType, setCardType] = useState('');
@@ -35,81 +37,17 @@ export default function MintInterface() {
   const [success, setSuccess] = useState<string | null>(null);
   const [mintedCardObjectId, setMintedCardObjectId] = useState<string | null>(null);
   
-  // Contract addresses from published contracts
-  const [contractAddresses, setContractAddresses] = useState<{
-    packageId: string;
-    adminCapId: string;
-  } | null>(null);
-  
-  // Available card types with metadata
-  const [availableCardTypes, setAvailableCardTypes] = useState<{[key: string]: any}>({});
-  const [loadingMetadata, setLoadingMetadata] = useState(false);
-  
   // Selected card metadata for preview
   const [selectedCardMetadata, setSelectedCardMetadata] = useState<any>(null);
 
-  // Load contract addresses from published contracts
-  const loadContractAddresses = async () => {
-    try {
-      const response = await fetch('/contract-objects.json');
-      if (response.ok) {
-        const data = await response.json();
-        if (data.packageId && data.adminCapId) {
-          setContractAddresses({
-            packageId: data.packageId,
-            adminCapId: data.adminCapId
-          });
-        }
-      }
-    } catch (error) {
-      console.error('Failed to load contract addresses:', error);
-    }
-  };
+  // Custom hooks
+  const { contractAddresses, loading: contractLoading, error: contractError, refetch: refetchContracts } = useContractAddresses();
+  const { metadata: availableCardTypes, loading: loadingMetadata, error: metadataError, refetch: refetchMetadata } = useFrontendMetadata();
 
-  // Load available card types with metadata
-  const loadAvailableCardTypes = async () => {
-    setLoadingMetadata(true);
-    try {
-      const response = await fetch('/api/admin/metadata-ids');
-      if (response.ok) {
-        const data = await response.json();
-        
-        // Filter metadata to only include those that match the current package ID
-        const currentPackageId = contractAddresses?.packageId;
-        if (currentPackageId) {
-          const validMetadata: {[key: string]: any} = {};
-          
-          Object.entries(data).forEach(([cardType, metadata]: [string, any]) => {
-            // Check if the metadata's objectType contains the current package ID
-            if (metadata.objectType && metadata.objectType.includes(currentPackageId)) {
-              validMetadata[cardType] = metadata;
-            } else {
-              console.log(`Filtering out ${cardType} - package ID mismatch. Expected: ${currentPackageId}, Found in: ${metadata.objectType}`);
-            }
-          });
-          
-          setAvailableCardTypes(validMetadata);
-          console.log(`Loaded ${Object.keys(validMetadata).length} valid card types for package ${currentPackageId}`);
-        } else {
-          // If no contract addresses loaded yet, show all metadata (will be filtered later)
-          setAvailableCardTypes(data);
-        }
-      }
-    } catch (error) {
-      console.error('Failed to load available card types:', error);
-    } finally {
-      setLoadingMetadata(false);
-    }
-  };
-
-  // Load contract addresses and available card types on component mount
+  // Listen for metadata updates from other components
   useEffect(() => {
-    loadContractAddresses();
-    loadAvailableCardTypes();
-    
-    // Listen for metadata updates from other components
     const handleMetadataUpdate = () => {
-      loadAvailableCardTypes();
+      refetchMetadata();
     };
     
     window.addEventListener('metadataUpdated', handleMetadataUpdate);
@@ -117,56 +55,17 @@ export default function MintInterface() {
     return () => {
       window.removeEventListener('metadataUpdated', handleMetadataUpdate);
     };
-  }, []);
+  }, [refetchMetadata]);
 
-  // Re-filter metadata when contract addresses change
-  useEffect(() => {
-    if (contractAddresses?.packageId) {
-      loadAvailableCardTypes();
-    }
-  }, [contractAddresses]);
-
-  // Inspector Gadget card types
-  const CARD_TYPES = [
-    'AlarmClock', 'AmazonFan', 'Arms', 'Badge', 'BallpointPen', 'BeachShovel',
-    'Binoculars', 'BlackDuster', 'BlackMagnifyingGlass', 'BlueBlowDryer',
-    'BlueStripedHandkerchief', 'BoatPropellerFan', 'BolloBalls', 'Bone',
-    'Brella', 'BucketOfWater', 'CanOpener', 'Candy', 'Card', 'CarMechanicFan',
-    'ChopSticks', 'Clippers', 'Coat', 'Coin', 'Copter', 'CopterSpare',
-    'CountDraculasHauntedCastleTouristBrochure', 'Daffodils', 'Daisies',
-    'DemagnetizedCompass', 'DeskLamp', 'DistressSignalFlag', 'Doll',
-    'DuckCall', 'Ears', 'EgyptFan', 'Emergency', 'EverestIslandFan',
-    'FeatherDuster', 'FingerprintDustingKit', 'FirecrackerSkates',
-    'FishNet', 'FiveHands', 'FlashbulbCamera', 'FlashcubeCamera',
-    'Flashlight', 'FlightSafetyLiterature', 'Flippers', 'Fork',
-    'FountainPen', 'GadgetMobileKeys', 'GardeningShovel', 'Geraniums',
-    'Hand', 'HandOfCards', 'HandheldFlashlight', 'HatTip', 'HeadWheel',
-    'IceSkates', 'IdentificationPaper', 'Key', 'Keyboard', 'KitchenKnife',
-    'Laser', 'LeftArm', 'LeftArmRetractor', 'LeftBinocular', 'LeftCuff',
-    'LeftEar', 'LeftLeg', 'LeftSkate', 'LightBulb', 'Lighter', 'LongShovel',
-    'Magnet', 'MagnetShoes', 'Mallet', 'MapOfSouthAfrica', 'MapOfTibet',
-    'Match', 'Megaphone', 'MetalFlySwatter', 'Neck', 'Net',
-    'NorthPoleCompass', 'Note', 'Notepad', 'OilCan', 'PaperFan',
-    'Parachute', 'Pencil', 'Peonies', 'PinkEnvelope', 'PinkHandkerchief',
-    'PizzaChefHat', 'PlasticFan', 'PlasticFlySwatter', 'PocketWatch',
-    'PocketWatchOnChain', 'PoliceId', 'PoolTube', 'Pot', 'Primroses',
-    'PrototypeRadar', 'Pulley', 'Radar', 'RedBlowDryer', 'RedCup',
-    'RedDottedHandkerchief', 'RedDuster', 'RedHandleScissors',
-    'RedMagnifyingGlass', 'Respirator', 'RightArm', 'RightArmRetractor',
-    'RightCuff', 'RightEar', 'RightLeg', 'RocketSkates', 'Roses',
-    'SafetyScissors', 'Sail', 'Saw', 'Scissors', 'Screwdriver', 'Shears',
-    'Shoehorn', 'Skates', 'Skis', 'SmallCamera', 'SmallMallet', 'Sponge',
-    'Spoon', 'Spring', 'Squeegee', 'SteelMagnifyingGlass', 'StrawHat',
-    'SurrenderFlag', 'Superbells', 'Telescope', 'TelescopingLegs',
-    'Teeth', 'Tie', 'Toothbrush', 'Toothpaste', 'TopSecretGadgetPhone',
-    'TrickFlower', 'TwoHands', 'TwoLeftCuffs', 'WaterCannon',
-    'WaterGun', 'WaterSkiPropeller', 'WeldingMask', 'WhiteHandkerchief',
-    'WinnerFlag', 'WorkLight', 'Wrench', 'YellowHandkerchief', 'Yoyo'
-  ];
 
   const handleMint = async () => {
     if (!currentAccount || !cardType || !metadataObjectId || !title || !metadataId || !recipient) {
       setError('Please connect wallet and fill all required fields');
+      return;
+    }
+
+    if (!contractAddresses) {
+      setError('Contract addresses not loaded. Please refresh the page to load contract data.');
       return;
     }
 
@@ -176,23 +75,11 @@ export default function MintInterface() {
     setMintedCardObjectId(null);
 
     try {
-      // Check if contract addresses are loaded
-      if (!contractAddresses) {
-        throw new Error('Contract addresses not loaded. Please refresh the page to load contract data.');
-      }
-
       const { packageId: PACKAGE_ID, adminCapId: ADMIN_CAP_ID } = contractAddresses;
+      const TYPE_T = transactionHandler.generateTypeArgument(PACKAGE_ID, cardType);
 
       // Build the transaction
       const tx = new Transaction();
-      
-      // Set sender address
-      tx.setSender(currentAccount.address);
-      
-      // Get the type argument based on card type
-      const TYPE_T = `${PACKAGE_ID}::gadget_gameplay_items::TradingCard<${PACKAGE_ID}::gadget_gameplay_items_titles::${cardType}>`;
-      
-      // Call mint_and_transfer function
       tx.moveCall({
         target: `${PACKAGE_ID}::gadget_gameplay_items::mint_and_transfer`,
         typeArguments: [TYPE_T],
@@ -207,63 +94,26 @@ export default function MintInterface() {
         ]
       });
 
-      // Set gas budget
-      tx.setGasBudget(10000000);
+      // Execute transaction using the transaction handler
+      const result = await transactionHandler.executeTransaction(
+        tx,
+        currentAccount,
+        currentWallet,
+        '/api/admin/mint-card',
+        {
+          cardType,
+          metadataObjectId,
+          title,
+          level,
+          metadataId,
+          mintedNumber,
+          recipient
+        }
+      );
 
-      // Sign the transaction using the connected wallet
-      // Check if the wallet supports signTransaction feature
-      if (!currentWallet.features['sui:signTransaction']) {
-        throw new Error('signTransaction feature is not supported by the current wallet');
-      }
-      
-      const signTransaction = currentWallet.features['sui:signTransaction'].signTransaction;
-      const signedTransaction = await signTransaction({
-        transaction: tx,
-        account: currentAccount,
-      });
-
-      console.log('Transaction signed successfully');
-      console.log('Signed transaction object:', signedTransaction);
-      console.log('Signed transaction keys:', Object.keys(signedTransaction));
-
-      // Execute the signed transaction via backend
-      const executeResponse = await fetch('/api/admin/mint-card', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ 
-          cardType: cardType,
-          metadataObjectId: metadataObjectId,
-          title: title,
-          level: level,
-          metadataId: metadataId,
-          mintedNumber: mintedNumber,
-          recipient: recipient,
-          transactionBytes: signedTransaction.transaction || signedTransaction.transactionBytes || signedTransaction.bytes || tx.serialize(),
-          signature: signedTransaction.signature
-        })
-      });
-
-      if (!executeResponse.ok) {
-        const errorData = await executeResponse.json().catch(() => ({ error: 'Unknown error' }));
-        throw new Error(`Failed to execute transaction: ${errorData.error || 'Unknown error'}`);
-      }
-
-      const txResponse = await executeResponse.json();
-
-      // Check if the transaction was successful
-      if (txResponse?.effects?.status?.status === "success") {
-        const createdObjects = txResponse.effects.created || [];
-        
-        // Find the minted card object from the created objects
-        const mintedCard = createdObjects?.find(
-          (item) => item.objectType?.includes('TradingCard')
-        );
-
-        // Extract the object ID of the minted card
-        const cardObjectId = mintedCard?.reference?.objectId || mintedCard?.objectId;
-        
-        if (cardObjectId) {
-          setMintedCardObjectId(cardObjectId);
+      if (result.success) {
+        if (result.objectId) {
+          setMintedCardObjectId(result.objectId);
           setSuccess(`Card minted successfully! Type: ${cardType}, Level: ${level}, Recipient: ${recipient}`);
         } else {
           setSuccess(`Card minted successfully! Type: ${cardType}, Level: ${level}, Recipient: ${recipient} (Object ID not found)`);
@@ -273,9 +123,8 @@ export default function MintInterface() {
         setTitle('');
         setMintedNumber(1);
         setRecipient('');
-        // Don't reset cardType, metadataObjectId, metadataId, or level to allow easy second mint
       } else {
-        throw new Error(`Transaction failed: ${txResponse?.effects?.status?.error || 'Unknown error'}`);
+        setError(`Mint failed: ${result.error}`);
       }
       
     } catch (err) {
@@ -313,18 +162,15 @@ export default function MintInterface() {
           <h4 className="text-lg font-semibold text-gray-800 mb-4">Mint Configuration</h4>
           
           <div className="space-y-4">
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Card Type *
-              </label>
+            <FormField label="Card Type" required>
               <div className="flex gap-2">
-                <select
+                <SelectField
                   value={cardType}
-                  onChange={(e) => {
-                    setCardType(e.target.value);
+                  onChange={(value) => {
+                    setCardType(value);
                     // Auto-populate metadata object ID when card type is selected
-                    if (e.target.value && availableCardTypes[e.target.value]) {
-                      const metadata = availableCardTypes[e.target.value];
+                    if (value && availableCardTypes[value]) {
+                      const metadata = availableCardTypes[value];
                       setMetadataObjectId(metadata.objectId);
                       setMetadataId(metadata.objectId);
                       setSelectedCardMetadata(metadata);
@@ -332,29 +178,29 @@ export default function MintInterface() {
                       setSelectedCardMetadata(null);
                     }
                   }}
-                  className="flex-1 p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                  required
-                >
-                  <option value="">Choose a card type</option>
-                  {Object.keys(availableCardTypes).map(type => (
-                    <option key={type} value={type}>{type}</option>
-                  ))}
-                </select>
-                <button
-                  type="button"
-                  onClick={loadAvailableCardTypes}
+                  options={Object.keys(availableCardTypes).map(type => ({
+                    value: type,
+                    label: type
+                  }))}
+                  placeholder="Choose a card type"
+                  loading={loadingMetadata}
+                  className="flex-1"
+                />
+                <Button
+                  onClick={refetchMetadata}
                   disabled={loadingMetadata}
-                  className="px-3 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50"
+                  size="sm"
+                  className="px-3 py-2"
                 >
                   {loadingMetadata ? '...' : '↻'}
-                </button>
+                </Button>
               </div>
-              {Object.keys(availableCardTypes).length === 0 && (
+              {Object.keys(availableCardTypes).length === 0 && !loadingMetadata && (
                 <p className="text-sm text-red-600 mt-1">
                   No card types with metadata available. Create metadata first.
                 </p>
               )}
-            </div>
+            </FormField>
 
             {/* Image Preview */}
             {selectedCardMetadata && selectedCardMetadata.imageUrl && (
@@ -386,104 +232,72 @@ export default function MintInterface() {
               </div>
             )}
 
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Metadata Object ID *
-              </label>
-              <input
-                type="text"
+            <FormField 
+              label="Metadata Object ID" 
+              required 
+              helpText="The object ID of the metadata created from mint_metadata"
+            >
+              <InputField
                 value={metadataObjectId}
-                onChange={(e) => setMetadataObjectId(e.target.value)}
-                className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                onChange={setMetadataObjectId}
                 placeholder="0x..."
-                required
               />
-              <p className="text-sm text-gray-500 mt-1">
-                The object ID of the metadata created from mint_metadata
-              </p>
-            </div>
+            </FormField>
 
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Metadata ID *
-              </label>
-              <input
-                type="text"
+            <FormField 
+              label="Metadata ID" 
+              required 
+              helpText="The ID of the metadata (usually same as Object ID)"
+            >
+              <InputField
                 value={metadataId}
-                onChange={(e) => setMetadataId(e.target.value)}
-                className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                onChange={setMetadataId}
                 placeholder="0x..."
-                required
               />
-              <p className="text-sm text-gray-500 mt-1">
-                The ID of the metadata (usually same as Object ID)
-              </p>
-            </div>
+            </FormField>
 
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Card Title *
-              </label>
-              <input
-                type="text"
+            <FormField label="Card Title" required>
+              <InputField
                 value={title}
-                onChange={(e) => setTitle(e.target.value)}
-                className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                onChange={setTitle}
                 placeholder="Example Yoyo Card"
-                required
               />
-            </div>
+            </FormField>
 
             <div className="grid grid-cols-2 gap-4">
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Level
-                </label>
-                <input
+              <FormField label="Level">
+                <InputField
                   type="number"
-                  value={level || ''}
-                  onChange={(e) => {
-                    const value = parseInt(e.target.value);
-                    setLevel(isNaN(value) ? 1 : value);
+                  value={level}
+                  onChange={(value) => {
+                    const numValue = parseInt(value);
+                    setLevel(isNaN(numValue) ? 1 : numValue);
                   }}
-                  className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                  min="1"
-                  max="5"
                 />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Minted Number
-                </label>
-                <input
+              </FormField>
+              <FormField label="Minted Number">
+                <InputField
                   type="number"
-                  value={mintedNumber || ''}
-                  onChange={(e) => {
-                    const value = parseInt(e.target.value);
-                    setMintedNumber(isNaN(value) ? 1 : value);
+                  value={mintedNumber}
+                  onChange={(value) => {
+                    const numValue = parseInt(value);
+                    setMintedNumber(isNaN(numValue) ? 1 : numValue);
                   }}
-                  className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                  min="1"
                 />
-              </div>
+              </FormField>
             </div>
 
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Recipient Address *
-              </label>
-              <input
-                type="text"
+            <FormField 
+              label="Recipient Address" 
+              required 
+              helpText="The address that will receive the minted card"
+            >
+              <InputField
                 value={recipient}
-                onChange={(e) => setRecipient(e.target.value)}
-                className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                onChange={setRecipient}
                 placeholder={currentAccount?.address || "0x..."}
-                required
               />
-              <p className="text-sm text-gray-500 mt-1">
-                The address that will receive the minted card
-              </p>
-            </div>
+            </FormField>
           </div>
         </div>
 
@@ -519,13 +333,15 @@ export default function MintInterface() {
                 </div>
               </div>
 
-              <button
+              <Button
                 onClick={handleMint}
                 disabled={!currentAccount || loading}
-                className="w-full px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed font-medium"
+                loading={loading}
+                className="w-full"
+                size="lg"
               >
                 {loading ? 'Minting Card...' : 'Mint Card'}
-              </button>
+              </Button>
             </div>
           ) : (
             <div className="text-center py-8">
@@ -538,14 +354,20 @@ export default function MintInterface() {
 
       {/* Status Messages */}
       {error && (
-        <div className="bg-red-50 border border-red-200 rounded-lg p-4">
-          <p className="text-red-800 font-medium">❌ {error}</p>
-        </div>
+        <StatusMessage
+          type="error"
+          message={error}
+          onClose={() => setError(null)}
+        />
       )}
 
       {success && (
-        <div className="bg-green-50 border border-green-200 rounded-lg p-4">
-          <p className="text-green-800 font-medium">✅ {success}</p>
+        <div>
+          <StatusMessage
+            type="success"
+            message={success}
+            onClose={() => setSuccess(null)}
+          />
           {mintedCardObjectId && (
             <div className="mt-3 p-3 bg-white border border-green-200 rounded-lg">
               <h5 className="font-semibold text-green-800 mb-2">Minted Card Object ID:</h5>
@@ -553,15 +375,17 @@ export default function MintInterface() {
                 <p className="text-sm font-mono text-gray-800 break-all">
                   {mintedCardObjectId}
                 </p>
-                <button
+                <Button
                   onClick={() => {
                     navigator.clipboard.writeText(mintedCardObjectId);
                     // You could add a toast notification here
                   }}
-                  className="ml-2 px-2 py-1 bg-green-600 text-white text-xs rounded hover:bg-green-700"
+                  size="sm"
+                  variant="success"
+                  className="ml-2"
                 >
                   Copy
-                </button>
+                </Button>
               </div>
             </div>
           )}
@@ -570,7 +394,7 @@ export default function MintInterface() {
 
       {/* Form Actions */}
       <div className="flex justify-between items-center">
-        <button
+        <Button
           onClick={() => {
             setCardType('');
             setMetadataObjectId('');
@@ -584,10 +408,10 @@ export default function MintInterface() {
             setSuccess(null);
             setMintedCardObjectId(null);
           }}
-          className="px-4 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-700 font-medium"
+          variant="secondary"
         >
           Reset Form
-        </button>
+        </Button>
         <div className="text-sm text-gray-600">
           {Object.keys(availableCardTypes).length} card types available
         </div>

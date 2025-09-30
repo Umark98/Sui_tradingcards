@@ -6,9 +6,10 @@
   "type": "module",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "mint-metadata": "ts-node src/mint_metadata.ts",
-    "mint-and-transfer": "ts-node src/mint_and_transfer.ts",
-    "display": "ts-node src/display.ts"
+    "mint-metadata": "node --loader ts-node/esm src/mint_metadata.ts",
+    "mint-and-transfer": "node --loader ts-node/esm src/mint_and_transfer.ts",
+    "mint-genesis": "node --loader ts-node/esm src/mint_genesis_card.ts",
+    "display": "node --loader ts-node/esm src/display.ts"
   },
   "keywords": [],
   "author": "",

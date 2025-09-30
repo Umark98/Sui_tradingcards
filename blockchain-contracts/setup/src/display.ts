@@ -28,6 +28,7 @@ export async function createDisplay(type: string) {
   const tx = new Transaction();
   const signer = await getSigner();
 
+  // Dynamic display object based on card type
   let displayObject: DisplayFieldsType = {
     keys: [
       "name",
@@ -40,24 +41,22 @@ export async function createDisplay(type: string) {
       "mint_number",
       "edition",
       "royalty",
-      "treasury_address",
       "artist",
       "copyright"
     ],
     values: [
-      `Commemorative Card ${type}`,
-      `https://cdn11.bigcommerce.com/s-spem6oukby/images/stencil/1280x1280/products/123/436/2D__57497__49826.1681470474.jpg?c=1`,
-      `A unique Genesis ${type} collectible card`,
-      "https://www.tradingcard.com",
-      "TradingCard Team",
+      type, // Dynamic card type
+      process.env.GENESIS_IMAGE_URL || `https://cdn11.bigcommerce.com/s-spem6oukby/images/stencil/1280x1280/products/123/436/2D__57497__49826.1681470474.jpg?c=1`,
+      `A unique Genesis ${type} commemorative card`,
+      process.env.PROJECT_URL || "https://www.tradingcard.com",
+      process.env.CREATOR || "TradingCard Team",
       "Collectible",
       "Genesis Card",
-      "0",
+      "{mint_number}", // Template variable for dynamic mint number
       "Limited Edition",
-      "5%",
-      "0xb73f130f70ce3fda909699b2978da240d73d1c6c85a2ef3624819b42641bd681",
-      "Card Artist",
-      "© 2025 TradingCard"
+      process.env.ROYALTY || "5%",
+      process.env.ARTIST || "Card Artist",
+      process.env.COPYRIGHT || "© 2025 TradingCard"
     ],
   };
 
@@ -105,4 +104,4 @@ export async function createDisplay(type: string) {
 }
 
 // Example usage for CommemorativeCard1
-createDisplay("CommemorativeCard2");
+createDisplay("CommemorativeCard1");

@@ -3,13 +3,10 @@
 import { useWalletKit } from '@mysten/wallet-kit';
 import { ConnectButton } from '@mysten/wallet-kit';
 import WalletInfo from '@/components/WalletInfo';
-import ProtectedRoute from '@/components/ProtectedRoute';
-
 export default function WalletPage() {
   const { currentAccount } = useWalletKit();
 
   return (
-    <ProtectedRoute>
     <div className="max-w-4xl mx-auto space-y-8">
       <div className="text-center space-y-4">
         <h1 className="text-4xl font-bold text-gray-900">
@@ -59,6 +56,5 @@ export default function WalletPage() {
         )}
       </div>
     </div>
-    </ProtectedRoute>
   );
 }

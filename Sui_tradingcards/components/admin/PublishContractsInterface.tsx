@@ -143,14 +143,14 @@ export default function PublishContractsInterface() {
       setLoadingStep('Signing transaction...');
       console.log('Signing transaction with wallet...');
       
-      // Check if the wallet supports signTransaction feature
-      if (!currentWallet.features['sui:signTransaction']) {
-        throw new Error('signTransaction feature is not supported by the current wallet');
+      // Check if the wallet supports signTransactionBlock feature
+      if (!currentWallet.features['sui:signTransactionBlock']) {
+        throw new Error('signTransactionBlock feature is not supported by the current wallet');
       }
       
-      const signTransaction = currentWallet.features['sui:signTransaction'].signTransaction;
+      const signTransaction = currentWallet.features['sui:signTransactionBlock'].signTransactionBlock;
       const signedTransaction = await signTransaction({
-        transaction: tx,
+        transactionBlock: tx,
         account: currentAccount,
       });
 

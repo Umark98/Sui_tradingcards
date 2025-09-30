@@ -154,7 +154,7 @@ export default function CardConfigForm() {
         
         // Extract unique collections for filter dropdown
         const uniqueCollections = [...new Set(configs.map((config: CardConfig) => config.collectionName).filter(Boolean))];
-        setCollections(uniqueCollections);
+        setCollections(uniqueCollections as string[]);
       } else {
         console.error('Configs response not ok:', configsResponse.status);
       }
