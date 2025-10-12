@@ -59,7 +59,7 @@ const season = 1; // Option<u16> some
 
 // Setup client
 const client = new SuiClient({
-  url: getFullnodeUrl('testnet'), // Change to 'mainnet' if needed
+  url: getFullnodeUrl(process.env.SUI_NETWORK || 'testnet'),
 });
 
 async function mintMetadata() {

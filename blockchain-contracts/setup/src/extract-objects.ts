@@ -16,7 +16,7 @@ async function main() {
   const transactionDigest = 'EgYShDVLwUNyidt5aP5Kr5ap78HZLbt2AYC7HR5JqPG7';
 
   // Connect to Sui testnet
-  const client = new SuiClient({ url: getFullnodeUrl('testnet') });
+  const client = new SuiClient({ url: getFullnodeUrl(process.env.SUI_NETWORK || 'testnet') });
 
   // Retry fetching transaction block to handle propagation delays
   let txResponse;

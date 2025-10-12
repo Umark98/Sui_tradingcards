@@ -38,7 +38,7 @@ const recipient = process.env.RECIPIENT_ADDRESS || ''; // Must be set in environ
 
 // Setup client
 const client = new SuiClient({
-  url: getFullnodeUrl('testnet'), // Change to 'mainnet' if needed
+  url: getFullnodeUrl(process.env.SUI_NETWORK || 'testnet'),
 });
 
 async function mintAndTransfer() {

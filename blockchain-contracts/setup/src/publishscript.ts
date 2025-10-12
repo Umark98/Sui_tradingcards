@@ -11,10 +11,10 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 // The Sui network to connect to.
-const SUI_NETWORK = getFullnodeUrl("testnet");
+const SUI_NETWORK = getFullnodeUrl(process.env.SUI_NETWORK || "testnet");
 
 // Paths to the Move CLI and the root of your packages
-const cliPath = "/Users/apple/.cargo/bin/sui";
+const cliPath = process.env.SUI_CLI_PATH || "/Users/apple/.cargo/bin/sui";
 
 // Define the path for the contract you want to publish.
 // Based on your folder structure, the contracts are in a single `sources` directory.
@@ -67,7 +67,7 @@ async function publishContract(path: string) {
           `${cliPath} move build --dump-bytecode-as-base64 --path sources`,
           { 
             encoding: "utf-8",
-            cwd: "/Users/apple/Downloads/Work/blockchain-contracts" // Change to blockchain-contracts directory
+            cwd: process.env.BLOCKCHAIN_CONTRACTS_PATH || path.resolve(__dirname, '../../') // Dynamic path to blockchain-contracts directory
           }
         )
       ));

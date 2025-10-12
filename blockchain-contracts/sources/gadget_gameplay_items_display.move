@@ -28,7 +28,7 @@ module tradingcard::gadget_gameplay_items_display {
     // TelescopingLegs, Teeth, Tie, Toothbrush, Toothpaste, TrickFlower,
     // TwoHands, TwoLeftCuffs, WaterCannon, WaterGun, WaterSkiPropeller, WeldingMask,
     // WhiteHandkerchief, WinnerFlag, WorkLight,
-    // Wrench, YellowHandkerchief, Yoyo,
+     Wrench, YellowHandkerchief, Yoyo,
     Brella, TopSecretGadgetPhone,Mallet,Legs
 }; 
 
@@ -191,9 +191,9 @@ module tradingcard::gadget_gameplay_items_display {
     // let white_handkerchief_display = gadget_gameplay_items_display<TradingCard<WhiteHandkerchief>>(publisher, ctx);
     // let winner_flag_display = gadget_gameplay_items_display<TradingCard<WinnerFlag>>(publisher, ctx);
     // let work_light_display = gadget_gameplay_items_display<TradingCard<WorkLight>>(publisher, ctx);
-    // let wrench_display = gadget_gameplay_items_display<TradingCard<Wrench>>(publisher, ctx);
-    // let yellow_handkerchief_display = gadget_gameplay_items_display<TradingCard<YellowHandkerchief>>(publisher, ctx);
-    // let yoyo_display = gadget_gameplay_items_display<TradingCard<Yoyo>>(publisher, ctx);
+     let wrench_display = gadget_gameplay_items_display<TradingCard<Wrench>>(publisher, ctx);
+    let yellow_handkerchief_display = gadget_gameplay_items_display<TradingCard<YellowHandkerchief>>(publisher, ctx);
+     let yoyo_display = gadget_gameplay_items_display<TradingCard<Yoyo>>(publisher, ctx);
 
      transfer::public_transfer(legs_display,ctx.sender());
     // transfer::public_transfer(alarm_clock_display, ctx.sender());
@@ -352,9 +352,9 @@ module tradingcard::gadget_gameplay_items_display {
     // transfer::public_transfer(white_handkerchief_display, ctx.sender());
     // transfer::public_transfer(winner_flag_display, ctx.sender());
     // transfer::public_transfer(work_light_display, ctx.sender());
-    // transfer::public_transfer(wrench_display, ctx.sender());
-    // transfer::public_transfer(yellow_handkerchief_display, ctx.sender());
-    // transfer::public_transfer(yoyo_display, ctx.sender());
+     transfer::public_transfer(wrench_display, ctx.sender());
+     transfer::public_transfer(yellow_handkerchief_display, ctx.sender());
+     transfer::public_transfer(yoyo_display, ctx.sender());
 
     
        
