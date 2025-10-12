@@ -18,7 +18,7 @@ export async function GET(request: Request) {
           n.nft_title,
           n.nft_description,
           n.numentities,
-          n.type,
+          nt.type_name AS type,
           n.rarity,
           n.m_level AS minted_level,  -- renamed for frontend
           n.edition_size,
@@ -29,6 +29,7 @@ export async function GET(request: Request) {
           p.name AS platform
       FROM users u
       JOIN nfts n ON u.user_id = n.user_id
+      LEFT JOIN nft_types nt ON n.type_id = nt.type_id
       LEFT JOIN artists a ON n.artist_id = a.artist_id
       LEFT JOIN collections c ON n.collection_id = c.collection_id
       LEFT JOIN platforms p ON c.platform_id = p.platform_id
