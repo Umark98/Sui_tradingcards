@@ -30,24 +30,31 @@ export async function GET() {
         ORDER BY count DESC
       `);
 
-      // Get recent NFTs (using created_at if available, or nft_id as fallback)
+      // Get recent mints - only NFTs that have been collected/minted (have transaction_digest or minted_at)
       const recentMintsResult = await client.query(`
         SELECT 
           n.nft_id,
+          n.nft_title,
           nt.type_name,
           nr.rarity_name,
           nml.level_value,
           u.user_email,
+          u.wallet_address,
           n.nft_serial_number,
+          n.transaction_digest,
+          n.mint_number,
+          n.minted_at,
+          n.status,
           c.name as collection_name
         FROM nfts n
-        JOIN nft_types nt ON n.type_id = nt.type_id
+        LEFT JOIN nft_types nt ON n.type_id = nt.type_id
         LEFT JOIN nft_rarities nr ON n.rarity_id = nr.rarity_id
         LEFT JOIN nft_mint_levels nml ON n.level_id = nml.level_id
-        JOIN users u ON n.user_id = u.user_id
+        LEFT JOIN users u ON n.user_id = u.user_id
         LEFT JOIN collections c ON n.collection_id = c.collection_id
-        ORDER BY n.nft_id DESC
-        LIMIT 10
+        WHERE n.status = 'collected' OR n.transaction_digest IS NOT NULL OR n.minted_at IS NOT NULL
+        ORDER BY COALESCE(n.minted_at, CURRENT_TIMESTAMP) DESC, n.nft_id DESC
+        LIMIT 20
       `);
 
       const stats = {
@@ -71,11 +78,18 @@ export async function GET() {
         }, {} as Record<string, number>),
         recentMints: recentMintsResult.rows.map((row: any) => ({
           id: `nft_${row.nft_id}`,
-          cardType: row.type_name,
+          nftTitle: row.nft_title || 'Unknown NFT',
+          cardType: row.type_name || 'Unknown Type',
+          collectionName: row.collection_name || 'Unknown Collection',
+          rarity: row.rarity_name || 'Unknown',
           level: row.level_value || 1,
-          recipient: row.user_email,
-          timestamp: new Date().toISOString(), // Using current time since we don't have created_at
-          transactionDigest: `nft_${row.nft_serial_number}`
+          recipient: row.wallet_address || row.user_email,
+          recipientEmail: row.user_email,
+          timestamp: row.minted_at ? new Date(row.minted_at).toISOString() : new Date().toISOString(),
+          transactionDigest: row.transaction_digest || `pending_${row.nft_id}`,
+          mintNumber: row.mint_number || null,
+          status: row.status || 'available',
+          serialNumber: row.nft_serial_number
         }))
       };
 
