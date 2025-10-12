@@ -165,7 +165,7 @@ export default function WalletAssets() {
   return (
     <div className="bg-white border border-gray-200 rounded-lg p-6">
       <div className="flex items-center justify-between mb-4">
-        <h3 className="text-xl font-semibold text-gray-800">
+        <h3 className="text-xl font-semibold text-white">
           Other Wallet Assets
         </h3>
         <button
@@ -205,7 +205,7 @@ export default function WalletAssets() {
           {assets.map((assetType) => (
             <div key={assetType.type} className="border border-gray-200 rounded-lg p-4">
               <div className="flex items-center justify-between mb-3">
-                <h4 className="font-semibold text-gray-800">
+                <h4 className="font-semibold text-white">
                   {getAssetTypeDisplayName(assetType.type)}
                 </h4>
                 <span className="bg-blue-100 text-blue-800 text-xs font-medium px-2.5 py-0.5 rounded-full">
@@ -231,7 +231,7 @@ export default function WalletAssets() {
                       )}
                       
                       <div>
-                        <h5 className="font-medium text-sm text-gray-800 truncate">
+                        <h5 className="font-medium text-sm text-white truncate">
                           {obj.data?.display?.name || 'Unnamed Asset'}
                         </h5>
                         <p className="text-xs text-gray-500 font-mono">

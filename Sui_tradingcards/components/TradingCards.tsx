@@ -182,12 +182,12 @@ export default function TradingCards() {
 
   const getRarityColor = (rarity: string) => {
     switch (rarity.toLowerCase()) {
-      case 'common': return 'bg-gray-100 text-gray-800';
-      case 'uncommon': return 'bg-green-100 text-green-800';
+      case 'common': return 'bg-gray-100 text-white';
+      case 'uncommon': return 'bg-green-100 text-green-100';
       case 'rare': return 'bg-blue-100 text-blue-800';
       case 'epic': return 'bg-purple-100 text-purple-800';
       case 'legendary': return 'bg-yellow-100 text-yellow-800';
-      default: return 'bg-gray-100 text-gray-800';
+      default: return 'bg-gray-100 text-white';
     }
   };
 
@@ -204,7 +204,7 @@ export default function TradingCards() {
     <div className="bg-white border border-gray-200 rounded-lg p-6">
       <div className="flex items-center justify-between mb-6">
         <div>
-          <h3 className="text-xl font-semibold text-gray-800">
+          <h3 className="text-xl font-semibold text-white">
             Inspector Gadget Trading Cards
           </h3>
           <p className="text-sm text-gray-600 mt-1">
@@ -236,7 +236,7 @@ export default function TradingCards() {
       {!loading && !error && cards.length === 0 && (
         <div className="text-center py-12">
           <div className="text-gray-400 text-6xl mb-4">🕵️</div>
-          <h4 className="text-lg font-medium text-gray-800 mb-2">
+          <h4 className="text-lg font-medium text-white mb-2">
             No Inspector Gadget Cards Found
           </h4>
           <p className="text-gray-600 mb-4">
@@ -255,7 +255,7 @@ export default function TradingCards() {
               <div className="text-blue-600 text-2xl mr-3">📊</div>
               <div>
                 <h4 className="font-semibold text-blue-800">Collection Summary</h4>
-                <p className="text-blue-700 text-sm">
+                <p className="text-white text-sm">
                   You own {cards.length} Inspector Gadget trading card{cards.length !== 1 ? 's' : ''}
                 </p>
               </div>
@@ -284,7 +284,7 @@ export default function TradingCards() {
                 {/* Card Details */}
                 <div className="p-4">
                   <div className="flex items-start justify-between mb-2">
-                    <h5 className="font-semibold text-gray-800 text-sm leading-tight">
+                    <h5 className="font-semibold text-white text-sm leading-tight">
                       {card.title}
                     </h5>
                     <span className={`px-2 py-1 rounded-full text-xs font-medium ${getRarityColor(card.rarity)}`}>

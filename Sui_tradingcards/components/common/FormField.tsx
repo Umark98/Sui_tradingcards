@@ -11,15 +11,15 @@ interface FormFieldProps {
 export function FormField({ label, required = false, children, helpText, error }: FormFieldProps) {
   return (
     <div>
-      <label className="block text-sm font-medium text-gray-700 mb-2">
-        {label} {required && <span className="text-red-500">*</span>}
+      <label className="block text-sm font-medium text-gray-200 mb-2">
+        {label} {required && <span className="text-red-300">*</span>}
       </label>
       {children}
       {helpText && (
-        <p className="text-xs text-gray-500 mt-1">{helpText}</p>
+        <p className="text-xs text-gray-300 mt-1">{helpText}</p>
       )}
       {error && (
-        <p className="text-xs text-red-600 mt-1">{error}</p>
+        <p className="text-xs text-red-300 mt-1">{error}</p>
       )}
     </div>
   );
@@ -42,7 +42,7 @@ export function SelectField({
   placeholder = "Choose an option", 
   disabled = false,
   loading = false,
-  className = "w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+  className = "w-full p-3 bg-white/10 border border-white/20 rounded-lg text-white placeholder-gray-400 focus:ring-2 focus:ring-purple-400 focus:border-purple-400 focus:bg-white/15 transition-all"
 }: SelectFieldProps) {
   return (
     <select
@@ -81,7 +81,7 @@ export function InputField({
   onChange, 
   placeholder, 
   disabled = false,
-  className = "w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500",
+  className = "w-full p-3 bg-white/10 border border-white/20 rounded-lg text-white placeholder-gray-400 focus:ring-2 focus:ring-purple-400 focus:border-purple-400 focus:bg-white/15 transition-all",
   rows
 }: InputFieldProps) {
   if (type === "textarea") {

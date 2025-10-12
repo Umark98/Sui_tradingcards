@@ -1,0 +1,60 @@
+/* Admin Portal Theme Overrides - Glassmorphism */
+
+/* Override any white backgrounds in admin components */
+.admin-card,
+.card,
+[class*="bg-white"]:not([class*="bg-white/"]):not(.modal):not(.dropdown):not(.select-option) {
+  @apply bg-white/10 backdrop-blur-lg border-white/20 text-white;
+}
+
+/* Text color overrides */
+.admin-section h1,
+.admin-section h2,
+.admin-section h3,
+.admin-section h4,
+.admin-section h5,
+.admin-section h6 {
+  @apply text-white;
+}
+
+.admin-section p {
+  @apply text-gray-200;
+}
+
+.admin-section label {
+  @apply text-gray-200;
+}
+
+/* Table styles */
+.admin-section table {
+  @apply bg-white/5 border-white/20;
+}
+
+.admin-section th {
+  @apply bg-white/10 text-white border-white/20;
+}
+
+.admin-section td {
+  @apply text-gray-200 border-white/10;
+}
+
+.admin-section tr:hover {
+  @apply bg-white/5;
+}
+
+/* Code/pre blocks */
+.admin-section pre,
+.admin-section code {
+  @apply bg-white/10 text-gray-200 border-white/20;
+}
+
+/* Links */
+.admin-section a {
+  @apply text-purple-300 hover:text-purple-200;
+}
+
+/* Dividers */
+.admin-section hr {
+  @apply border-white/20;
+}
+

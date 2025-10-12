@@ -1,10 +1,1 @@
-{
-  "Mallet": {
-    "objectId": "0xfabc03763356bf53925d8ac73b4668a49dc9414da8eb75b65a116fda58af0e26",
-    "objectType": "0xf8abee1fcfa09d0753b63c9d33c6abbe36123cc9dd1380c5a94f1d9a5add7b45::gadget_gameplay_items::GadgetGameplayItemMetadata<0xf8abee1fcfa09d0753b63c9d33c6abbe36123cc9dd1380c5a94f1d9a5add7b45::gadget_gameplay_items::TradingCard<0xf8abee1fcfa09d0753b63c9d33c6abbe36123cc9dd1380c5a94f1d9a5add7b45::gadget_gameplay_items_titles::Mallet>>",
-    "timestamp": "2025-09-30T07:10:29.700Z",
-    "version": 1,
-    "description": "testtsdadasd",
-    "imageUrl": "https://media.istockphoto.com/id/1410870926/vector/nft-monkey.jpg?s=612x612&w=0&k=20&c=xJWmwYkuynah_iiKbq_JTJxTgMHdNhLVjPPbzkwsx0w="
-  }
-}
+{}

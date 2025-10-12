@@ -3,7 +3,7 @@ import { Transaction } from '@mysten/sui/transactions';
 import { SuiClient, getFullnodeUrl } from '@mysten/sui/client';
 
 // Sui network configuration
-const SUI_NETWORK = getFullnodeUrl('testnet');
+const SUI_NETWORK = getFullnodeUrl(process.env.SUI_NETWORK || 'testnet');
 const client = new SuiClient({ url: SUI_NETWORK });
 
 interface MintGenesisCardRequest {

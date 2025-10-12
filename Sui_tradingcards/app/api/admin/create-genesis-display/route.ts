@@ -7,7 +7,7 @@ import * as fs from 'fs';
 import * as path from 'path';
 
 // Sui network configuration
-const SUI_NETWORK = getFullnodeUrl('testnet');
+const SUI_NETWORK = getFullnodeUrl(process.env.SUI_NETWORK || 'testnet');
 const client = new SuiClient({ url: SUI_NETWORK });
 
 interface CreateDisplayRequest {

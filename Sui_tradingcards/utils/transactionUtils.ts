@@ -12,7 +12,7 @@ export class TransactionHandler {
   private client: SuiClient;
 
   constructor() {
-    this.client = new SuiClient({ url: getFullnodeUrl('testnet') });
+    this.client = new SuiClient({ url: getFullnodeUrl(process.env.NEXT_PUBLIC_SUI_NETWORK || 'testnet') });
   }
 
   async executeTransaction(

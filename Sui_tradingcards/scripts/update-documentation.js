@@ -1,154 +1,162 @@
 #!/usr/bin/env node
 
 /**
- * Automated Documentation Update Script
- * Updates hardcoded package IDs and admin caps in documentation files
- * when new contracts are published
+ * Update Documentation Script
+ * 
+ * This script updates documentation files with the latest contract addresses
+ * and deployment information after successful contract publishing.
  */
 
 const fs = require('fs');
 const path = require('path');
 
 // Get the project root directory
-const PROJECT_ROOT = path.join(__dirname, '..');
+const projectRoot = path.dirname(path.dirname(__filename));
 
-// Paths to files that need updating (relative to project root)
-const FILES_TO_UPDATE = [
-  path.join(PROJECT_ROOT, 'ADMIN_README.md'),
-  path.join(PROJECT_ROOT, 'setup', 'admin_schema.sql')
-];
+// Paths to documentation files
+const docsPath = path.join(projectRoot, 'DEPLOYMENT_GUIDE.md');
+const readmePath = path.join(projectRoot, 'README.md');
 
-// Contract objects file path
-const CONTRACT_OBJECTS_PATH = path.join(PROJECT_ROOT, 'public', 'contract-objects.json');
+// Environment file path
+const envPath = path.join(projectRoot, '.env.local');
 
-/**
- * Get current contract addresses from contract-objects.json
- */
-function getCurrentContractAddresses() {
+// Contract addresses file path
+const contractAddressesPath = path.join(projectRoot, 'public', 'contract-objects.json');
+
+function readEnvFile() {
   try {
-    if (fs.existsSync(CONTRACT_OBJECTS_PATH)) {
-      const data = fs.readFileSync(CONTRACT_OBJECTS_PATH, 'utf-8');
-      const contractData = JSON.parse(data);
-      return {
-        packageId: contractData.packageId,
-        adminCapId: contractData.adminCapId,
-        upgradeCapId: contractData.upgradeCapId,
-        publisherId: contractData.publisherId
-      };
-    }
-  } catch (error) {
-    console.error('Error reading contract-objects.json:', error);
-  }
-  return null;
-}
-
-/**
- * Update package ID in a string
- */
-function updatePackageId(content, oldPackageId, newPackageId) {
-  if (!oldPackageId || !newPackageId) return content;
-  
-  // Replace the old package ID with new one
-  const regex = new RegExp(oldPackageId.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'g');
-  return content.replace(regex, newPackageId);
-}
-
-/**
- * Update admin cap ID in a string
- */
-function updateAdminCapId(content, oldAdminCapId, newAdminCapId) {
-  if (!oldAdminCapId || !newAdminCapId) return content;
-  
-  // Replace the old admin cap ID with new one
-  const regex = new RegExp(oldAdminCapId.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'g');
-  return content.replace(regex, newAdminCapId);
-}
-
-/**
- * Update a single file
- */
-function updateFile(filePath) {
-  try {
-    if (!fs.existsSync(filePath)) {
-      console.log(`File not found: ${filePath}`);
-      return;
-    }
-
-    console.log(`Updating file: ${filePath}`);
-    
-    // Read current content
-    let content = fs.readFileSync(filePath, 'utf-8');
-    const originalContent = content;
-    
-    // Get current contract addresses
-    const contractAddresses = getCurrentContractAddresses();
-    if (!contractAddresses) {
-      console.log('No contract addresses found, skipping update');
-      return;
+    if (!fs.existsSync(envPath)) {
+      console.log('No .env.local file found');
+      return {};
     }
     
-    // Find existing package IDs in the content
-    const packageIdRegex = /0x[a-fA-F0-9]{64}/g;
-    const existingPackageIds = content.match(packageIdRegex) || [];
+    const envContent = fs.readFileSync(envPath, 'utf-8');
+    const envVars = {};
     
-    // Update all package IDs to the current one
-    existingPackageIds.forEach(oldPackageId => {
-      if (oldPackageId !== contractAddresses.packageId) {
-        content = updatePackageId(content, oldPackageId, contractAddresses.packageId);
-        console.log(`  Updated package ID: ${oldPackageId} -> ${contractAddresses.packageId}`);
+    envContent.split('\n').forEach(line => {
+      const trimmedLine = line.trim();
+      if (trimmedLine && !trimmedLine.startsWith('#')) {
+        const [key, ...valueParts] = trimmedLine.split('=');
+        if (key && valueParts.length > 0) {
+          envVars[key.trim()] = valueParts.join('=').trim();
+        }
       }
     });
     
-    // Update admin cap IDs if they exist
-    if (contractAddresses.adminCapId) {
-      const adminCapRegex = /0x[a-fA-F0-9]{64}/g;
-      const existingAdminCaps = content.match(adminCapRegex) || [];
-      
-      existingAdminCaps.forEach(oldAdminCapId => {
-        if (oldAdminCapId !== contractAddresses.adminCapId && oldAdminCapId !== contractAddresses.packageId) {
-          content = updateAdminCapId(content, oldAdminCapId, contractAddresses.adminCapId);
-          console.log(`  Updated admin cap ID: ${oldAdminCapId} -> ${contractAddresses.adminCapId}`);
-        }
-      });
-    }
-    
-    // Write updated content if changes were made
-    if (content !== originalContent) {
-      fs.writeFileSync(filePath, content, 'utf-8');
-      console.log(`  ✅ File updated successfully`);
-    } else {
-      console.log(`  ℹ️  No updates needed`);
-    }
-    
+    return envVars;
   } catch (error) {
-    console.error(`Error updating file ${filePath}:`, error);
+    console.error('Error reading .env.local file:', error);
+    return {};
   }
 }
 
-/**
- * Main function
- */
-function main() {
-  console.log('🔄 Starting automated documentation update...');
-  
-  const contractAddresses = getCurrentContractAddresses();
-  if (!contractAddresses) {
-    console.error('❌ No contract addresses found. Make sure contracts are published first.');
-    process.exit(1);
+function readContractAddresses() {
+  try {
+    if (!fs.existsSync(contractAddressesPath)) {
+      console.log('No contract-objects.json file found');
+      return {};
+    }
+    
+    const contractData = JSON.parse(fs.readFileSync(contractAddressesPath, 'utf-8'));
+    return contractData;
+  } catch (error) {
+    console.error('Error reading contract-objects.json file:', error);
+    return {};
   }
+}
+
+function updateDeploymentGuide(envVars, contractData) {
+  try {
+    if (!fs.existsSync(docsPath)) {
+      console.log('DEPLOYMENT_GUIDE.md not found, skipping update');
+      return;
+    }
+    
+    let content = fs.readFileSync(docsPath, 'utf-8');
+    
+    // Update contract addresses section
+    const contractSection = `## Contract Addresses
+
+The following contract addresses are automatically updated after deployment:
+
+- **Package ID**: \`${envVars.PACKAGE_ID || 'Not deployed'}\`
+- **Admin Cap ID**: \`${envVars.ADMIN_CAP_ID || 'Not deployed'}\`
+- **Publisher ID**: \`${envVars.PUBLISHER_ID || 'Not deployed'}\`
+- **Upgrade Cap ID**: \`${envVars.UPGRADE_CAP_ID || 'Not deployed'}\`
+
+### Network Information
+- **Network**: Sui Testnet
+- **Last Updated**: ${new Date().toISOString()}
+
+### Contract Objects
+${contractData && Object.keys(contractData).length > 0 ? 
+  Object.entries(contractData).map(([key, value]) => `- **${key}**: \`${value}\``).join('\n') :
+  'No contract objects found'
+}`;
+
+    // Replace or add the contract addresses section
+    const contractRegex = /## Contract Addresses[\s\S]*?(?=##|$)/;
+    if (contractRegex.test(content)) {
+      content = content.replace(contractRegex, contractSection);
+    } else {
+      content += '\n\n' + contractSection;
+    }
+    
+    fs.writeFileSync(docsPath, content, 'utf-8');
+    console.log('✅ Updated DEPLOYMENT_GUIDE.md');
+    
+  } catch (error) {
+    console.error('Error updating DEPLOYMENT_GUIDE.md:', error);
+  }
+}
+
+function updateReadme(envVars) {
+  try {
+    if (!fs.existsSync(readmePath)) {
+      console.log('README.md not found, skipping update');
+      return;
+    }
+    
+    let content = fs.readFileSync(readmePath, 'utf-8');
+    
+    // Update deployment status
+    const deploymentStatus = `## Deployment Status
+
+- **Package ID**: \`${envVars.PACKAGE_ID || 'Not deployed'}\`
+- **Network**: Sui Testnet
+- **Last Deployed**: ${envVars.PACKAGE_ID ? new Date().toISOString() : 'Not deployed'}`;
+
+    // Replace or add the deployment status section
+    const statusRegex = /## Deployment Status[\s\S]*?(?=##|$)/;
+    if (statusRegex.test(content)) {
+      content = content.replace(statusRegex, deploymentStatus);
+    } else {
+      content += '\n\n' + deploymentStatus;
+    }
+    
+    fs.writeFileSync(readmePath, content, 'utf-8');
+    console.log('✅ Updated README.md');
+    
+  } catch (error) {
+    console.error('Error updating README.md:', error);
+  }
+}
+
+function main() {
+  console.log('🔄 Updating documentation with latest contract addresses...');
   
-  console.log('📋 Current contract addresses:');
-  console.log(`  Package ID: ${contractAddresses.packageId}`);
-  console.log(`  Admin Cap ID: ${contractAddresses.adminCapId}`);
-  console.log(`  Upgrade Cap ID: ${contractAddresses.upgradeCapId}`);
-  console.log(`  Publisher ID: ${contractAddresses.publisherId}`);
-  console.log('');
+  // Read environment variables and contract data
+  const envVars = readEnvFile();
+  const contractData = readContractAddresses();
   
-  // Update each file
-  FILES_TO_UPDATE.forEach(updateFile);
+  console.log('📋 Found environment variables:', Object.keys(envVars));
+  console.log('📋 Found contract data keys:', Object.keys(contractData));
   
-  console.log('');
-  console.log('✅ Documentation update completed!');
+  // Update documentation files
+  updateDeploymentGuide(envVars, contractData);
+  updateReadme(envVars);
+  
+  console.log('✅ Documentation update completed successfully');
 }
 
 // Run the script
@@ -156,9 +164,4 @@ if (require.main === module) {
   main();
 }
 
-module.exports = {
-  getCurrentContractAddresses,
-  updateFile,
-  updatePackageId,
-  updateAdminCapId
-};
+module.exports = { main, readEnvFile, readContractAddresses };

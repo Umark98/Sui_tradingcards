@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import { useWalletKit } from '@mysten/wallet-kit';
 import { Transaction } from '@mysten/sui/transactions';
 import { useContractAddresses } from '@/hooks/useContractAddresses';
-import { useAvailableCardTypes } from '@/hooks/useMetadata';
+import { useContractCardTypes } from '@/hooks/useMetadata';
 import { transactionHandler } from '@/utils/transactionUtils';
 import { FormField, SelectField, InputField } from '@/components/common/FormField';
 import { StatusMessage, LoadingSpinner } from '@/components/common/StatusMessage';
@@ -54,7 +54,7 @@ export default function MintMetadataInterface() {
   
   // Custom hooks
   const { contractAddresses, loading: contractLoading, error: contractError, refetch: refetchContracts } = useContractAddresses();
-  const { metadata: availableCardTypes, loading: loadingMetadata, error: metadataError, refetch: refetchMetadata } = useAvailableCardTypes();
+  const { metadata: availableCardTypes, loading: loadingMetadata, error: metadataError, refetch: refetchMetadata } = useContractCardTypes();
   const [description, setDescription] = useState('');
   const [episodeUtility, setEpisodeUtility] = useState<number | undefined>();
   const [transferability, setTransferability] = useState('Platform');
@@ -306,19 +306,9 @@ export default function MintMetadataInterface() {
 
   return (
     <div className="space-y-6">
-      <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
-        <h3 className="text-lg font-semibold text-blue-800 mb-2">
-          Mint Trading Card Metadata
-        </h3>
-        <p className="text-blue-700 text-sm">
-          Create metadata for Inspector Gadget trading cards. This defines the properties and levels for a new card type.
-        </p>
-      </div>
-
-
       {!currentAccount && (
-        <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
-          <p className="text-yellow-800 font-medium">
+        <div className="bg-yellow-500/20 border border-yellow-400/50 rounded-lg p-4">
+          <p className="text-white font-medium">
             ⚠️ Please connect your wallet to mint metadata
           </p>
         </div>
@@ -326,8 +316,8 @@ export default function MintMetadataInterface() {
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Metadata Configuration */}
-        <div className="bg-white border border-gray-200 rounded-lg p-6">
-          <h4 className="text-lg font-semibold text-gray-800 mb-4">Metadata Configuration</h4>
+        <div className="bg-white/10 backdrop-blur-lg border border-white/20 rounded-lg p-6">
+          <h4 className="text-lg font-semibold text-white mb-4">Metadata Configuration</h4>
           
           <div className="space-y-4">
             <FormField label="Card Type" required>
@@ -343,7 +333,7 @@ export default function MintMetadataInterface() {
                 disabled={Object.keys(availableCardTypes).length === 0 && !loadingMetadata}
               />
               {Object.keys(availableCardTypes).length === 0 && !loadingMetadata && (
-                <p className="text-sm text-green-600 mt-1">
+                <p className="text-sm text-green-200 mt-1">
                   ✅ All available card types already have metadata created. No new metadata needed unless you publish a new package.
                 </p>
               )}
@@ -392,26 +382,26 @@ export default function MintMetadataInterface() {
 
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-medium text-gray-200 mb-2">
                   Edition
                 </label>
                 <input
                   type="text"
                   value={edition}
                   onChange={(e) => setEdition(e.target.value)}
-                  className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                  className="w-full p-3 border border-white/30 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                   placeholder="First Edition"
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-medium text-gray-200 mb-2">
                   Set
                 </label>
                 <input
                   type="text"
                   value={set}
                   onChange={(e) => setSet(e.target.value)}
-                  className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                  className="w-full p-3 border border-white/30 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                   placeholder="Season 1"
                 />
               </div>
@@ -425,7 +415,7 @@ export default function MintMetadataInterface() {
                 onChange={(e) => setUpgradeable(e.target.checked)}
                 className="mr-2"
               />
-              <label htmlFor="upgradeable" className="text-sm font-medium text-gray-700">
+              <label htmlFor="upgradeable" className="text-sm font-medium text-gray-200">
                 Upgradeable
               </label>
             </div>
@@ -433,12 +423,12 @@ export default function MintMetadataInterface() {
         </div>
 
         {/* Levels Configuration */}
-        <div className="bg-white border border-gray-200 rounded-lg p-6">
+        <div className="bg-white/10 backdrop-blur-lg border border-white/20 rounded-lg p-6">
           <div className="flex items-center justify-between mb-4">
-            <h4 className="text-lg font-semibold text-gray-800">Levels Configuration</h4>
+            <h4 className="text-lg font-semibold text-white">Levels Configuration</h4>
             <button
               onClick={addLevel}
-              className="px-3 py-1 bg-blue-600 text-white rounded text-sm hover:bg-blue-700"
+              className="px-3 py-1 bg-gradient-to-r from-purple-600 to-blue-600 text-white rounded text-sm hover:from-purple-700 hover:to-blue-700 shadow-lg hover:shadow-xl transform hover:scale-105"
             >
               Add Level
             </button>
@@ -446,13 +436,13 @@ export default function MintMetadataInterface() {
 
           <div className="space-y-4 max-h-96 overflow-y-auto">
             {levels.map((level, index) => (
-              <div key={index} className="border border-gray-200 rounded-lg p-4">
+              <div key={index} className="border border-white/20 rounded-lg p-4">
                 <div className="flex items-center justify-between mb-3">
-                  <h5 className="font-medium text-gray-800">Level {level.key}</h5>
+                  <h5 className="font-medium text-white">Level {level.key}</h5>
                   {levels.length > 1 && (
                     <button
                       onClick={() => removeLevel(index)}
-                      className="text-red-600 hover:text-red-800 text-sm"
+                      className="text-red-200 hover:text-red-200 text-sm"
                     >
                       Remove
                     </button>
@@ -461,11 +451,11 @@ export default function MintMetadataInterface() {
 
                 <div className="grid grid-cols-2 gap-3">
                   <div>
-                    <label className="block text-xs font-medium text-gray-600 mb-1">Rarity</label>
+                    <label className="block text-xs font-medium text-gray-300 mb-1">Rarity</label>
                     <select
                       value={level.rarity}
                       onChange={(e) => updateLevel(index, 'rarity', e.target.value)}
-                      className="w-full p-2 border border-gray-300 rounded text-sm focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
+                      className="w-full p-2 border border-white/30 rounded text-sm focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
                     >
                       <option value="Common">Common</option>
                       <option value="Uncommon">Uncommon</option>
@@ -475,16 +465,16 @@ export default function MintMetadataInterface() {
                     </select>
                   </div>
                   <div>
-                    <label className="block text-xs font-medium text-gray-600 mb-1">Enhancement</label>
+                    <label className="block text-xs font-medium text-gray-300 mb-1">Enhancement</label>
                     <input
                       type="text"
                       value={level.enhancement}
                       onChange={(e) => updateLevel(index, 'enhancement', e.target.value)}
-                      className="w-full p-2 border border-gray-300 rounded text-sm focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
+                      className="w-full p-2 border border-white/30 rounded text-sm focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
                     />
                   </div>
                   <div>
-                    <label className="block text-xs font-medium text-gray-600 mb-1">Rank</label>
+                    <label className="block text-xs font-medium text-gray-300 mb-1">Rank</label>
                     <input
                       type="number"
                       value={level.rank || ''}
@@ -492,12 +482,12 @@ export default function MintMetadataInterface() {
                         const value = parseInt(e.target.value);
                         updateLevel(index, 'rank', isNaN(value) ? 1 : value);
                       }}
-                      className="w-full p-2 border border-gray-300 rounded text-sm focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
+                      className="w-full p-2 border border-white/30 rounded text-sm focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
                       min="1"
                     />
                   </div>
                   <div>
-                    <label className="block text-xs font-medium text-gray-600 mb-1">Unlock Threshold</label>
+                    <label className="block text-xs font-medium text-gray-300 mb-1">Unlock Threshold</label>
                     <input
                       type="number"
                       value={level.unlockThreshold || ''}
@@ -505,7 +495,7 @@ export default function MintMetadataInterface() {
                         const value = parseInt(e.target.value);
                         updateLevel(index, 'unlockThreshold', isNaN(value) ? 100 : value);
                       }}
-                      className="w-full p-2 border border-gray-300 rounded text-sm focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
+                      className="w-full p-2 border border-white/30 rounded text-sm focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
                       min="0"
                     />
                   </div>
@@ -513,22 +503,22 @@ export default function MintMetadataInterface() {
 
                 <div className="mt-3 space-y-2">
                   <div>
-                    <label className="block text-xs font-medium text-gray-600 mb-1">Primary Media URL</label>
+                    <label className="block text-xs font-medium text-gray-300 mb-1">Primary Media URL</label>
                     <input
                       type="url"
                       value={level.mediaUrlPrimary}
                       onChange={(e) => updateLevel(index, 'mediaUrlPrimary', e.target.value)}
-                      className="w-full p-2 border border-gray-300 rounded text-sm focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
+                      className="w-full p-2 border border-white/30 rounded text-sm focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
                       placeholder="https://example.com/image.png"
                     />
                   </div>
                   <div>
-                    <label className="block text-xs font-medium text-gray-600 mb-1">Display Media URL</label>
+                    <label className="block text-xs font-medium text-gray-300 mb-1">Display Media URL</label>
                     <input
                       type="url"
                       value={level.mediaUrlDisplay}
                       onChange={(e) => updateLevel(index, 'mediaUrlDisplay', e.target.value)}
-                      className="w-full p-2 border border-gray-300 rounded text-sm focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
+                      className="w-full p-2 border border-white/30 rounded text-sm focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
                       placeholder="https://example.com/display.png"
                     />
                   </div>
@@ -544,7 +534,7 @@ export default function MintMetadataInterface() {
         <button
           onClick={handleSubmit}
           disabled={!currentAccount || loading || !cardType || !description}
-          className="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed font-medium"
+          className="px-6 py-3 bg-gradient-to-r from-purple-600 to-blue-600 text-white rounded-lg hover:from-purple-700 hover:to-blue-700 shadow-lg hover:shadow-xl transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed font-medium"
         >
           {loading ? 'Creating Metadata...' : 'Create Metadata'}
         </button>
@@ -552,58 +542,58 @@ export default function MintMetadataInterface() {
 
       {/* Status Messages */}
       {error && (
-        <div className="bg-red-50 border border-red-200 rounded-lg p-4">
-          <p className="text-red-800 font-medium">❌ {error}</p>
+        <div className="bg-red-500/20 border border-red-400/50 rounded-lg p-4">
+          <p className="text-red-200 font-medium">❌ {error}</p>
         </div>
       )}
 
       {success && (
-        <div className="bg-green-50 border border-green-200 rounded-lg p-4">
-          <p className="text-green-800 font-medium">✅ {success}</p>
+        <div className="bg-green-500/20 border border-green-400/50 rounded-lg p-4">
+          <p className="text-green-200 font-medium">✅ {success}</p>
         </div>
       )}
 
       {/* Confirmation Dialog */}
       {showConfirmDialog && existingMetadata && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white rounded-lg p-6 max-w-md w-full mx-4">
+          <div className="bg-white/10 backdrop-blur-lg rounded-lg border border-white/20 p-6 max-w-md w-full mx-4">
             <div className="flex items-center mb-4">
               <div className="text-yellow-500 text-2xl mr-3">⚠️</div>
-              <h3 className="text-lg font-semibold text-gray-800">
+              <h3 className="text-lg font-semibold text-white">
                 Metadata Already Exists
               </h3>
             </div>
             
             <div className="mb-4">
-              <p className="text-gray-600 mb-3">
+              <p className="text-gray-300 mb-3">
                 Metadata for <strong>{cardType}</strong> already exists:
               </p>
               
-              <div className="bg-gray-50 border border-gray-200 rounded-lg p-3 text-sm">
+              <div className="bg-white/5 border border-white/10 rounded-lg p-3 text-sm">
                 <div className="mb-2">
-                  <span className="font-medium text-gray-700">Object ID:</span>
-                  <span className="ml-2 text-gray-600 font-mono text-xs">
+                  <span className="font-medium text-gray-200">Object ID:</span>
+                  <span className="ml-2 text-gray-300 font-mono text-xs">
                     {existingMetadata.objectId}
                   </span>
                 </div>
                 <div className="mb-2">
-                  <span className="font-medium text-gray-700">Version:</span>
-                  <span className="ml-2 text-gray-600">{existingMetadata.version}</span>
+                  <span className="font-medium text-gray-200">Version:</span>
+                  <span className="ml-2 text-gray-300">{existingMetadata.version}</span>
                 </div>
                 <div className="mb-2">
-                  <span className="font-medium text-gray-700">Description:</span>
-                  <span className="ml-2 text-gray-600">{existingMetadata.description}</span>
+                  <span className="font-medium text-gray-200">Description:</span>
+                  <span className="ml-2 text-gray-300">{existingMetadata.description}</span>
                 </div>
                 <div>
-                  <span className="font-medium text-gray-700">Created:</span>
-                  <span className="ml-2 text-gray-600">
+                  <span className="font-medium text-gray-200">Created:</span>
+                  <span className="ml-2 text-gray-300">
                     {new Date(existingMetadata.timestamp).toLocaleString()}
                   </span>
                 </div>
               </div>
             </div>
 
-            <p className="text-gray-600 mb-4">
+            <p className="text-gray-300 mb-4">
               Are you sure you want to create new metadata for this card type? This will create a duplicate entry.
             </p>
 
@@ -613,7 +603,7 @@ export default function MintMetadataInterface() {
                   setShowConfirmDialog(false);
                   setExistingMetadata(null);
                 }}
-                className="flex-1 px-4 py-2 bg-gray-300 text-gray-700 rounded-lg hover:bg-gray-400 font-medium"
+                className="flex-1 px-4 py-2 bg-gray-300 text-gray-200 rounded-lg hover:bg-gray-400 font-medium"
               >
                 Cancel
               </button>
@@ -629,18 +619,18 @@ export default function MintMetadataInterface() {
       )}
 
       {/* Instructions */}
-      <div className="bg-blue-50 border border-blue-200 rounded-lg p-6">
-        <h4 className="text-lg font-semibold text-blue-800 mb-3">How to Use</h4>
-        <div className="text-blue-700 text-sm space-y-2">
+      <div className="bg-blue-500/20 border border-blue-400/50 rounded-lg p-6">
+        <h4 className="text-lg font-semibold text-blue-200 mb-3">How to Use</h4>
+        <div className="text-white text-sm space-y-2">
           <p><strong>1. Smart Filtering:</strong> Only card types without existing metadata are shown in the dropdown.</p>
           <p><strong>2. Create Metadata:</strong> Fill in the form and click "Create Metadata" to mint metadata for the selected card type.</p>
           <p><strong>3. Use in Minting:</strong> After creating metadata, use the "Mint and Transfer" tab to mint actual cards.</p>
           <p><strong>4. Package Updates:</strong> When you publish a new package, new card types will appear here for metadata creation.</p>
         </div>
         
-        <div className="mt-4 bg-white border border-blue-200 rounded-lg p-4">
-          <h5 className="font-semibold text-blue-800 mb-2">💡 Smart Behavior</h5>
-          <div className="text-blue-700 text-sm space-y-1">
+        <div className="mt-4 bg-white/10 backdrop-blur-lg border border-blue-200 rounded-lg p-4">
+          <h5 className="font-semibold text-blue-200 mb-2">💡 Smart Behavior</h5>
+          <div className="text-white text-sm space-y-1">
             <p>• Card types with existing metadata are automatically hidden</p>
             <p>• If all card types have metadata, the form will show a completion message</p>
             <p>• This prevents duplicate metadata creation for the same package</p>

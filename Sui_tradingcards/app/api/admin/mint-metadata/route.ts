@@ -7,7 +7,7 @@ import * as path from 'path';
 import { getCurrentContractAddresses, generateObjectType } from '@/lib/contract-addresses';
 
 // Sui network configuration
-const SUI_NETWORK = getFullnodeUrl('testnet');
+const SUI_NETWORK = getFullnodeUrl(process.env.SUI_NETWORK || 'testnet');
 const client = new SuiClient({ url: SUI_NETWORK });
 
 // Contract addresses - loaded from .env.local (updated after contract publishing)

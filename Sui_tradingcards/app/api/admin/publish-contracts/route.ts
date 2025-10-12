@@ -9,7 +9,7 @@ import { updatePackageIdInString } from '@/lib/contract-addresses';
 import { getDeploymentConfig, validateDeploymentConfig } from '@/lib/config';
 
 // Sui network configuration
-const SUI_NETWORK = getFullnodeUrl('testnet');
+const SUI_NETWORK = getFullnodeUrl(process.env.SUI_NETWORK || 'testnet');
 const client = new SuiClient({ url: SUI_NETWORK });
 
 // Get deployment configuration
@@ -31,6 +31,8 @@ export async function POST(request: NextRequest) {
 
     console.log('Received request with transactionBytes length:', transactionBytes?.length);
     console.log('Received request with signature:', signature?.substring(0, 20) + '...');
+    console.log('Transaction bytes type:', typeof transactionBytes);
+    console.log('Signature type:', typeof signature);
 
     if (!transactionBytes || !signature) {
       console.error('Missing required fields:', { hasTransactionBytes: !!transactionBytes, hasSignature: !!signature });
@@ -41,8 +43,38 @@ export async function POST(request: NextRequest) {
     }
 
     // Execute the transaction that was built and signed on the frontend
-    const txBytes = Buffer.from(transactionBytes, 'base64');
-    console.log('Transaction bytes length:', txBytes.length);
+    let txBytes;
+    try {
+      // Handle different input formats
+      if (typeof transactionBytes === 'string') {
+        // Try to decode as base64
+        txBytes = Buffer.from(transactionBytes, 'base64');
+        console.log('Decoded transaction bytes from base64, length:', txBytes.length);
+      } else if (Buffer.isBuffer(transactionBytes)) {
+        txBytes = transactionBytes;
+        console.log('Using transaction bytes as Buffer, length:', txBytes.length);
+      } else if (transactionBytes instanceof Uint8Array) {
+        txBytes = Buffer.from(transactionBytes);
+        console.log('Converted Uint8Array to Buffer, length:', txBytes.length);
+      } else {
+        throw new Error(`Unsupported transaction bytes format: ${typeof transactionBytes}`);
+      }
+      
+      // Validate the transaction bytes
+      if (txBytes.length === 0) {
+        throw new Error('Transaction bytes are empty');
+      }
+      
+      console.log('Final transaction bytes length:', txBytes.length);
+      console.log('First 20 bytes (hex):', txBytes.slice(0, 20).toString('hex'));
+      
+    } catch (decodeError) {
+      console.error('Error processing transaction bytes:', decodeError);
+      return NextResponse.json(
+        { error: `Failed to process transaction bytes: ${decodeError.message}` },
+        { status: 400 }
+      );
+    }
     
     console.log('Executing transaction block...');
     const txResponse = await client.executeTransactionBlock({
@@ -84,21 +116,22 @@ export async function POST(request: NextRequest) {
 
       // Find the admin cap object ID from objectChanges
       const adminCapObject = createdObjectChanges?.find(
-        (item) => item.objectType?.includes('AdminCap')
+        (item) => item.objectType?.includes('AdminCap') || item.objectType?.includes('cap::AdminCap')
       );
       
       if (!adminCapObject) {
         console.warn('Admin Cap object not found in transaction results');
+        console.log('Available object types:', createdObjectChanges?.map(obj => obj.objectType));
       }
 
       // Find the upgrade cap object ID from objectChanges
       const upgradeCapObject = createdObjectChanges?.find(
-        (item) => item.objectType?.includes('UpgradeCap')
+        (item) => item.objectType?.includes('UpgradeCap') || item.objectType?.includes('package::UpgradeCap')
       );
 
       // Find the publisher object ID from objectChanges
       const publisherObject = createdObjectChanges?.find(
-        (item) => item.objectType?.includes('Publisher')
+        (item) => item.objectType?.includes('Publisher') || item.objectType?.includes('package::Publisher')
       );
 
       // Find display objects from objectChanges
@@ -133,7 +166,7 @@ export async function POST(request: NextRequest) {
           type: obj.type
         })),
         allObjectTypes: allObjectTypes, // For mint metadata interface
-        network: 'testnet',
+        network: process.env.SUI_NETWORK || 'testnet',
         timestamp: new Date().toISOString(),
         effects: txResponse.effects,
         events: txResponse.events
@@ -176,47 +209,29 @@ export async function POST(request: NextRequest) {
           type: obj.type
         })),
         timestamp: new Date().toISOString(),
-        network: 'testnet',
+        network: process.env.SUI_NETWORK || 'testnet',
         version: '1.0'
       };
+      
+      // Clear metadata JSON files when new contracts are published
+      // These should start empty and only populate when mint-metadata is called
+      const metadataIdsPath = path.join(config.publicDir, 'metadata-ids.json');
+      const frontendMetadataIdsPath = path.join(config.publicDir, 'frontend-metadata-ids.json');
+      const genesisDisplaysPath = path.join(config.publicDir, 'genesis-displays.json');
+      
+      console.log('Clearing metadata and genesis JSON files for fresh deployment...');
+      
+      // Write empty objects to metadata files
+      fs.writeFileSync(metadataIdsPath, JSON.stringify({}, null, 2), 'utf-8');
+      console.log('✅ Cleared metadata-ids.json');
+      
+      fs.writeFileSync(frontendMetadataIdsPath, JSON.stringify({}, null, 2), 'utf-8');
+      console.log('✅ Cleared frontend-metadata-ids.json');
+      
+      // Clear genesis displays
+      fs.writeFileSync(genesisDisplaysPath, JSON.stringify({}, null, 2), 'utf-8');
+      console.log('✅ Cleared genesis-displays.json');
       fs.writeFileSync(objectTypesPath, JSON.stringify(freshObjectTypesData, null, 2), 'utf-8');
-
-      // Update existing metadata to use the new package ID instead of clearing it
-      const metadataIdsPath = config.metadataIdsPath;
-      
-      // Read existing metadata if it exists
-      let existingMetadata = {};
-      try {
-        if (fs.existsSync(metadataIdsPath)) {
-          const existingData = fs.readFileSync(metadataIdsPath, 'utf-8');
-          existingMetadata = JSON.parse(existingData);
-          console.log('Found existing metadata, updating package IDs...');
-        }
-      } catch (error) {
-        console.log('No existing metadata file found or error reading it');
-      }
-      
-      // Update package IDs in existing metadata using centralized utility
-      const updatedMetadata: Record<string, any> = {};
-      Object.entries(existingMetadata).forEach(([cardType, metadata]: [string, any]) => {
-        if (metadata.objectType) {
-          // Use centralized utility to update package ID
-          const updatedObjectType = updatePackageIdInString(metadata.objectType, packageID);
-          
-          updatedMetadata[cardType] = {
-            ...metadata,
-            objectType: updatedObjectType
-          };
-          
-          console.log(`Updated ${cardType} metadata to use new package ID`);
-        } else {
-          // Keep metadata as-is if no objectType
-          updatedMetadata[cardType] = metadata;
-        }
-      });
-      
-      fs.writeFileSync(metadataIdsPath, JSON.stringify(updatedMetadata, null, 2), 'utf-8');
-      console.log(`Updated ${Object.keys(updatedMetadata).length} metadata entries with new package ID`);
 
       // Also update the .env.local file for the Next.js app with the new package ID and admin cap
       const envPath = config.envFilePath;
@@ -231,15 +246,26 @@ export async function POST(request: NextRequest) {
       }
       
       // Update or add the contract addresses
-      const envContent = existingContent
+      let envContent = existingContent
         .replace(/PACKAGE_ID=.*/g, '')
         .replace(/ADMIN_CAP_ID=.*/g, '')
         .replace(/PUBLISHER_ID=.*/g, '')
         .replace(/UPGRADE_CAP_ID=.*/g, '')
-        .trim() + 
-        `\n# Contract Addresses (updated after publishing)\nPACKAGE_ID=${packageID}\nADMIN_CAP_ID=${adminCapObject?.objectId}\nPUBLISHER_ID=${publisherObject?.objectId}\nUPGRADE_CAP_ID=${upgradeCapObject?.objectId}\n`;
+        .replace(/^\s*$/gm, '') // Remove empty lines
+        .trim();
+      
+      // Add new contract addresses
+      envContent += `\n\n# Contract Addresses (updated after publishing)\nPACKAGE_ID=${packageID}\nADMIN_CAP_ID=${adminCapObject?.objectId || ''}\nPUBLISHER_ID=${publisherObject?.objectId || ''}\nUPGRADE_CAP_ID=${upgradeCapObject?.objectId || ''}\n`;
+      
+      console.log('Updating .env.local file with new contract addresses:');
+      console.log('- Package ID:', packageID);
+      console.log('- Admin Cap ID:', adminCapObject?.objectId || 'NOT FOUND');
+      console.log('- Publisher ID:', publisherObject?.objectId || 'NOT FOUND');
+      console.log('- Upgrade Cap ID:', upgradeCapObject?.objectId || 'NOT FOUND');
+      console.log('- Env file path:', envPath);
       
       fs.writeFileSync(envPath, envContent, 'utf-8');
+      console.log('✅ .env.local file updated successfully');
 
       // Update documentation files with new contract addresses
       try {

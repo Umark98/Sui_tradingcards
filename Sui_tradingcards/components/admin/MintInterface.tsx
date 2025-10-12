@@ -138,19 +138,9 @@ export default function MintInterface() {
 
   return (
     <div className="space-y-6">
-      <div className="bg-green-50 border border-green-200 rounded-lg p-4">
-        <h3 className="text-lg font-semibold text-green-800 mb-2">
-          Mint and Transfer
-        </h3>
-        <p className="text-green-700 text-sm">
-          Mint Inspector Gadget trading cards using the mint_and_transfer function. 
-          Ensure you have created metadata first and have the admin capabilities.
-        </p>
-      </div>
-
       {!currentAccount && (
-        <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
-          <p className="text-yellow-800 font-medium">
+        <div className="bg-yellow-500/20 border border-yellow-400/50 rounded-lg p-4">
+          <p className="text-white font-medium">
             ⚠️ Please connect your wallet to mint cards
           </p>
         </div>
@@ -158,8 +148,8 @@ export default function MintInterface() {
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Mint Configuration */}
-        <div className="bg-white border border-gray-200 rounded-lg p-6">
-          <h4 className="text-lg font-semibold text-gray-800 mb-4">Mint Configuration</h4>
+        <div className="bg-white/10 backdrop-blur-lg border border-white/20 rounded-lg p-6">
+          <h4 className="text-lg font-semibold text-white mb-4">Mint Configuration</h4>
           
           <div className="space-y-4">
             <FormField label="Card Type" required>
@@ -196,7 +186,7 @@ export default function MintInterface() {
                 </Button>
               </div>
               {Object.keys(availableCardTypes).length === 0 && !loadingMetadata && (
-                <p className="text-sm text-red-600 mt-1">
+                <p className="text-sm text-red-200 mt-1">
                   No card types with metadata available. Create metadata first.
                 </p>
               )}
@@ -205,25 +195,25 @@ export default function MintInterface() {
             {/* Image Preview */}
             {selectedCardMetadata && selectedCardMetadata.imageUrl && (
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-medium text-gray-200 mb-2">
                   Card Preview
                 </label>
-                <div className="border border-gray-200 rounded-lg p-4 bg-gray-50">
+                <div className="border border-white/20 rounded-lg p-4 bg-white/5">
                   <div className="flex items-center space-x-4">
                     <div className="flex-shrink-0">
                       <img
                         src={selectedCardMetadata.imageUrl}
                         alt={`${cardType} card preview`}
-                        className="w-20 h-20 object-cover rounded-lg border border-gray-300"
+                        className="w-20 h-20 object-cover rounded-lg border border-white/30"
                         onError={(e) => {
                           e.currentTarget.src = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iODAiIGhlaWdodD0iODAiIHZpZXdCb3g9IjAgMCA4MCA4MCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3Qgd2lkdGg9IjgwIiBoZWlnaHQ9IjgwIiBmaWxsPSIjRjNGNEY2Ii8+CjxwYXRoIGQ9Ik00MCAyMEMzMS4xNjM0IDIwIDI0IDI3LjE2MzQgMjQgMzZDMjQgNDQuODM2NiAzMS4xNjM0IDUyIDQwIDUyQzQ4LjgzNjYgNTIgNTYgNDQuODM2NiA1NiAzNkM1NiAyNy4xNjM0IDQ4LjgzNjYgMjAgNDAgMjBaIiBmaWxsPSIjOUNBM0FGIi8+CjxwYXRoIGQ9Ik0yNCA2MEMyNCA2OC44MzY2IDMxLjE2MzQgNzYgNDAgNzZINDhDNTYuODM2NiA3NiA2NCA2OC44MzY2IDY0IDYwVjUySDI0VjYwWiIgZmlsbD0iIzlDQTNBRiIvPgo8L3N2Zz4K';
                         }}
                       />
                     </div>
                     <div className="flex-1">
-                      <h4 className="text-lg font-semibold text-gray-800">{cardType}</h4>
-                      <p className="text-sm text-gray-600">{selectedCardMetadata.description}</p>
-                      <p className="text-xs text-gray-500 mt-1">
+                      <h4 className="text-lg font-semibold text-white">{cardType}</h4>
+                      <p className="text-sm text-gray-300">{selectedCardMetadata.description}</p>
+                      <p className="text-xs text-gray-300 mt-1">
                         Version: {selectedCardMetadata.version} • Created: {new Date(selectedCardMetadata.timestamp).toLocaleDateString()}
                       </p>
                     </div>
@@ -302,29 +292,29 @@ export default function MintInterface() {
         </div>
 
         {/* Transaction Preview */}
-        <div className="bg-white border border-gray-200 rounded-lg p-6">
-          <h4 className="text-lg font-semibold text-gray-800 mb-4">Transaction Preview</h4>
+        <div className="bg-white/10 backdrop-blur-lg border border-white/20 rounded-lg p-6">
+          <h4 className="text-lg font-semibold text-white mb-4">Transaction Preview</h4>
           
           {cardType && metadataObjectId && title && metadataId && recipient ? (
             <div className="space-y-4">
-              <div className="bg-gray-50 border border-gray-200 rounded-lg p-4">
-                <h5 className="font-semibold text-gray-800 mb-3">Function Call</h5>
-                <div className="text-sm font-mono text-gray-600 space-y-1">
-                  <div><span className="text-blue-600">target:</span> gadget_gameplay_items::mint_and_transfer</div>
-                  <div><span className="text-blue-600">type:</span> TradingCard&lt;{cardType}&gt;</div>
-                  <div><span className="text-blue-600">admin_cap:</span> ✓ Loaded</div>
-                  <div><span className="text-blue-600">item_metadata:</span> {metadataObjectId ? '✓ Set' : 'Not set'}</div>
-                  <div><span className="text-blue-600">title:</span> "{title}"</div>
-                  <div><span className="text-blue-600">level:</span> {level}</div>
-                  <div><span className="text-blue-600">metadata:</span> {metadataId.substring(0, 20)}...</div>
-                  <div><span className="text-blue-600">minted_number:</span> {mintedNumber}</div>
-                  <div><span className="text-blue-600">recipient:</span> {recipient.substring(0, 20)}...</div>
+              <div className="bg-white/5 border border-white/10 rounded-lg p-4">
+                <h5 className="font-semibold text-white mb-3">Function Call</h5>
+                <div className="text-sm font-mono text-gray-300 space-y-1">
+                  <div><span className="text-blue-200">target:</span> gadget_gameplay_items::mint_and_transfer</div>
+                  <div><span className="text-blue-200">type:</span> TradingCard&lt;{cardType}&gt;</div>
+                  <div><span className="text-blue-200">admin_cap:</span> ✓ Loaded</div>
+                  <div><span className="text-blue-200">item_metadata:</span> {metadataObjectId ? '✓ Set' : 'Not set'}</div>
+                  <div><span className="text-blue-200">title:</span> "{title}"</div>
+                  <div><span className="text-blue-200">level:</span> {level}</div>
+                  <div><span className="text-blue-200">metadata:</span> {metadataId.substring(0, 20)}...</div>
+                  <div><span className="text-blue-200">minted_number:</span> {mintedNumber}</div>
+                  <div><span className="text-blue-200">recipient:</span> {recipient.substring(0, 20)}...</div>
                 </div>
               </div>
 
-              <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
-                <h5 className="font-semibold text-blue-800 mb-2">Card Details</h5>
-                <div className="text-sm text-blue-700 space-y-1">
+              <div className="bg-blue-500/20 border border-blue-400/50 rounded-lg p-4">
+                <h5 className="font-semibold text-blue-200 mb-2">Card Details</h5>
+                <div className="text-sm text-white space-y-1">
                   <div><strong>Type:</strong> {cardType}</div>
                   <div><strong>Title:</strong> {title}</div>
                   <div><strong>Level:</strong> {level}</div>
@@ -345,8 +335,8 @@ export default function MintInterface() {
             </div>
           ) : (
             <div className="text-center py-8">
-              <div className="text-gray-400 text-4xl mb-2">🪙</div>
-              <p className="text-gray-600">Fill in the configuration to preview the transaction</p>
+              <div className="text-gray-300 text-4xl mb-2">🪙</div>
+              <p className="text-gray-300">Fill in the configuration to preview the transaction</p>
             </div>
           )}
         </div>
@@ -369,10 +359,10 @@ export default function MintInterface() {
             onClose={() => setSuccess(null)}
           />
           {mintedCardObjectId && (
-            <div className="mt-3 p-3 bg-white border border-green-200 rounded-lg">
-              <h5 className="font-semibold text-green-800 mb-2">Minted Card Object ID:</h5>
+            <div className="mt-3 p-3 bg-green-500/20 border border-green-400/50 rounded-lg">
+              <h5 className="font-semibold text-green-200 mb-2">Minted Card Object ID:</h5>
               <div className="flex items-center justify-between">
-                <p className="text-sm font-mono text-gray-800 break-all">
+                <p className="text-sm font-mono text-white break-all">
                   {mintedCardObjectId}
                 </p>
                 <Button
@@ -381,7 +371,7 @@ export default function MintInterface() {
                     // You could add a toast notification here
                   }}
                   size="sm"
-                  variant="success"
+                  variant="primary"
                   className="ml-2"
                 >
                   Copy
@@ -412,24 +402,24 @@ export default function MintInterface() {
         >
           Reset Form
         </Button>
-        <div className="text-sm text-gray-600">
+        <div className="text-sm text-gray-300">
           {Object.keys(availableCardTypes).length} card types available
         </div>
       </div>
 
       {/* Instructions */}
-      <div className="bg-gray-50 border border-gray-200 rounded-lg p-6">
-        <h4 className="text-lg font-semibold text-gray-800 mb-4">How to Use</h4>
-        <div className="text-sm text-gray-600 space-y-2">
+      <div className="bg-white/5 border border-white/10 rounded-lg p-6">
+        <h4 className="text-lg font-semibold text-white mb-4">How to Use</h4>
+        <div className="text-sm text-gray-300 space-y-2">
           <p><strong>Step 1:</strong> First create metadata using the "Mint Metadata" tab</p>
           <p><strong>Step 2:</strong> Copy the metadata object ID from the successful metadata creation</p>
           <p><strong>Step 3:</strong> Fill in the card details above</p>
           <p><strong>Step 4:</strong> Click "Mint Card" to execute the transaction directly with your wallet</p>
         </div>
         
-        <div className="mt-4 bg-white border border-gray-200 rounded-lg p-4">
-          <h5 className="font-semibold text-gray-800 mb-2">Example Values</h5>
-          <div className="text-xs text-gray-600 space-y-1">
+        <div className="mt-4 bg-white/10 backdrop-blur-lg border border-white/20 rounded-lg p-4">
+          <h5 className="font-semibold text-white mb-2">Example Values</h5>
+          <div className="text-xs text-gray-300 space-y-1">
             <div><strong>Metadata Object ID:</strong> (from metadata creation)</div>
             <div><strong>Metadata ID:</strong> (same as object ID)</div>
             <div><strong>Title:</strong> Example Yoyo Card</div>

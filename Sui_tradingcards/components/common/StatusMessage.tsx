@@ -10,15 +10,15 @@ export function StatusMessage({ type, message, onClose }: StatusMessageProps) {
   const getStyles = () => {
     switch (type) {
       case 'success':
-        return 'bg-green-50 border-green-200 text-green-800';
+        return 'bg-green-500/20 border-green-400/50 text-green-200';
       case 'error':
-        return 'bg-red-50 border-red-200 text-red-800';
+        return 'bg-red-500/20 border-red-400/50 text-red-200';
       case 'warning':
-        return 'bg-yellow-50 border-yellow-200 text-yellow-800';
+        return 'bg-yellow-500/20 border-yellow-400/50 text-yellow-200';
       case 'info':
-        return 'bg-blue-50 border-blue-200 text-blue-800';
+        return 'bg-blue-500/20 border-blue-400/50 text-blue-200';
       default:
-        return 'bg-gray-50 border-gray-200 text-gray-800';
+        return 'bg-white/10 border-white/20 text-gray-200';
     }
   };
 
@@ -46,7 +46,7 @@ export function StatusMessage({ type, message, onClose }: StatusMessageProps) {
         {onClose && (
           <button
             onClick={onClose}
-            className="ml-4 text-gray-400 hover:text-gray-600"
+            className="ml-4 text-gray-300 hover:text-white transition-colors"
           >
             ✕
           </button>
@@ -75,8 +75,8 @@ export function LoadingSpinner({ size = 'md', text }: LoadingSpinnerProps) {
 
   return (
     <div className="flex items-center justify-center">
-      <div className={`animate-spin rounded-full border-b-2 border-blue-600 ${getSizeClass()}`}></div>
-      {text && <p className="ml-2 text-gray-600">{text}</p>}
+      <div className={`animate-spin rounded-full border-b-2 border-purple-400 ${getSizeClass()}`}></div>
+      {text && <p className="ml-2 text-gray-200">{text}</p>}
     </div>
   );
 }

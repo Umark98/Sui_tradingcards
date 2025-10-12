@@ -11,7 +11,7 @@ interface WalletBalance {
 }
 
 export default function WalletInfo() {
-  const { currentAccount, currentWallet } = useWalletKit();
+  const { currentAccount, currentWallet, disconnect } = useWalletKit();
   const [balance, setBalance] = useState<WalletBalance | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -30,22 +30,45 @@ export default function WalletInfo() {
     setError(null);
     
     try {
-      // Get SUI balance using the correct endpoint and format
-      const response = await fetch(`https://fullnode.testnet.sui.io`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          jsonrpc: '2.0',
-          id: 1,
-          method: 'suix_getBalance',
-          params: [currentAccount.address],
-        }),
-      });
-
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
+      // Try multiple Sui RPC endpoints for better reliability
+      const endpoints = [
+        'https://fullnode.testnet.sui.io',
+        'https://sui-testnet.blockvision.org',
+        'https://testnet.sui.io'
+      ];
+      
+      let response;
+      let lastError;
+      
+      for (const endpoint of endpoints) {
+        try {
+          response = await fetch(endpoint, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+              jsonrpc: '2.0',
+              id: 1,
+              method: 'suix_getBalance',
+              params: [currentAccount.address],
+            }),
+            // Add timeout to prevent hanging
+            signal: AbortSignal.timeout(10000) // 10 second timeout
+          });
+          
+          if (response.ok) {
+            break; // Success, exit the loop
+          }
+        } catch (error) {
+          lastError = error;
+          console.warn(`Failed to fetch from ${endpoint}:`, error);
+          continue; // Try next endpoint
+        }
+      }
+      
+      if (!response || !response.ok) {
+        throw lastError || new Error('All RPC endpoints failed');
       }
 
       const text = await response.text();
@@ -106,7 +129,7 @@ export default function WalletInfo() {
 
   return (
     <div className="bg-white border border-gray-200 rounded-lg p-6">
-      <h3 className="text-xl font-semibold text-gray-800 mb-4">
+      <h3 className="text-xl font-semibold text-white mb-4">
         Wallet Information
       </h3>
       
@@ -118,7 +141,7 @@ export default function WalletInfo() {
             </label>
             <div className="bg-gray-50 border border-gray-200 rounded-lg p-3">
               <div className="flex items-center justify-between">
-                <span className="font-mono text-sm text-gray-800">
+                <span className="font-mono text-sm text-white">
                   {formatAddress(currentAccount.address)}
                 </span>
                 <button
@@ -140,7 +163,7 @@ export default function WalletInfo() {
               Wallet Name
             </label>
             <div className="bg-gray-50 border border-gray-200 rounded-lg p-3">
-              <span className="text-sm text-gray-800">
+              <span className="text-sm text-white">
                 {currentWallet?.name || 'Unknown Wallet'}
               </span>
             </div>
@@ -153,7 +176,7 @@ export default function WalletInfo() {
               Network
             </label>
             <div className="bg-gray-50 border border-gray-200 rounded-lg p-3">
-              <span className="text-sm text-gray-800">
+              <span className="text-sm text-white">
                 Sui Testnet
               </span>
             </div>
@@ -169,7 +192,7 @@ export default function WalletInfo() {
               ) : error ? (
                 <span className="text-sm text-red-500">Error: {error}</span>
               ) : balance ? (
-                <span className="text-sm text-gray-800">
+                <span className="text-sm text-white">
                   {formatBalance(balance.totalBalance)} SUI
                 </span>
               ) : (
@@ -180,13 +203,23 @@ export default function WalletInfo() {
         </div>
       </div>
 
-      <div className="mt-6 pt-4 border-t border-gray-200">
+      <div className="mt-6 pt-4 border-t border-gray-200 flex justify-between">
         <button
           onClick={fetchWalletBalance}
           disabled={loading}
           className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed text-sm font-medium"
         >
           {loading ? 'Refreshing...' : 'Refresh Balance'}
+        </button>
+        <button
+          onClick={() => {
+            // Set flag to force disconnect on next page load
+            sessionStorage.setItem('forceWalletDisconnect', 'true');
+            disconnect();
+          }}
+          className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 text-sm font-medium"
+        >
+          Disconnect Wallet
         </button>
       </div>
     </div>

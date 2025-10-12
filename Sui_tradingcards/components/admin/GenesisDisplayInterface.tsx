@@ -422,52 +422,42 @@ export default function GenesisDisplayInterface() {
 
   return (
     <div className="space-y-6">
-      {/* Header */}
-      <div className="bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-200 rounded-lg p-6">
-        <h3 className="text-xl font-semibold text-blue-800 mb-2">
-          🎨 Genesis Display Management
-        </h3>
-        <p className="text-blue-700 text-sm">
-          Create and manage display objects for Genesis commemorative cards to enable rich metadata in wallets
-        </p>
-      </div>
-
       {!currentAccount && (
-        <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
-          <p className="text-yellow-800 font-medium">
+        <div className="bg-yellow-500/20 border border-yellow-400/50 rounded-lg p-4">
+          <p className="text-white font-medium">
             ⚠️ Please connect your wallet to manage display objects
           </p>
         </div>
       )}
 
       {/* Contract Addresses Status */}
-      <div className="bg-gray-50 border border-gray-200 rounded-lg p-4">
-        <h4 className="text-sm font-semibold text-gray-700 mb-2">Contract Addresses Status</h4>
+      <div className="bg-white/5 border border-white/10 rounded-lg p-4">
+        <h4 className="text-sm font-semibold text-gray-200 mb-2">Contract Addresses Status</h4>
         {loadingAddresses ? (
-          <p className="text-gray-600 text-sm">Loading contract addresses...</p>
+          <p className="text-gray-300 text-sm">Loading contract addresses...</p>
         ) : contractAddresses.packageId && contractAddresses.publisherId ? (
-          <div className="text-sm text-green-700">
+          <div className="text-sm text-white">
             ✅ Contract addresses loaded successfully
-            <div className="mt-1 text-xs text-gray-600">
+            <div className="mt-1 text-xs text-gray-300">
               Package ID: {contractAddresses.packageId?.slice(0, 8)}...{contractAddresses.packageId?.slice(-8)}
             </div>
           </div>
         ) : (
-          <p className="text-red-600 text-sm">❌ Contract addresses not loaded</p>
+          <p className="text-red-200 text-sm">❌ Contract addresses not loaded</p>
         )}
       </div>
 
       {/* Display Fields Configuration */}
-      <div className="bg-white border border-gray-200 rounded-lg p-6">
-        <h4 className="text-lg font-semibold text-gray-800 mb-4">Configure Display Fields</h4>
-        <p className="text-gray-600 text-sm mb-4">
+      <div className="bg-white/10 backdrop-blur-lg border border-white/20 rounded-lg p-6">
+        <h4 className="text-lg font-semibold text-white mb-4">Configure Display Fields</h4>
+        <p className="text-gray-300 text-sm mb-4">
           Select a Genesis card type to configure its display fields. These fields will be used when creating display objects.
         </p>
         
         {loadingCardTypes ? (
           <div className="text-center py-4">
-            <div className="inline-block animate-spin rounded-full h-6 w-6 border-b-2 border-blue-600"></div>
-            <p className="mt-2 text-gray-600">Loading card types...</p>
+            <div className="inline-block animate-spin rounded-full h-6 w-6 border-b-2 border-purple-400"></div>
+            <p className="mt-2 text-gray-300">Loading card types...</p>
           </div>
         ) : (
           <div className="space-y-4">
@@ -479,12 +469,12 @@ export default function GenesisDisplayInterface() {
                   onClick={() => handleCardTypeSelection(cardType)}
                   className={`px-4 py-3 rounded-lg border-2 transition-colors ${
                     selectedCardType === cardType
-                      ? 'border-blue-500 bg-blue-50 text-blue-700'
-                      : 'border-gray-200 bg-white text-gray-700 hover:border-gray-300 hover:bg-gray-50'
+                      ? 'border-purple-400 bg-purple-600 text-white'
+                      : 'border-white/20 bg-white/10 backdrop-blur-lg text-gray-200 hover:border-white/30 hover:bg-white/20/5'
                   }`}
                 >
                   <div className="text-sm font-medium">{cardType}</div>
-                  <div className="text-xs text-gray-500 mt-1">
+                  <div className="text-xs text-gray-300 mt-1">
                     {displayObjects[cardType] ? 'Display exists' : 'No display'}
                   </div>
                 </button>
@@ -493,12 +483,12 @@ export default function GenesisDisplayInterface() {
 
             {/* Display Fields Form - Only show when a card type is selected */}
             {selectedCardType && (
-              <div className="border border-gray-200 rounded-lg p-4 bg-gray-50">
+              <div className="border border-white/20 rounded-lg p-4 bg-white/5">
                 <div className="flex items-center justify-between mb-4">
-                  <h5 className="font-semibold text-gray-700">Configure {selectedCardType}</h5>
+                  <h5 className="font-semibold text-gray-200">Configure {selectedCardType}</h5>
                   <button
                     onClick={() => setSelectedCardType(null)}
-                    className="text-gray-500 hover:text-gray-700 text-sm"
+                    className="text-gray-300 hover:text-gray-200 text-sm"
                   >
                     ✕ Close
                   </button>
@@ -506,124 +496,124 @@ export default function GenesisDisplayInterface() {
                 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">Name</label>
+                    <label className="block text-sm font-medium text-gray-200 mb-1">Name</label>
                     <input
                       type="text"
                       value={displayFields[selectedCardType]?.name || ''}
                       onChange={(e) => updateDisplayField(selectedCardType, 'name', e.target.value)}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm"
+                      className="w-full px-3 py-2 bg-white/10 border border-white/20 rounded-lg text-white placeholder-gray-400 focus:ring-2 focus:ring-purple-400 focus:border-purple-400 focus:bg-white/15 transition-all text-sm"
                       placeholder="Card name"
                     />
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">Image URL</label>
+                    <label className="block text-sm font-medium text-gray-200 mb-1">Image URL</label>
                     <input
                       type="url"
                       value={displayFields[selectedCardType]?.image_url || ''}
                       onChange={(e) => updateDisplayField(selectedCardType, 'image_url', e.target.value)}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm"
+                      className="w-full px-3 py-2 bg-white/10 border border-white/20 rounded-lg text-white placeholder-gray-400 focus:ring-2 focus:ring-purple-400 focus:border-purple-400 focus:bg-white/15 transition-all text-sm"
                       placeholder="https://example.com/image.jpg"
                     />
                   </div>
                   <div className="md:col-span-2">
-                    <label className="block text-sm font-medium text-gray-700 mb-1">Description</label>
+                    <label className="block text-sm font-medium text-gray-200 mb-1">Description</label>
                     <textarea
                       value={displayFields[selectedCardType]?.description || ''}
                       onChange={(e) => updateDisplayField(selectedCardType, 'description', e.target.value)}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm"
+                      className="w-full px-3 py-2 bg-white/10 border border-white/20 rounded-lg text-white placeholder-gray-400 focus:ring-2 focus:ring-purple-400 focus:border-purple-400 focus:bg-white/15 transition-all text-sm"
                       rows={2}
                       placeholder="Card description"
                     />
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">Project URL</label>
+                    <label className="block text-sm font-medium text-gray-200 mb-1">Project URL</label>
                     <input
                       type="url"
                       value={displayFields[selectedCardType]?.project_url || ''}
                       onChange={(e) => updateDisplayField(selectedCardType, 'project_url', e.target.value)}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm"
+                      className="w-full px-3 py-2 bg-white/10 border border-white/20 rounded-lg text-white placeholder-gray-400 focus:ring-2 focus:ring-purple-400 focus:border-purple-400 focus:bg-white/15 transition-all text-sm"
                       placeholder="https://example.com"
                     />
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">Creator</label>
+                    <label className="block text-sm font-medium text-gray-200 mb-1">Creator</label>
                     <input
                       type="text"
                       value={displayFields[selectedCardType]?.creator || ''}
                       onChange={(e) => updateDisplayField(selectedCardType, 'creator', e.target.value)}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm"
+                      className="w-full px-3 py-2 bg-white/10 border border-white/20 rounded-lg text-white placeholder-gray-400 focus:ring-2 focus:ring-purple-400 focus:border-purple-400 focus:bg-white/15 transition-all text-sm"
                       placeholder="Creator name"
                     />
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">Category</label>
+                    <label className="block text-sm font-medium text-gray-200 mb-1">Category</label>
                     <input
                       type="text"
                       value={displayFields[selectedCardType]?.category || ''}
                       onChange={(e) => updateDisplayField(selectedCardType, 'category', e.target.value)}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm"
+                      className="w-full px-3 py-2 bg-white/10 border border-white/20 rounded-lg text-white placeholder-gray-400 focus:ring-2 focus:ring-purple-400 focus:border-purple-400 focus:bg-white/15 transition-all text-sm"
                       placeholder="Category"
                     />
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">Type</label>
+                    <label className="block text-sm font-medium text-gray-200 mb-1">Type</label>
                     <input
                       type="text"
                       value={displayFields[selectedCardType]?.type || ''}
                       onChange={(e) => updateDisplayField(selectedCardType, 'type', e.target.value)}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm"
+                      className="w-full px-3 py-2 bg-white/10 border border-white/20 rounded-lg text-white placeholder-gray-400 focus:ring-2 focus:ring-purple-400 focus:border-purple-400 focus:bg-white/15 transition-all text-sm"
                       placeholder="Card type"
                     />
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">Edition</label>
+                    <label className="block text-sm font-medium text-gray-200 mb-1">Edition</label>
                     <input
                       type="text"
                       value={displayFields[selectedCardType]?.edition || ''}
                       onChange={(e) => updateDisplayField(selectedCardType, 'edition', e.target.value)}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm"
+                      className="w-full px-3 py-2 bg-white/10 border border-white/20 rounded-lg text-white placeholder-gray-400 focus:ring-2 focus:ring-purple-400 focus:border-purple-400 focus:bg-white/15 transition-all text-sm"
                       placeholder="Edition"
                     />
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">Royalty</label>
+                    <label className="block text-sm font-medium text-gray-200 mb-1">Royalty</label>
                     <input
                       type="text"
                       value={displayFields[selectedCardType]?.royalty || ''}
                       onChange={(e) => updateDisplayField(selectedCardType, 'royalty', e.target.value)}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm"
+                      className="w-full px-3 py-2 bg-white/10 border border-white/20 rounded-lg text-white placeholder-gray-400 focus:ring-2 focus:ring-purple-400 focus:border-purple-400 focus:bg-white/15 transition-all text-sm"
                       placeholder="Royalty percentage"
                     />
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">Artist</label>
+                    <label className="block text-sm font-medium text-gray-200 mb-1">Artist</label>
                     <input
                       type="text"
                       value={displayFields[selectedCardType]?.artist || ''}
                       onChange={(e) => updateDisplayField(selectedCardType, 'artist', e.target.value)}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm"
+                      className="w-full px-3 py-2 bg-white/10 border border-white/20 rounded-lg text-white placeholder-gray-400 focus:ring-2 focus:ring-purple-400 focus:border-purple-400 focus:bg-white/15 transition-all text-sm"
                       placeholder="Artist name"
                     />
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">Copyright</label>
+                    <label className="block text-sm font-medium text-gray-200 mb-1">Copyright</label>
                     <input
                       type="text"
                       value={displayFields[selectedCardType]?.copyright || ''}
                       onChange={(e) => updateDisplayField(selectedCardType, 'copyright', e.target.value)}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm"
+                      className="w-full px-3 py-2 bg-white/10 border border-white/20 rounded-lg text-white placeholder-gray-400 focus:ring-2 focus:ring-purple-400 focus:border-purple-400 focus:bg-white/15 transition-all text-sm"
                       placeholder="Copyright notice"
                     />
                   </div>
                 </div>
 
                 {/* Custom Fields Section */}
-                <div className="mt-6 pt-4 border-t border-gray-300">
+                <div className="mt-6 pt-4 border-t border-white/30">
                   <div className="flex items-center justify-between mb-4">
-                    <h6 className="text-sm font-semibold text-gray-700">Custom Fields</h6>
+                    <h6 className="text-sm font-semibold text-gray-200">Custom Fields</h6>
                     <button
                       onClick={() => addCustomField(selectedCardType)}
-                      className="px-3 py-1 bg-green-600 text-white text-xs rounded hover:bg-green-700 transition-colors"
+                      className="px-3 py-1 bg-gradient-to-r from-purple-600 to-blue-600 text-white text-xs rounded hover:from-purple-700 hover:to-blue-700 shadow-lg hover:shadow-xl transform hover:scale-105 transition-all"
                     >
                       + Add Field
                     </button>
@@ -638,7 +628,7 @@ export default function GenesisDisplayInterface() {
                               type="text"
                               value={field.key}
                               onChange={(e) => updateCustomFieldKey(selectedCardType, index, e.target.value)}
-                              className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm"
+                              className="w-full px-3 py-2 bg-white/10 border border-white/20 rounded-lg text-white placeholder-gray-400 focus:ring-2 focus:ring-purple-400 focus:border-purple-400 focus:bg-white/15 transition-all text-sm"
                               placeholder="Field name (e.g., rarity, collection)"
                             />
                           </div>
@@ -647,13 +637,13 @@ export default function GenesisDisplayInterface() {
                               type="text"
                               value={field.value}
                               onChange={(e) => updateCustomFieldValue(selectedCardType, index, e.target.value)}
-                              className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm"
+                              className="w-full px-3 py-2 bg-white/10 border border-white/20 rounded-lg text-white placeholder-gray-400 focus:ring-2 focus:ring-purple-400 focus:border-purple-400 focus:bg-white/15 transition-all text-sm"
                               placeholder="Field value"
                             />
                           </div>
                           <button
                             onClick={() => removeCustomField(selectedCardType, index)}
-                            className="px-2 py-2 bg-red-600 text-white text-xs rounded hover:bg-red-700 transition-colors"
+                            className="px-2 py-2 bg-gradient-to-r from-red-600 to-red-700 text-white text-xs rounded hover:from-red-700 hover:to-red-800 shadow-lg hover:shadow-xl transform hover:scale-105 transition-colors"
                           >
                             ✕
                           </button>
@@ -661,24 +651,24 @@ export default function GenesisDisplayInterface() {
                       ))}
                     </div>
                   ) : (
-                    <p className="text-gray-500 text-sm">No custom fields added yet. Click "Add Field" to add custom metadata.</p>
+                    <p className="text-gray-300 text-sm">No custom fields added yet. Click "Add Field" to add custom metadata.</p>
                   )}
                 </div>
                 
                 {/* Submit Button */}
-                <div className="mt-6 pt-4 border-t border-gray-200">
+                <div className="mt-6 pt-4 border-t border-white/20">
                   <div className="flex items-center justify-between">
-                    <div className="text-sm text-gray-600">
+                    <div className="text-sm text-gray-300">
                       {displayObjects[selectedCardType] ? (
-                        <span className="text-green-600">✅ Display object already exists</span>
+                        <span className="text-green-200">✅ Display object already exists</span>
                       ) : (
-                        <span className="text-green-600">✅ Ready to create display object</span>
+                        <span className="text-green-200">✅ Ready to create display object</span>
                       )}
                     </div>
                     <button
                       onClick={() => createDisplayForCardType(selectedCardType)}
                       disabled={loading || !currentAccount || displayObjects[selectedCardType]}
-                      className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed text-sm font-medium"
+                      className="px-6 py-2 bg-gradient-to-r from-purple-600 to-blue-600 text-white rounded-lg hover:from-purple-700 hover:to-blue-700 shadow-lg hover:shadow-xl transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed text-sm font-medium"
                     >
                       {loading ? 'Creating...' : displayObjects[selectedCardType] ? 'Already Created' : 'Create Display'}
                     </button>
@@ -693,28 +683,17 @@ export default function GenesisDisplayInterface() {
 
       {/* Status Messages */}
       {error && (
-        <div className="bg-red-50 border border-red-200 rounded-lg p-4">
-          <p className="text-red-800 font-medium">❌ {error}</p>
+        <div className="bg-red-500/20 border border-red-400/50 rounded-lg p-4">
+          <p className="text-red-200 font-medium">❌ {error}</p>
         </div>
       )}
 
       {success && (
-        <div className="bg-green-50 border border-green-200 rounded-lg p-4">
-          <p className="text-green-800 font-medium">✅ {success}</p>
+        <div className="bg-green-500/20 border border-green-400/50 rounded-lg p-4">
+          <p className="text-green-200 font-medium">✅ {success}</p>
         </div>
       )}
 
-      {/* Instructions */}
-      <div className="bg-blue-50 border border-blue-200 rounded-lg p-6">
-        <h4 className="text-lg font-semibold text-blue-800 mb-3">Instructions</h4>
-        <div className="text-blue-700 text-sm space-y-2">
-          <p><strong>1. Select Card Type:</strong> Click on any of the 4 Genesis card type buttons to configure its display fields.</p>
-          <p><strong>2. Configure Fields:</strong> Customize the display fields (name, image, description, etc.) for the selected card type.</p>
-          <p><strong>3. Create Display:</strong> Click "Create Display" button to create the display object with your configured fields.</p>
-          <p><strong>4. Repeat:</strong> Repeat the process for each Genesis card type you want to create display objects for.</p>
-          <p><strong>5. Wallet Display:</strong> Once created, genesis cards will show rich metadata in Sui wallets.</p>
-        </div>
-      </div>
     </div>
   );
 }

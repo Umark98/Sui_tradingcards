@@ -22,19 +22,22 @@ export function Button({
   className = ''
 }: ButtonProps) {
   const getVariantStyles = () => {
+    // Unified gradient button style for all variants
+    const baseStyle = 'bg-gradient-to-r from-purple-600 to-blue-600 text-white hover:from-purple-700 hover:to-blue-700 disabled:from-purple-800 disabled:to-blue-800 shadow-lg hover:shadow-xl';
+    
     switch (variant) {
       case 'primary':
-        return 'bg-blue-600 text-white hover:bg-blue-700 disabled:bg-blue-300';
+        return baseStyle;
       case 'secondary':
-        return 'bg-gray-300 text-gray-700 hover:bg-gray-400 disabled:bg-gray-200';
+        return 'bg-white/10 border-2 border-white/30 text-white hover:bg-white/20 hover:border-white/40 disabled:bg-white/5 disabled:border-white/20 shadow-lg hover:shadow-xl';
       case 'danger':
-        return 'bg-red-600 text-white hover:bg-red-700 disabled:bg-red-300';
+        return 'bg-gradient-to-r from-red-600 to-red-700 text-white hover:from-red-700 hover:to-red-800 disabled:from-red-800 disabled:to-red-900 shadow-lg hover:shadow-xl';
       case 'success':
-        return 'bg-green-600 text-white hover:bg-green-700 disabled:bg-green-300';
+        return 'bg-gradient-to-r from-purple-600 to-blue-600 text-white hover:from-purple-700 hover:to-blue-700 disabled:from-purple-800 disabled:to-blue-800 shadow-lg hover:shadow-xl';
       case 'warning':
-        return 'bg-yellow-600 text-white hover:bg-yellow-700 disabled:bg-yellow-300';
+        return 'bg-gradient-to-r from-yellow-500 to-orange-500 text-white hover:from-yellow-600 hover:to-orange-600 disabled:from-yellow-700 disabled:to-orange-700 shadow-lg hover:shadow-xl';
       default:
-        return 'bg-blue-600 text-white hover:bg-blue-700 disabled:bg-blue-300';
+        return baseStyle;
     }
   };
 
@@ -57,8 +60,8 @@ export function Button({
       className={`
         ${getVariantStyles()}
         ${getSizeStyles()}
-        rounded-lg font-medium transition-colors duration-200
-        disabled:opacity-50 disabled:cursor-not-allowed
+        rounded-lg font-semibold transition-all duration-200 transform hover:scale-105 active:scale-95
+        disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100
         ${className}
       `}
     >

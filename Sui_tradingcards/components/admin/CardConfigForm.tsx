@@ -225,35 +225,35 @@ export default function CardConfigForm() {
   if (loading) {
     return (
       <div className="text-center py-8">
-        <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
-        <p className="mt-2 text-gray-600">Loading configuration data...</p>
+        <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-purple-400"></div>
+        <p className="mt-2 text-gray-300">Loading configuration data...</p>
       </div>
     );
   }
 
   return (
     <div className="space-y-6">
-      <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
-        <h3 className="text-lg font-semibold text-blue-800 mb-2">
+      <div className="bg-blue-500/20 border border-blue-400/50 rounded-lg p-4">
+        <h3 className="text-lg font-semibold text-blue-200 mb-2">
           Inspector Gadget NFT Configuration
         </h3>
-        <p className="text-blue-700 text-sm">
+        <p className="text-white text-sm">
           View and manage existing NFT types, rarities, and levels in your database.
         </p>
       </div>
 
       {error && (
-        <div className="bg-red-50 border border-red-200 rounded-lg p-4">
-          <p className="text-red-800 font-medium">❌ {error}</p>
+        <div className="bg-red-500/20 border border-red-400/50 rounded-lg p-4">
+          <p className="text-red-200 font-medium">❌ {error}</p>
         </div>
       )}
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Card Configurations */}
-        <div className="bg-white border border-gray-200 rounded-lg p-6">
+        <div className="bg-white/10 backdrop-blur-lg border border-white/20 rounded-lg p-6">
           <div className="flex items-center justify-between mb-4">
-            <h4 className="text-lg font-semibold text-gray-800">Card Configurations</h4>
-            <span className="text-sm text-gray-500">{cardConfigs.length} total cards</span>
+            <h4 className="text-lg font-semibold text-white">Card Configurations</h4>
+            <span className="text-sm text-gray-300">{cardConfigs.length} total cards</span>
           </div>
           
           {/* Search and Filter */}
@@ -263,17 +263,17 @@ export default function CardConfigForm() {
               placeholder="Search cards (e.g., Arms, Legs, Genesis...)"
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+              className="w-full p-2 border border-white/30 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
             />
             
             {/* Filter Controls */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
               <div>
-                <label className="block text-xs font-medium text-gray-700 mb-1">Filter by Rarity</label>
+                <label className="block text-xs font-medium text-gray-200 mb-1">Filter by Rarity</label>
                 <select
                   value={selectedRarity}
                   onChange={(e) => setSelectedRarity(e.target.value)}
-                  className="w-full p-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                  className="w-full p-2 text-sm border border-white/30 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                 >
                   <option value="">All Rarities</option>
                   {rarities.map(rarity => (
@@ -285,11 +285,11 @@ export default function CardConfigForm() {
               </div>
               
               <div>
-                <label className="block text-xs font-medium text-gray-700 mb-1">Filter by Level</label>
+                <label className="block text-xs font-medium text-gray-200 mb-1">Filter by Level</label>
                 <select
                   value={selectedLevel}
                   onChange={(e) => setSelectedLevel(e.target.value)}
-                  className="w-full p-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                  className="w-full p-2 text-sm border border-white/30 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                 >
                   <option value="">All Levels</option>
                   {levels.map(level => (
@@ -301,11 +301,11 @@ export default function CardConfigForm() {
               </div>
               
               <div>
-                <label className="block text-xs font-medium text-gray-700 mb-1">Filter by Collection</label>
+                <label className="block text-xs font-medium text-gray-200 mb-1">Filter by Collection</label>
                 <select
                   value={selectedCollection}
                   onChange={(e) => setSelectedCollection(e.target.value)}
-                  className="w-full p-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                  className="w-full p-2 text-sm border border-white/30 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                 >
                   <option value="">All Collections</option>
                   {collections.map(collection => (
@@ -326,7 +326,7 @@ export default function CardConfigForm() {
                     setSelectedLevel('');
                     setSelectedCollection('');
                   }}
-                  className="text-sm text-gray-600 hover:text-gray-800 underline"
+                  className="text-sm text-gray-300 hover:text-white underline"
                 >
                   Clear All Filters
                 </button>
@@ -334,16 +334,16 @@ export default function CardConfigForm() {
             )}
             
             <div className="flex items-center justify-between">
-              <span className="text-sm text-gray-600">
+              <span className="text-sm text-gray-300">
                 Showing {Math.min(filteredConfigs.length, showLimit)} of {filteredConfigs.length} results
                 {(selectedRarity || selectedLevel || selectedCollection) && (
-                  <span className="ml-2 text-blue-600">(filtered)</span>
+                  <span className="ml-2 text-blue-200">(filtered)</span>
                 )}
               </span>
               {filteredConfigs.length > showLimit && (
                 <button
                   onClick={() => setShowLimit(showLimit + 20)}
-                  className="text-sm text-blue-600 hover:text-blue-800"
+                  className="text-sm text-blue-200 hover:text-blue-200"
                 >
                   Show More
                 </button>
@@ -356,30 +356,30 @@ export default function CardConfigForm() {
               {filteredConfigs.slice(0, showLimit).map((config) => (
                 <div 
                   key={config.objectId} 
-                  className="border border-gray-100 rounded-lg p-4 cursor-pointer hover:border-blue-300 hover:bg-blue-50 transition-all duration-200"
+                  className="border border-white/10 rounded-lg p-4 cursor-pointer hover:border-blue-300 hover:bg-blue-50 transition-all duration-200"
                   onClick={() => handleCardClick(config)}
                 >
                   <div className="space-y-2">
                     <div className="flex items-center justify-between">
-                      <span className="font-medium text-gray-800">{config.cardType}</span>
-                      <span className="text-xs text-gray-500">{config.mintSupply} NFTs</span>
+                      <span className="font-medium text-white">{config.cardType}</span>
+                      <span className="text-xs text-gray-300">{config.mintSupply} NFTs</span>
                     </div>
-                    <div className="text-sm text-gray-600">
+                    <div className="text-sm text-gray-300">
                       <div className="flex items-center space-x-4">
                         <span><strong>Collection:</strong> {config.collectionName || 'N/A'}</span>
                         {config.rarity && (
                           <span className={`px-2 py-1 rounded text-xs font-medium ${
-                            config.rarity === 'Legendary' ? 'bg-yellow-100 text-yellow-800' :
-                            config.rarity === 'Epic' ? 'bg-purple-100 text-purple-800' :
-                            config.rarity === 'Rare' ? 'bg-blue-100 text-blue-800' :
-                            config.rarity === 'Uncommon' ? 'bg-green-100 text-green-800' :
-                            'bg-gray-100 text-gray-800'
+                            config.rarity === 'Legendary' ? 'bg-yellow-500 text-black font-bold' :
+                            config.rarity === 'Epic' ? 'bg-purple-600 text-white' :
+                            config.rarity === 'Rare' ? 'bg-blue-600 text-white' :
+                            config.rarity === 'Uncommon' ? 'bg-green-600 text-white' :
+                            'bg-gray-600 text-white'
                           }`}>
                             {config.rarity}
                           </span>
                         )}
                         {config.level && (
-                          <span className="px-2 py-1 bg-gray-100 text-gray-800 rounded text-xs font-medium">
+                          <span className="px-2 py-1 bg-gray-600 text-white rounded text-xs font-medium">
                             Lv.{config.level}
                           </span>
                         )}
@@ -387,10 +387,10 @@ export default function CardConfigForm() {
                       <div><strong>Edition:</strong> {config.edition}</div>
                       <div><strong>Set:</strong> {config.set}</div>
                     </div>
-                    <div className="text-xs text-gray-500">
+                    <div className="text-xs text-gray-300">
                       {config.description}
                     </div>
-                    <div className="text-xs text-blue-600 font-medium mt-2">
+                    <div className="text-xs text-blue-200 font-medium mt-2">
                       Click to view details and users →
                     </div>
                   </div>
@@ -399,7 +399,7 @@ export default function CardConfigForm() {
             </div>
           ) : (
             <div className="text-center py-4">
-              <p className="text-gray-500 text-sm">
+              <p className="text-gray-300 text-sm">
                 {searchTerm ? `No cards found matching "${searchTerm}"` : 'No card configurations found'}
               </p>
             </div>
@@ -407,75 +407,75 @@ export default function CardConfigForm() {
         </div>
 
         {/* Rarities */}
-        <div className="bg-white border border-gray-200 rounded-lg p-6">
-          <h4 className="text-lg font-semibold text-gray-800 mb-4">Rarities</h4>
+        <div className="bg-white/10 backdrop-blur-lg border border-white/20 rounded-lg p-6">
+          <h4 className="text-lg font-semibold text-white mb-4">Rarities</h4>
           {rarities.length > 0 ? (
             <div className="space-y-2">
               {rarities.map((rarity) => (
-                <div key={rarity.rarity_id} className="border border-gray-100 rounded-lg p-3">
+                <div key={rarity.rarity_id} className="border border-white/10 rounded-lg p-3">
                   <div className="flex items-center justify-between">
                     <span className={`font-medium px-2 py-1 rounded-full text-xs ${
-                      rarity.rarity_name.toLowerCase() === 'common' ? 'bg-gray-100 text-gray-800' :
-                      rarity.rarity_name.toLowerCase() === 'uncommon' ? 'bg-green-100 text-green-800' :
-                      rarity.rarity_name.toLowerCase() === 'rare' ? 'bg-blue-100 text-blue-800' :
-                      rarity.rarity_name.toLowerCase() === 'epic' ? 'bg-purple-100 text-purple-800' :
-                      'bg-yellow-100 text-yellow-800'
+                      rarity.rarity_name.toLowerCase() === 'common' ? 'bg-gray-600 text-white' :
+                      rarity.rarity_name.toLowerCase() === 'uncommon' ? 'bg-green-600 text-white' :
+                      rarity.rarity_name.toLowerCase() === 'rare' ? 'bg-blue-600 text-white' :
+                      rarity.rarity_name.toLowerCase() === 'epic' ? 'bg-purple-600 text-white' :
+                      'bg-yellow-500 text-black font-bold'
                     }`}>
                       {rarity.rarity_name}
                     </span>
-                    <span className="text-xs text-gray-500">ID: {rarity.rarity_id}</span>
+                    <span className="text-xs text-gray-300">ID: {rarity.rarity_id}</span>
                   </div>
                 </div>
               ))}
             </div>
           ) : (
             <div className="text-center py-4">
-              <p className="text-gray-500 text-sm">No rarities found</p>
+              <p className="text-gray-300 text-sm">No rarities found</p>
             </div>
           )}
         </div>
 
         {/* Levels */}
-        <div className="bg-white border border-gray-200 rounded-lg p-6">
-          <h4 className="text-lg font-semibold text-gray-800 mb-4">Mint Levels</h4>
+        <div className="bg-white/10 backdrop-blur-lg border border-white/20 rounded-lg p-6">
+          <h4 className="text-lg font-semibold text-white mb-4">Mint Levels</h4>
           {levels.length > 0 ? (
             <div className="space-y-2">
               {levels.map((level) => (
-                <div key={level.level_id} className="border border-gray-100 rounded-lg p-3">
+                <div key={level.level_id} className="border border-white/10 rounded-lg p-3">
                   <div className="flex items-center justify-between">
-                    <span className="font-medium text-gray-800">Level {level.level_value}</span>
-                    <span className="text-xs text-gray-500">ID: {level.level_id}</span>
+                    <span className="font-medium text-white">Level {level.level_value}</span>
+                    <span className="text-xs text-gray-300">ID: {level.level_id}</span>
                   </div>
                 </div>
               ))}
             </div>
           ) : (
             <div className="text-center py-4">
-              <p className="text-gray-500 text-sm">No levels found</p>
+              <p className="text-gray-300 text-sm">No levels found</p>
             </div>
           )}
         </div>
       </div>
 
       {/* Database Information */}
-      <div className="bg-white border border-gray-200 rounded-lg p-6">
-        <h4 className="text-lg font-semibold text-gray-800 mb-4">Database Information</h4>
+      <div className="bg-white/10 backdrop-blur-lg border border-white/20 rounded-lg p-6">
+        <h4 className="text-lg font-semibold text-white mb-4">Database Information</h4>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
           <div>
-            <span className="font-medium text-gray-700">Database:</span>
-            <span className="ml-2 text-gray-600">tradingdb</span>
+            <span className="font-medium text-gray-200">Database:</span>
+            <span className="ml-2 text-gray-300">tradingdb</span>
           </div>
           <div>
-            <span className="font-medium text-gray-700">Schema:</span>
-            <span className="ml-2 text-gray-600">Original NFT Schema</span>
+            <span className="font-medium text-gray-200">Schema:</span>
+            <span className="ml-2 text-gray-300">Original NFT Schema</span>
           </div>
           <div>
-            <span className="font-medium text-gray-700">Total Tables:</span>
-            <span className="ml-2 text-gray-600">14 tables</span>
+            <span className="font-medium text-gray-200">Total Tables:</span>
+            <span className="ml-2 text-gray-300">14 tables</span>
           </div>
           <div>
-            <span className="font-medium text-gray-700">Status:</span>
-            <span className="ml-2 text-green-600">✅ Connected</span>
+            <span className="font-medium text-gray-200">Status:</span>
+            <span className="ml-2 text-green-200">✅ Connected</span>
           </div>
         </div>
       </div>
@@ -483,7 +483,7 @@ export default function CardConfigForm() {
       <div className="flex justify-end">
         <button
           onClick={fetchData}
-          className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 text-sm font-medium"
+          className="px-4 py-2 bg-gradient-to-r from-purple-600 to-blue-600 text-white rounded-lg hover:from-purple-700 hover:to-blue-700 shadow-lg hover:shadow-xl transform hover:scale-105 text-sm font-medium"
         >
           Refresh Data
         </button>
@@ -492,21 +492,21 @@ export default function CardConfigForm() {
       {/* Card Details Modal */}
       {showModal && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-lg max-w-4xl w-full max-h-[90vh] overflow-y-auto">
+          <div className="bg-white/10 backdrop-blur-lg rounded-lg border border-white/20 max-w-4xl w-full max-h-[90vh] overflow-y-auto">
             <div className="p-6">
               {/* Modal Header */}
               <div className="flex items-center justify-between mb-6">
                 <div>
-                  <h3 className="text-2xl font-bold text-gray-900">
+                  <h3 className="text-2xl font-bold text-white">
                     {selectedCard?.cardType}
                   </h3>
-                  <p className="text-gray-600 mt-1">
+                  <p className="text-gray-300 mt-1">
                     {selectedCard?.collectionName} Collection
                   </p>
                 </div>
                 <button
                   onClick={closeModal}
-                  className="text-gray-400 hover:text-gray-600 text-2xl"
+                  className="text-gray-300 hover:text-gray-300 text-2xl"
                 >
                   ×
                 </button>
@@ -514,46 +514,46 @@ export default function CardConfigForm() {
 
               {loadingDetails ? (
                 <div className="text-center py-8">
-                  <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
-                  <p className="mt-2 text-gray-600">Loading card details...</p>
+                  <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-purple-400"></div>
+                  <p className="mt-2 text-gray-300">Loading card details...</p>
                 </div>
               ) : cardDetails ? (
                 <div className="space-y-6">
                   {/* Card Overview */}
-                  <div className="bg-gray-50 rounded-lg p-4">
-                    <h4 className="text-lg font-semibold text-gray-800 mb-3">Card Overview</h4>
+                  <div className="bg-white/5 rounded-lg p-4">
+                    <h4 className="text-lg font-semibold text-white mb-3">Card Overview</h4>
                     <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                       <div className="text-center">
-                        <div className="text-2xl font-bold text-blue-600">{cardDetails.cardDetails.totalNfts}</div>
-                        <div className="text-sm text-gray-600">Total NFTs</div>
+                        <div className="text-2xl font-bold text-blue-200">{cardDetails.cardDetails.totalNfts}</div>
+                        <div className="text-sm text-gray-300">Total NFTs</div>
                       </div>
                       <div className="text-center">
-                        <div className="text-2xl font-bold text-green-600">{cardDetails.cardDetails.uniqueOwners}</div>
-                        <div className="text-sm text-gray-600">Unique Owners</div>
+                        <div className="text-2xl font-bold text-green-200">{cardDetails.cardDetails.uniqueOwners}</div>
+                        <div className="text-sm text-gray-300">Unique Owners</div>
                       </div>
                       <div className="text-center">
-                        <div className="text-2xl font-bold text-purple-600">{cardDetails.cardDetails.serialRange.min}</div>
-                        <div className="text-sm text-gray-600">Min Serial</div>
+                        <div className="text-2xl font-bold text-purple-200">{cardDetails.cardDetails.serialRange.min}</div>
+                        <div className="text-sm text-gray-300">Min Serial</div>
                       </div>
                       <div className="text-center">
-                        <div className="text-2xl font-bold text-purple-600">{cardDetails.cardDetails.serialRange.max}</div>
-                        <div className="text-sm text-gray-600">Max Serial</div>
+                        <div className="text-2xl font-bold text-purple-200">{cardDetails.cardDetails.serialRange.max}</div>
+                        <div className="text-sm text-gray-300">Max Serial</div>
                       </div>
                     </div>
                     <div className="mt-4 flex items-center space-x-4">
                       {cardDetails.cardDetails.rarity && (
                         <span className={`px-3 py-1 rounded-full text-sm font-medium ${
-                          cardDetails.cardDetails.rarity === 'Legendary' ? 'bg-yellow-100 text-yellow-800' :
-                          cardDetails.cardDetails.rarity === 'Epic' ? 'bg-purple-100 text-purple-800' :
-                          cardDetails.cardDetails.rarity === 'Rare' ? 'bg-blue-100 text-blue-800' :
-                          cardDetails.cardDetails.rarity === 'Uncommon' ? 'bg-green-100 text-green-800' :
-                          'bg-gray-100 text-gray-800'
+                          cardDetails.cardDetails.rarity === 'Legendary' ? 'bg-yellow-500 text-black font-bold' :
+                          cardDetails.cardDetails.rarity === 'Epic' ? 'bg-purple-600 text-white' :
+                          cardDetails.cardDetails.rarity === 'Rare' ? 'bg-blue-600 text-white' :
+                          cardDetails.cardDetails.rarity === 'Uncommon' ? 'bg-green-600 text-white' :
+                          'bg-gray-600 text-white'
                         }`}>
                           {cardDetails.cardDetails.rarity}
                         </span>
                       )}
                       {cardDetails.cardDetails.level && (
-                        <span className="px-3 py-1 bg-gray-100 text-gray-800 rounded-full text-sm font-medium">
+                        <span className="px-3 py-1 bg-gray-600 text-white rounded-full text-sm font-medium">
                           Level {cardDetails.cardDetails.level}
                         </span>
                       )}
@@ -562,23 +562,23 @@ export default function CardConfigForm() {
 
                   {/* Top Owners */}
                   <div>
-                    <h4 className="text-lg font-semibold text-gray-800 mb-3">Top Owners</h4>
-                    <div className="bg-white border border-gray-200 rounded-lg overflow-hidden">
+                    <h4 className="text-lg font-semibold text-white mb-3">Top Owners</h4>
+                    <div className="bg-white/10 backdrop-blur-lg border border-white/20 rounded-lg overflow-hidden">
                       <div className="max-h-64 overflow-y-auto">
                         {cardDetails.topOwners.map((owner, index) => (
-                          <div key={owner.userId} className="border-b border-gray-100 last:border-b-0 p-4 hover:bg-gray-50">
+                          <div key={owner.userId} className="border-b border-white/10 last:border-b-0 p-4 hover:bg-white/20/5">
                             <div className="flex items-center justify-between">
                               <div>
-                                <div className="font-medium text-gray-900">
+                                <div className="font-medium text-white">
                                   #{index + 1} {owner.email}
                                 </div>
-                                <div className="text-xs text-gray-500">
+                                <div className="text-xs text-gray-300">
                                   Serial Range: {owner.serialRange.first} - {owner.serialRange.last}
                                 </div>
                               </div>
                               <div className="text-right">
-                                <div className="text-lg font-bold text-blue-600">{owner.ownedCount}</div>
-                                <div className="text-xs text-gray-500">owned</div>
+                                <div className="text-lg font-bold text-blue-200">{owner.ownedCount}</div>
+                                <div className="text-xs text-gray-300">owned</div>
                               </div>
                             </div>
                           </div>
@@ -589,27 +589,27 @@ export default function CardConfigForm() {
 
                   {/* Recent NFTs */}
                   <div>
-                    <h4 className="text-lg font-semibold text-gray-800 mb-3">Recent NFTs</h4>
-                    <p className="text-sm text-gray-600 mb-3">Most recently added NFTs of this type in the database</p>
-                    <div className="bg-white border border-gray-200 rounded-lg overflow-hidden">
+                    <h4 className="text-lg font-semibold text-white mb-3">Recent NFTs</h4>
+                    <p className="text-sm text-gray-300 mb-3">Most recently added NFTs of this type in the database</p>
+                    <div className="bg-white/10 backdrop-blur-lg border border-white/20 rounded-lg overflow-hidden">
                       <div className="max-h-64 overflow-y-auto">
                         {cardDetails.recentActivity.map((activity) => (
-                          <div key={activity.nftId} className="border-b border-gray-100 last:border-b-0 p-3 hover:bg-gray-50">
+                          <div key={activity.nftId} className="border-b border-white/10 last:border-b-0 p-3 hover:bg-white/20/5">
                             <div className="flex items-center justify-between">
                               <div>
-                                <div className="font-medium text-gray-900">NFT #{activity.nftId}</div>
-                                <div className="text-sm text-gray-600">{activity.userEmail}</div>
-                                <div className="text-xs text-gray-500">Owner</div>
+                                <div className="font-medium text-white">NFT #{activity.nftId}</div>
+                                <div className="text-sm text-gray-300">{activity.userEmail}</div>
+                                <div className="text-xs text-gray-300">Owner</div>
                               </div>
                               <div className="text-right">
-                                <div className="text-sm font-medium text-gray-900">Serial #{activity.serialNumber}</div>
+                                <div className="text-sm font-medium text-white">Serial #{activity.serialNumber}</div>
                                 {activity.rarity && (
                                   <div className={`text-xs px-2 py-1 rounded ${
-                                    activity.rarity === 'Legendary' ? 'bg-yellow-100 text-yellow-800' :
-                                    activity.rarity === 'Epic' ? 'bg-purple-100 text-purple-800' :
-                                    activity.rarity === 'Rare' ? 'bg-blue-100 text-blue-800' :
-                                    activity.rarity === 'Uncommon' ? 'bg-green-100 text-green-800' :
-                                    'bg-gray-100 text-gray-800'
+                                    activity.rarity === 'Legendary' ? 'bg-yellow-500 text-black font-bold' :
+                                    activity.rarity === 'Epic' ? 'bg-purple-600 text-white' :
+                                    activity.rarity === 'Rare' ? 'bg-blue-600 text-white' :
+                                    activity.rarity === 'Uncommon' ? 'bg-green-600 text-white' :
+                                    'bg-gray-600 text-white'
                                   }`}>
                                     {activity.rarity}
                                   </div>
@@ -624,7 +624,7 @@ export default function CardConfigForm() {
                 </div>
               ) : (
                 <div className="text-center py-8">
-                  <p className="text-gray-500">Failed to load card details</p>
+                  <p className="text-gray-300">Failed to load card details</p>
                 </div>
               )}
             </div>
