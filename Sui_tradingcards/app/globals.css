@@ -3,6 +3,37 @@
 :root {
   --background: #ffffff;
   --foreground: #171717;
+  
+  /* Professional Color Palette for Dark Theme */
+  --color-primary: #8b5cf6; /* Purple */
+  --color-primary-light: #a78bfa;
+  --color-primary-dark: #7c3aed;
+  
+  --color-secondary: #3b82f6; /* Blue */
+  --color-secondary-light: #60a5fa;
+  --color-secondary-dark: #2563eb;
+  
+  --color-success: #10b981; /* Green */
+  --color-warning: #f59e0b; /* Amber */
+  --color-error: #ef4444; /* Red */
+  --color-info: #06b6d4; /* Cyan */
+  
+  /* Text Colors */
+  --text-primary: #ffffff;
+  --text-secondary: #e5e7eb;
+  --text-muted: #9ca3af;
+  --text-disabled: #6b7280;
+  
+  /* Background Colors */
+  --bg-card: rgba(255, 255, 255, 0.1);
+  --bg-card-hover: rgba(255, 255, 255, 0.15);
+  --bg-input: rgba(255, 255, 255, 0.05);
+  --bg-input-focus: rgba(255, 255, 255, 0.1);
+  
+  /* Border Colors */
+  --border-default: rgba(255, 255, 255, 0.2);
+  --border-muted: rgba(255, 255, 255, 0.1);
+  --border-focus: rgba(139, 92, 246, 0.5);
 }
 
 @theme inline {
@@ -12,15 +43,254 @@
   --font-mono: var(--font-geist-mono);
 }
 
-/* @media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
-} */
-
 body {
   background: var(--background);
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
+}
+
+/* Admin Portal Professional Theme */
+.admin-section {
+  color: var(--text-primary);
+}
+
+.admin-section select,
+.admin-section input,
+.admin-section textarea {
+  color: var(--text-primary) !important;
+  background-color: var(--bg-input) !important;
+  border-color: var(--border-default) !important;
+}
+
+.admin-section select:focus,
+.admin-section input:focus,
+.admin-section textarea:focus {
+  background-color: var(--bg-input-focus) !important;
+  border-color: var(--border-focus) !important;
+  color: var(--text-primary) !important;
+}
+
+.admin-section select option {
+  background-color: #1e1b4b;
+  color: white;
+}
+
+.admin-section input::placeholder,
+.admin-section textarea::placeholder {
+  color: var(--text-muted) !important;
+  opacity: 1;
+}
+
+.admin-section input:disabled,
+.admin-section select:disabled,
+.admin-section textarea:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  color: var(--text-disabled) !important;
+}
+
+/* Labels and Text */
+.admin-section label {
+  color: var(--text-secondary) !important;
+  font-weight: 500;
+}
+
+.admin-section .text-gray-400,
+.admin-section .text-gray-500,
+.admin-section .text-gray-600 {
+  color: var(--text-muted) !important;
+}
+
+.admin-section .text-gray-300 {
+  color: var(--text-secondary) !important;
+}
+
+.admin-section .text-gray-200,
+.admin-section .text-white {
+  color: var(--text-primary) !important;
+}
+
+/* Buttons */
+.admin-section button:not(:disabled) {
+  color: var(--text-primary);
+}
+
+.admin-section button:disabled {
+  color: var(--text-disabled);
+}
+
+/* Cards and Containers */
+.admin-section .bg-white\/10,
+.admin-section .bg-white\/5 {
+  background-color: var(--bg-card) !important;
+}
+
+.admin-section .bg-white\/10:hover {
+  background-color: var(--bg-card-hover) !important;
+}
+
+/* Tables */
+.admin-section table {
+  color: var(--text-primary);
+}
+
+.admin-section th {
+  color: var(--text-secondary) !important;
+}
+
+.admin-section td {
+  color: var(--text-primary) !important;
+}
+
+/* Status Colors - Keep high contrast */
+.admin-section .text-green-400,
+.admin-section .text-green-500 {
+  color: #34d399 !important;
+}
+
+.admin-section .text-red-400,
+.admin-section .text-red-500 {
+  color: #f87171 !important;
+}
+
+.admin-section .text-yellow-400,
+.admin-section .text-yellow-500 {
+  color: #fbbf24 !important;
+}
+
+.admin-section .text-blue-400,
+.admin-section .text-blue-500 {
+  color: #60a5fa !important;
+}
+
+.admin-section .text-purple-400,
+.admin-section .text-purple-500 {
+  color: #a78bfa !important;
+}
+
+/* Info boxes */
+.admin-section .text-blue-200 {
+  color: #bfdbfe !important;
+}
+
+.admin-section .text-red-200 {
+  color: #fecaca !important;
+}
+
+.admin-section .text-green-200 {
+  color: #bbf7d0 !important;
+}
+
+.admin-section .text-yellow-200 {
+  color: #fef08a !important;
+}
+
+/* Portal Styling - Consistent with Admin */
+.portal-section {
+  color: var(--text-primary);
+}
+
+.portal-section input,
+.portal-section textarea,
+.portal-section select {
+  color: var(--text-primary) !important;
+  background-color: var(--bg-input) !important;
+  border-color: var(--border-default) !important;
+}
+
+.portal-section input:focus,
+.portal-section textarea:focus,
+.portal-section select:focus {
+  background-color: var(--bg-input-focus) !important;
+  border-color: var(--border-focus) !important;
+  color: var(--text-primary) !important;
+}
+
+.portal-section input::placeholder,
+.portal-section textarea::placeholder {
+  color: var(--text-muted) !important;
+  opacity: 1;
+}
+
+.portal-section label {
+  color: var(--text-secondary) !important;
+  font-weight: 500;
+}
+
+.portal-section .text-gray-300 {
+  color: var(--text-secondary) !important;
+}
+
+.portal-section .text-gray-400,
+.portal-section .text-gray-500 {
+  color: var(--text-muted) !important;
+}
+
+.portal-section .text-white {
+  color: var(--text-primary) !important;
+}
+
+/* Test Email Portal Styling */
+.test-email-section {
+  color: var(--text-primary);
+}
+
+.test-email-section input,
+.test-email-section textarea,
+.test-email-section select {
+  color: var(--text-primary) !important;
+  background-color: var(--bg-input) !important;
+  border-color: var(--border-default) !important;
+}
+
+.test-email-section input:focus,
+.test-email-section textarea:focus,
+.test-email-section select:focus {
+  background-color: var(--bg-input-focus) !important;
+  border-color: var(--border-focus) !important;
+  color: var(--text-primary) !important;
+}
+
+.test-email-section input::placeholder,
+.test-email-section textarea::placeholder {
+  color: var(--text-muted) !important;
+  opacity: 1;
+}
+
+.test-email-section label {
+  color: var(--text-secondary) !important;
+  font-weight: 500;
+}
+
+.test-email-section .text-gray-300 {
+  color: var(--text-secondary) !important;
+}
+
+.test-email-section .text-gray-400,
+.test-email-section .text-gray-500,
+.test-email-section .text-gray-600 {
+  color: var(--text-muted) !important;
+}
+
+.test-email-section .text-white {
+  color: var(--text-primary) !important;
+}
+
+/* Global text color improvements for dark backgrounds */
+.bg-gradient-to-br {
+  color: var(--text-primary);
+}
+
+/* Ensure all text on dark backgrounds is visible */
+h1, h2, h3, h4, h5, h6 {
+  color: inherit;
+}
+
+/* Make sure links are visible */
+a {
+  color: var(--color-primary-light);
+}
+
+a:hover {
+  color: var(--color-primary);
 }
