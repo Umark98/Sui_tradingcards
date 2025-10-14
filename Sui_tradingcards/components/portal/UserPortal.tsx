@@ -9,7 +9,7 @@ interface UserPortalProps {
 }
 
 interface Reservation {
-  id: number;
+  id: string | number;
   nftTitle: string;
   nftType: string;
   rarity: string;
@@ -30,12 +30,13 @@ export default function UserPortal({ user, onLogout }: UserPortalProps) {
   const [stats, setStats] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState<'all' | 'reserved' | 'claimed'>('all');
-  const [selectedIds, setSelectedIds] = useState<number[]>([]);
+  const [selectedIds, setSelectedIds] = useState<(string | number)[]>([]);
   const [collecting, setCollecting] = useState(false);
   const [message, setMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage] = useState(12);
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
+  const [searchTerm, setSearchTerm] = useState<string>('');
 
   useEffect(() => {
     loadReservations();
@@ -60,7 +61,7 @@ export default function UserPortal({ user, onLogout }: UserPortalProps) {
     }
   };
 
-  const handleCollect = async (reservationIds: number[]) => {
+  const handleCollect = async (reservationIds: (string | number)[]) => {
     setCollecting(true);
     setMessage(null);
 
@@ -72,17 +73,27 @@ export default function UserPortal({ user, onLogout }: UserPortalProps) {
       });
 
       const data = await response.json();
+      console.log('Collect response:', data);
 
       if (response.ok) {
-        setMessage({
-          type: 'success',
-          text: `Successfully collected ${data.results.length} NFT(s)!`,
-        });
+        if (data.errors && data.errors.length > 0) {
+          // Show errors if any occurred
+          const errorMessages = data.errors.map((e: any) => `${e.nftTitle || 'NFT'}: ${e.error}`).join('; ');
+          setMessage({
+            type: 'error',
+            text: `Failed to mint: ${errorMessages}`,
+          });
+        } else {
+          setMessage({
+            type: 'success',
+            text: `Successfully collected ${data.results.length} NFT(s)!`,
+          });
+        }
         // Reload reservations
         await loadReservations();
         setSelectedIds([]);
       } else {
-        setMessage({ type: 'error', text: data.error });
+        setMessage({ type: 'error', text: data.error || 'Failed to collect NFTs' });
       }
     } catch (error: any) {
       setMessage({ type: 'error', text: error.message || 'Failed to collect NFTs' });
@@ -92,7 +103,22 @@ export default function UserPortal({ user, onLogout }: UserPortalProps) {
   };
 
   const handleCollectAll = () => {
-    const availableIds = reservations
+    // Recalculate filtered reservations to ensure we have the current filter state
+    const currentFiltered = reservations.filter((r) => {
+      let statusMatch = false;
+      if (filter === 'all') {
+        statusMatch = true;
+      } else if (filter === 'reserved') {
+        statusMatch = r.status === 'reserved';
+      } else if (filter === 'claimed') {
+        statusMatch = r.status === 'claimed' || r.status === 'minted';
+      }
+      
+      const categoryMatch = selectedCategory === 'all' || r.collectionName === selectedCategory;
+      return statusMatch && categoryMatch;
+    });
+    
+    const availableIds = currentFiltered
       .filter((r) => r.status === 'reserved')
       .map((r) => r.id);
     handleCollect(availableIds);
@@ -104,7 +130,7 @@ export default function UserPortal({ user, onLogout }: UserPortalProps) {
     }
   };
 
-  const toggleSelection = (id: number) => {
+  const toggleSelection = (id: string | number) => {
     setSelectedIds((prev) =>
       prev.includes(id) ? prev.filter((i) => i !== id) : [...prev, id]
     );
@@ -113,11 +139,25 @@ export default function UserPortal({ user, onLogout }: UserPortalProps) {
   // Get unique categories (Genesis, Missions, etc.)
   const categories = Array.from(new Set(reservations.map(r => r.collectionName))).sort();
 
-  // Filter reservations by status and category
+  // Filter reservations by status, category, and search term
   const filteredReservations = reservations.filter((r) => {
-    const statusMatch = filter === 'all' || r.status === filter;
+    let statusMatch = false;
+    if (filter === 'all') {
+      statusMatch = true;
+    } else if (filter === 'reserved') {
+      statusMatch = r.status === 'reserved';
+    } else if (filter === 'claimed') {
+      // For "collected", include both 'claimed' and 'minted' statuses
+      statusMatch = r.status === 'claimed' || r.status === 'minted';
+    }
+    
     const categoryMatch = selectedCategory === 'all' || r.collectionName === selectedCategory;
-    return statusMatch && categoryMatch;
+    
+    // Search by title (case-insensitive)
+    const searchMatch = searchTerm === '' || 
+      r.nftTitle.toLowerCase().includes(searchTerm.toLowerCase());
+    
+    return statusMatch && categoryMatch && searchMatch;
   });
 
   // Pagination logic
@@ -126,10 +166,10 @@ export default function UserPortal({ user, onLogout }: UserPortalProps) {
   const endIndex = startIndex + itemsPerPage;
   const paginatedReservations = filteredReservations.slice(startIndex, endIndex);
 
-  // Reset to page 1 when filters change
+  // Reset to page 1 when filters or search term change
   useEffect(() => {
     setCurrentPage(1);
-  }, [filter, selectedCategory]);
+  }, [filter, selectedCategory, searchTerm]);
 
   const getRarityColor = (rarity: string) => {
     const colors: Record<string, string> = {
@@ -195,6 +235,28 @@ export default function UserPortal({ user, onLogout }: UserPortalProps) {
       {/* Filters */}
       <div className="max-w-7xl mx-auto mb-6">
         <div className="bg-white/10 backdrop-blur-lg rounded-2xl p-4 border border-white/20">
+          {/* Search Bar */}
+          <div className="mb-4">
+            <div className="relative">
+              <input
+                type="text"
+                placeholder="🔍 Search NFTs by title..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="w-full px-4 py-3 bg-white/5 border border-white/20 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-purple-500 focus:ring-2 focus:ring-purple-500/50 transition"
+              />
+              {searchTerm && (
+                <button
+                  onClick={() => setSearchTerm('')}
+                  className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-white transition"
+                  aria-label="Clear search"
+                >
+                  ✕
+                </button>
+              )}
+            </div>
+          </div>
+
           {/* Status Filters */}
           <div className="flex flex-wrap gap-2 mb-4">
             <button
@@ -202,7 +264,7 @@ export default function UserPortal({ user, onLogout }: UserPortalProps) {
               className={`px-4 py-2 rounded-lg transition ${
                 filter === 'all'
                   ? 'bg-white text-black'
-                  : 'bg-white/10 text-white hover:bg-white/20'
+                  : 'bg-white/10 text-white hover:bg-blue-500/20 hover:border-blue-400/30'
               }`}
             >
               All ({reservations.length})
@@ -212,7 +274,7 @@ export default function UserPortal({ user, onLogout }: UserPortalProps) {
               className={`px-4 py-2 rounded-lg transition ${
                 filter === 'reserved'
                   ? 'bg-green-500 text-white'
-                  : 'bg-white/10 text-white hover:bg-white/20'
+                  : 'bg-white/10 text-white hover:bg-green-500/20 hover:border-green-400/30'
               }`}
             >
               Available ({stats?.reserved || 0})
@@ -222,7 +284,7 @@ export default function UserPortal({ user, onLogout }: UserPortalProps) {
               className={`px-4 py-2 rounded-lg transition ${
                 filter === 'claimed'
                   ? 'bg-blue-500 text-white'
-                  : 'bg-white/10 text-white hover:bg-white/20'
+                  : 'bg-white/10 text-white hover:bg-blue-500/20 hover:border-blue-400/30'
               }`}
             >
               Collected ({stats?.claimed || 0})
@@ -237,7 +299,7 @@ export default function UserPortal({ user, onLogout }: UserPortalProps) {
               className={`px-3 py-1 rounded-lg text-sm transition ${
                 selectedCategory === 'all'
                   ? 'bg-blue-500 text-white'
-                  : 'bg-white/5 text-gray-300 hover:bg-white/10'
+                  : 'bg-white/5 text-gray-300 hover:bg-blue-500/15 hover:text-blue-200'
               }`}
             >
               All Categories
@@ -249,7 +311,7 @@ export default function UserPortal({ user, onLogout }: UserPortalProps) {
                 className={`px-3 py-1 rounded-lg text-sm transition ${
                   selectedCategory === category
                     ? 'bg-blue-500 text-white'
-                    : 'bg-white/5 text-gray-300 hover:bg-white/10'
+                    : 'bg-white/5 text-gray-300 hover:bg-blue-500/15 hover:text-blue-200'
                 }`}
               >
                 {category === 'Genesis' ? '🎴 Genesis' : 
@@ -264,6 +326,11 @@ export default function UserPortal({ user, onLogout }: UserPortalProps) {
           <div className="flex flex-wrap gap-2 justify-between items-center">
             <div className="text-sm text-gray-300">
               Showing {startIndex + 1}-{Math.min(endIndex, filteredReservations.length)} of {filteredReservations.length} NFTs
+              {searchTerm && (
+                <span className="ml-2 text-purple-300">
+                  (filtered by "{searchTerm}")
+                </span>
+              )}
             </div>
             <div className="flex gap-2">
               {selectedIds.length > 0 && (
@@ -275,13 +342,13 @@ export default function UserPortal({ user, onLogout }: UserPortalProps) {
                   Collect Selected ({selectedIds.length})
                 </button>
               )}
-              {stats?.reserved > 0 && (
+              {filteredReservations.filter(r => r.status === 'reserved').length > 0 && (
                 <button
                   onClick={handleCollectAll}
                   disabled={collecting}
                   className="bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white px-6 py-2 rounded-lg font-semibold transition-all shadow-lg hover:shadow-xl transform hover:scale-105 active:scale-95 disabled:opacity-50 disabled:hover:scale-100"
                 >
-                  {collecting ? 'Collecting...' : `Collect All (${stats.reserved})`}
+                  {collecting ? 'Collecting...' : `Collect All (${filteredReservations.filter(r => r.status === 'reserved').length})`}
                 </button>
               )}
             </div>
@@ -305,7 +372,19 @@ export default function UserPortal({ user, onLogout }: UserPortalProps) {
       <div className="max-w-7xl mx-auto">
         {filteredReservations.length === 0 ? (
           <div className="bg-white/10 backdrop-blur-lg rounded-2xl p-12 text-center border border-white/20">
-            <p className="text-gray-300 text-xl">No NFTs found in this category</p>
+            <p className="text-gray-300 text-xl">
+              {searchTerm 
+                ? `No NFTs found matching "${searchTerm}"`
+                : 'No NFTs found in this category'}
+            </p>
+            {searchTerm && (
+              <button
+                onClick={() => setSearchTerm('')}
+                className="mt-4 px-6 py-2 bg-purple-500/20 hover:bg-purple-500/30 text-purple-200 rounded-lg border border-purple-500/50 transition"
+              >
+                Clear Search
+              </button>
+            )}
           </div>
         ) : (
           <>
@@ -327,7 +406,7 @@ export default function UserPortal({ user, onLogout }: UserPortalProps) {
                 <button
                   onClick={() => setCurrentPage(Math.max(1, currentPage - 1))}
                   disabled={currentPage === 1}
-                  className="px-4 py-2 rounded-lg bg-white/10 text-white hover:bg-white/20 transition disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="px-4 py-2 rounded-lg bg-white/10 text-white hover:bg-blue-500/20 hover:border-blue-400/30 transition disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   Previous
                 </button>
@@ -352,7 +431,7 @@ export default function UserPortal({ user, onLogout }: UserPortalProps) {
                         className={`px-3 py-2 rounded-lg transition ${
                           currentPage === pageNum
                             ? 'bg-purple-500 text-white'
-                            : 'bg-white/10 text-white hover:bg-white/20'
+                            : 'bg-white/10 text-white hover:bg-purple-500/20 hover:border-purple-400/30'
                         }`}
                       >
                         {pageNum}
@@ -364,7 +443,7 @@ export default function UserPortal({ user, onLogout }: UserPortalProps) {
                 <button
                   onClick={() => setCurrentPage(Math.min(totalPages, currentPage + 1))}
                   disabled={currentPage === totalPages}
-                  className="px-4 py-2 rounded-lg bg-white/10 text-white hover:bg-white/20 transition disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="px-4 py-2 rounded-lg bg-white/10 text-white hover:bg-blue-500/20 hover:border-blue-400/30 transition disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   Next
                 </button>

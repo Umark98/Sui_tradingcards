@@ -1,1 +1,30 @@
-{}
+{
+  "Yoyo": {
+    "objectId": "0x9b05b7e1c5c0d1cff07e2ac521d273c87fac68282377579f451faed4d341381a",
+    "objectType": "0x5eae221a134e97e8d3af2f2c84daffed19d228897bb9e1721e2443ae4db05375::gadget_gameplay_items::GadgetGameplayItemMetadata<0x5eae221a134e97e8d3af2f2c84daffed19d228897bb9e1721e2443ae4db05375::gadget_gameplay_items::TradingCard<0x5eae221a134e97e8d3af2f2c84daffed19d228897bb9e1721e2443ae4db05375::gadget_gameplay_items_titles::Yoyo>>",
+    "timestamp": "2025-10-13T12:30:49.925Z",
+    "version": 1,
+    "description": "yoyo",
+    "imageUrl": "https://img.freepik.com/free-vector/yo-yo-toy-cartoon-vector-icon-illustration-education-object-icon-concept-isolated-premium-vector-flat-cartoon-style_138676-4095.jpg?semt=ais_hybrid&w=740&q=80",
+    "levelImages": {
+      "1": "https://img.freepik.com/free-vector/yo-yo-toy-cartoon-vector-icon-illustration-education-object-icon-concept-isolated-premium-vector-flat-cartoon-style_138676-4095.jpg?semt=ais_hybrid&w=740&q=80",
+      "2": "https://img.freepik.com/free-vector/yo-yo-toy-cartoon-vector-icon-illustration-education-object-icon-concept-isolated-premium-vector-flat-cartoon-style_138676-4095.jpg?semt=ais_hybrid&w=740&q=80",
+      "3": "https://img.freepik.com/free-vector/yo-yo-toy-cartoon-vector-icon-illustration-education-object-icon-concept-isolated-premium-vector-flat-cartoon-style_138676-4095.jpg?semt=ais_hybrid&w=740&q=80"
+    },
+    "lastFetched": "2025-10-14T04:53:42.225Z"
+  },
+  "Mallet": {
+    "objectId": "0xaabf7702e9b053609918b11783091d58a2a08886052db8afd338381b0d07d731",
+    "objectType": "0x5eae221a134e97e8d3af2f2c84daffed19d228897bb9e1721e2443ae4db05375::gadget_gameplay_items::GadgetGameplayItemMetadata<0x5eae221a134e97e8d3af2f2c84daffed19d228897bb9e1721e2443ae4db05375::gadget_gameplay_items::TradingCard<0x5eae221a134e97e8d3af2f2c84daffed19d228897bb9e1721e2443ae4db05375::gadget_gameplay_items_titles::Mallet>>",
+    "timestamp": "2025-10-13T12:38:50.155Z",
+    "version": 1,
+    "description": "Mallet card",
+    "imageUrl": "https://www.shutterstock.com/image-vector/illustration-cute-cartoon-hammer-nail-600nw-2479368445.jpg",
+    "levelImages": {
+      "1": "https://www.shutterstock.com/image-vector/illustration-cute-cartoon-hammer-nail-600nw-2479368445.jpg",
+      "2": "https://www.shutterstock.com/image-vector/illustration-cute-cartoon-hammer-nail-600nw-2479368445.jpg",
+      "3": "https://www.shutterstock.com/image-vector/illustration-cute-cartoon-hammer-nail-600nw-2479368445.jpg"
+    },
+    "lastFetched": "2025-10-14T04:53:43.236Z"
+  }
+}

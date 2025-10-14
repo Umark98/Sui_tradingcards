@@ -8,7 +8,6 @@ interface LoginFormProps {
 
 export default function LoginForm({ onLogin }: LoginFormProps) {
   const [email, setEmail] = useState('');
-  const [isRegistering, setIsRegistering] = useState(false);
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
 
@@ -18,44 +17,19 @@ export default function LoginForm({ onLogin }: LoginFormProps) {
     setMessage(null);
 
     try {
-      if (isRegistering) {
-        // Register new user
-        const response = await fetch('/api/portal/register', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ email }),
-        });
+      // Login user directly - registration disabled
+      const response = await fetch('/api/portal/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email }),
+      });
 
-        const data = await response.json();
+      const data = await response.json();
 
-        if (response.ok) {
-          setMessage({
-            type: 'success',
-            text: `Account created! Your wallet: ${data.user.wallet}. Check your email for verification.`,
-          });
-          // Auto-switch to login after 3 seconds
-          setTimeout(() => {
-            setIsRegistering(false);
-            setMessage(null);
-          }, 3000);
-        } else {
-          setMessage({ type: 'error', text: data.error });
-        }
+      if (response.ok) {
+        onLogin(email);
       } else {
-        // Login existing user
-        const response = await fetch('/api/portal/login', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ email }),
-        });
-
-        const data = await response.json();
-
-        if (response.ok) {
-          onLogin(email);
-        } else {
-          setMessage({ type: 'error', text: data.error });
-        }
+        setMessage({ type: 'error', text: data.error });
       }
     } catch (error: any) {
       setMessage({ type: 'error', text: error.message || 'An error occurred' });
@@ -72,13 +46,8 @@ export default function LoginForm({ onLogin }: LoginFormProps) {
             🎴 NFT Collection Portal
           </h1>
           <p className="text-gray-300">
-            {isRegistering ? 'Register for portal access' : 'Enter your email to continue'}
+            Enter your email to continue
           </p>
-          {isRegistering && (
-            <p className="text-yellow-300 text-sm mt-2">
-              ⚠️ Only existing database users can register
-            </p>
-          )}
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-6">
@@ -123,12 +92,13 @@ export default function LoginForm({ onLogin }: LoginFormProps) {
                 Processing...
               </span>
             ) : (
-              <>{isRegistering ? 'Create Account' : 'Login'}</>
+              <>Login</>
             )}
           </button>
         </form>
 
-        <div className="mt-6 text-center">
+        {/* Registration temporarily disabled */}
+        {/* <div className="mt-6 text-center">
           {isRegistering ? (
             <button
               onClick={() => {
@@ -150,7 +120,7 @@ export default function LoginForm({ onLogin }: LoginFormProps) {
               First time? Register here
             </button>
           )}
-        </div>
+        </div> */}
 
         <div className="mt-8 p-4 bg-blue-500/10 rounded-lg border border-blue-500/30">
           <h3 className="text-white font-semibold mb-2">ℹ️ Access Information:</h3>

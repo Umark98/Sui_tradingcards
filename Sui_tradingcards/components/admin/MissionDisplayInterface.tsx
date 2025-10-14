@@ -553,7 +553,9 @@ export default function MissionDisplayInterface() {
         throw new Error(result.error || 'Transaction execution failed');
       }
 
-      setSuccess(`Display created successfully for ${cardType}! Display ID: ${result.displayId}`);
+      // Show appropriate message based on whether it was an update or creation
+      const action = result.isUpdate ? 'updated' : 'created';
+      setSuccess(`Display ${action} successfully for ${cardType}! Display ID: ${result.displayId}`);
       
       // Reload display objects
       loadDisplayObjects();
@@ -622,25 +624,6 @@ export default function MissionDisplayInterface() {
           </div>
           <div className="flex items-center space-x-3">
             <button
-              onClick={() => {
-                const missingDisplays = missionCardTypes.filter(type => !displayObjects[type]);
-                if (missingDisplays.length > 0) {
-                  if (confirm(`Create display objects for all ${missingDisplays.length} missing mission card types?`)) {
-                    // Set up default fields for all missing types using proper descriptions
-                    missingDisplays.forEach(type => {
-                      autoFillAllFields(type);
-                    });
-                  }
-                } else {
-                  alert('All mission card types already have display objects!');
-                }
-              }}
-              className="px-4 py-2 text-sm bg-gradient-to-r from-purple-600 to-blue-600 text-white rounded hover:from-purple-700 hover:to-blue-700 shadow-lg hover:shadow-xl transform hover:scale-105 transition-all"
-              disabled={loadingDisplays}
-            >
-              Bulk Setup
-            </button>
-            <button
               onClick={loadDisplayObjects}
               className="px-4 py-2 text-sm bg-gradient-to-r from-purple-600 to-blue-600 text-white rounded hover:from-purple-700 hover:to-blue-700 shadow-lg hover:shadow-xl transform hover:scale-105 transition-all"
               disabled={loadingDisplays}
@@ -685,13 +668,13 @@ export default function MissionDisplayInterface() {
                   </div>
                 </div>
               </div>
-              <div className="bg-blue-600 p-4 rounded-lg shadow-lg">
+              <div className="bg-gradient-to-br from-purple-600 to-blue-600 p-4 rounded-lg shadow-lg">
                 <div className="flex items-center">
                   <div className="p-2 bg-white/20 rounded-lg">
                     <span className="text-white text-lg">🎯</span>
                   </div>
                   <div className="ml-3">
-                    <p className="text-sm font-medium text-blue-100">Total Types</p>
+                    <p className="text-sm font-medium text-white/90">Total Types</p>
                     <p className="text-2xl font-bold text-white">{missionCardTypes.length}</p>
                   </div>
                 </div>
@@ -736,22 +719,6 @@ export default function MissionDisplayInterface() {
                             >
                               {displayObjects[cardType] ? 'Edit' : 'Create'}
                             </button>
-                            {!displayObjects[cardType] && (
-                              <button
-                                onClick={() => {
-                                  // Set selected card type first
-                                  setSelectedCardType(cardType);
-                                  // Then auto-fill all fields
-                                  setTimeout(() => {
-                                    autoFillAllFields(cardType);
-                                  }, 100);
-                                }}
-                                className="px-2 py-1 text-xs bg-gradient-to-r from-purple-600 to-blue-600 text-white rounded hover:from-purple-700 hover:to-blue-700 shadow-lg hover:shadow-xl transform hover:scale-105 transition-all"
-                                title="Quick setup with auto-filled description"
-                              >
-                                Quick
-                              </button>
-                            )}
                           </div>
                         </div>
                       ))}
@@ -925,8 +892,8 @@ export default function MissionDisplayInterface() {
           <div className="mt-6 pt-6 border-t border-white/20">
             {displayObjects[selectedCardType] ? (
               <div className="space-y-3">
-                <div className="bg-blue-500/20 border border-blue-400/50 rounded-lg p-3">
-                  <p className="text-blue-200 text-sm">
+                <div className="bg-gradient-to-r from-purple-500/20 to-blue-500/20 border border-purple-400/50 rounded-lg p-3">
+                  <p className="text-purple-200 text-sm">
                     <strong>Display exists!</strong> Display ID: <span className="font-mono text-xs">{displayObjects[selectedCardType].displayId}</span>
                   </p>
                   <p className="text-white text-xs mt-1">

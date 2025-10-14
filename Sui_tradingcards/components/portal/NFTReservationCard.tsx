@@ -5,7 +5,7 @@ import React from 'react';
 interface NFTReservationCardProps {
   reservation: any;
   selected: boolean;
-  onSelect: (id: number) => void;
+  onSelect: (id: string | number) => void;
   getRarityColor: (rarity: string) => string;
 }
 
@@ -66,19 +66,21 @@ export default function NFTReservationCard({
           </div>
         )}
 
-        {/* Rarity Badge */}
-        <div
-          className={`absolute bottom-2 left-2 px-3 py-1 rounded-full text-xs font-bold text-white ${getRarityColor(
-            reservation.rarity
-          )}`}
-        >
-          {reservation.rarity}
-        </div>
+        {/* Rarity Badge - Only show for non-Genesis cards */}
+        {reservation.collectionName !== 'Genesis Cards' && reservation.rarity && (
+          <div
+            className={`absolute bottom-2 left-2 px-3 py-1 rounded-full text-xs font-bold text-white ${getRarityColor(
+              reservation.rarity
+            )}`}
+          >
+            {reservation.rarity}
+          </div>
+        )}
       </div>
 
       {/* Content */}
       <div className="p-4">
-        <h3 className="text-white font-bold text-lg mb-1 truncate">
+        <h3 className="text-white font-bold text-lg mb-1 break-words">
           {reservation.nftTitle}
         </h3>
         
@@ -92,11 +94,17 @@ export default function NFTReservationCard({
         </div>
 
         <div className="flex items-center justify-between text-sm mb-2">
-          <span className="text-gray-400">Level:</span>
-          <span className="text-white font-semibold">
-            {'⭐'.repeat(reservation.level)}
-          </span>
+          <span className="text-gray-400">Mint Number:</span>
+          <span className="text-white font-semibold">#{reservation.level}</span>
         </div>
+
+        {/* Card Level - Only show for collections that have levels (Gadgets) */}
+        {reservation.collectionName === 'Gadgets' && reservation.cardLevel && (
+          <div className="flex items-center justify-between text-sm mb-2">
+            <span className="text-gray-400">Level:</span>
+            <span className="text-white font-semibold">{reservation.cardLevel}</span>
+          </div>
+        )}
 
         {reservation.transactionDigest && (
           <div className="mt-3 pt-3 border-t border-white/10">

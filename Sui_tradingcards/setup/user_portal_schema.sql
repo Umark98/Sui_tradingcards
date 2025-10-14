@@ -19,7 +19,7 @@ CREATE TABLE IF NOT EXISTS nft_reservations (
     email VARCHAR(255) NOT NULL,
     nft_title VARCHAR(200) NOT NULL,
     nft_type VARCHAR(100) NOT NULL,
-    rarity VARCHAR(50) NOT NULL,
+    rarity VARCHAR(50),
     level INTEGER NOT NULL,
     collection_name VARCHAR(100),
     description TEXT,
@@ -93,4 +93,6 @@ COMMENT ON TABLE user_activity_log IS 'Logs all user activities for audit purpos
 COMMENT ON COLUMN nft_reservations.status IS 'Status: reserved, claimed, minted, failed';
 COMMENT ON COLUMN nft_reservations.voucher_id IS 'Unique identifier for the voucher';
 COMMENT ON COLUMN nft_reservations.voucher_signature IS 'Cryptographic signature for verification';
+COMMENT ON COLUMN nft_reservations.rarity IS 'Rarity level (nullable - not used for genesis cards)';
+COMMENT ON COLUMN nft_reservations.level IS 'Level for gadget cards, or mint_number for genesis cards';
 

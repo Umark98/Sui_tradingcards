@@ -29,7 +29,7 @@ export function Button({
       case 'primary':
         return baseStyle;
       case 'secondary':
-        return 'bg-white/10 border-2 border-white/30 text-white hover:bg-white/20 hover:border-white/40 disabled:bg-white/5 disabled:border-white/20 shadow-lg hover:shadow-xl';
+        return 'bg-white/10 border-2 border-white/30 text-white hover:bg-blue-500/20 hover:border-blue-400/40 disabled:bg-white/5 disabled:border-white/20 shadow-lg hover:shadow-xl';
       case 'danger':
         return 'bg-gradient-to-r from-red-600 to-red-700 text-white hover:from-red-700 hover:to-red-800 disabled:from-red-800 disabled:to-red-900 shadow-lg hover:shadow-xl';
       case 'success':

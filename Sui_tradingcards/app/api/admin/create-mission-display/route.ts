@@ -22,7 +22,7 @@ export async function POST(request: NextRequest) {
 
     // Execute the signed transaction
     const result = await client.executeTransactionBlock({
-      transactionBlock: signedTransaction.bytes || signedTransaction.transactionBlockBytes,
+      transactionBlock: signedTransaction.transactionBlockBytes,
       signature: signedTransaction.signature,
       options: {
         showEffects: true,
@@ -68,6 +68,98 @@ export async function POST(request: NextRequest) {
     const displayId = displayObject.reference.objectId;
     console.log('Display ID extracted:', displayId, isUpdate ? '(updated)' : '(created)');
 
+    // Fetch the display object to get the image URL
+    let imageUrl = '';
+    try {
+      console.log('Fetching display object data for image URL...');
+      
+      // Wait a bit for the display to be indexed
+      await new Promise(resolve => setTimeout(resolve, 2000));
+      
+      const displayObjectData = await client.getObject({
+        id: displayId,
+        options: {
+          showContent: true,
+          showDisplay: true,
+        },
+      });
+
+      console.log('=== FULL DISPLAY OBJECT DATA ===');
+      console.log(JSON.stringify(displayObjectData, null, 2));
+      console.log('=== END DISPLAY OBJECT DATA ===');
+
+      // Recursive function to find image URL anywhere in the object
+      const findImageUrl = (obj: any, depth = 0, path = ''): string => {
+        if (depth > 15) return ''; // Prevent infinite recursion
+        if (!obj || typeof obj !== 'object') return '';
+
+        // Direct checks for image URL
+        if (typeof obj.image_url === 'string' && obj.image_url.startsWith('http')) {
+          console.log(`✅ Found image_url at path: ${path}.image_url`);
+          return obj.image_url;
+        }
+        if (typeof obj.imageUrl === 'string' && obj.imageUrl.startsWith('http')) {
+          console.log(`✅ Found imageUrl at path: ${path}.imageUrl`);
+          return obj.imageUrl;
+        }
+        if (typeof obj.image === 'string' && obj.image.startsWith('http')) {
+          console.log(`✅ Found image at path: ${path}.image`);
+          return obj.image;
+        }
+        if (typeof obj.value === 'string' && obj.value.startsWith('http')) {
+          console.log(`✅ Found value at path: ${path}.value`);
+          return obj.value;
+        }
+
+        // Check if it's a key-value pair object
+        if (obj.key === 'image_url' && typeof obj.value === 'string') {
+          console.log(`✅ Found key-value pair at path: ${path}`);
+          return obj.value;
+        }
+
+        // Check nested fields object
+        if (obj.fields) {
+          if (obj.fields.key === 'image_url' && typeof obj.fields.value === 'string') {
+            console.log(`✅ Found in fields.key-value at path: ${path}.fields`);
+            return obj.fields.value;
+          }
+          const result = findImageUrl(obj.fields, depth + 1, `${path}.fields`);
+          if (result) return result;
+        }
+
+        // Recursively search arrays
+        if (Array.isArray(obj)) {
+          for (let i = 0; i < obj.length; i++) {
+            const result = findImageUrl(obj[i], depth + 1, `${path}[${i}]`);
+            if (result) return result;
+          }
+        }
+
+        // Recursively search object properties
+        for (const key in obj) {
+          if (obj.hasOwnProperty(key) && key !== 'objectId' && key !== 'digest') {
+            const result = findImageUrl(obj[key], depth + 1, `${path}.${key}`);
+            if (result) return result;
+          }
+        }
+
+        return '';
+      };
+
+      // Try to find image URL anywhere in the display object
+      imageUrl = findImageUrl(displayObjectData, 0, 'root');
+
+      if (imageUrl) {
+        console.log('✅ Successfully extracted image URL:', imageUrl);
+      } else {
+        console.log('⚠️ Could not find image URL in display object');
+        console.log('Please check the full display object data above and report the structure');
+      }
+    } catch (error) {
+      console.error('❌ Error fetching display object data:', error);
+      // Continue without image URL if fetch fails
+    }
+
     // Save the display ID to the mission-displays.json file
     const displayFilePath = path.join(process.cwd(), 'public', 'mission-displays.json');
     
@@ -82,14 +174,15 @@ export async function POST(request: NextRequest) {
       console.log('No existing display file found, creating new one');
     }
     
-    // Add new display
+    // Add new display with image URL
     const updatedDisplays = {
       ...existingDisplays,
       [cardType]: {
         displayId,
         cardType,
         timestamp: new Date().toISOString(),
-        digest: result.digest
+        digest: result.digest,
+        imageUrl: imageUrl || existingDisplays[cardType]?.imageUrl || ''
       }
     };
     

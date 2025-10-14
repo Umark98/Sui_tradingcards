@@ -46,7 +46,7 @@ export async function POST(request: NextRequest) {
       
       // Execute the signed transaction
       const result = await client.executeTransactionBlock({
-        transactionBlock: signedTransaction.bytes,
+        transactionBlock: signedTransaction.transactionBlockBytes,
         signature: signedTransaction.signature,
         options: {
           showEffects: true,
@@ -60,11 +60,94 @@ export async function POST(request: NextRequest) {
         throw new Error('Display object ID not found in transaction results');
       }
 
+      console.log('Display ID extracted:', displayId);
+
+      // Fetch the display object to get the image URL
+      let imageUrl = '';
+      try {
+        console.log('Fetching display object data for image URL...');
+        const displayObjectData = await client.getObject({
+          id: displayId,
+          options: {
+            showContent: true,
+            showDisplay: true,
+          },
+        });
+
+      console.log('Display object data:', JSON.stringify(displayObjectData, null, 2));
+
+      // Recursive function to find image URL anywhere in the object
+      const findImageUrl = (obj: any, depth = 0): string => {
+        if (depth > 10) return ''; // Prevent infinite recursion
+        if (!obj || typeof obj !== 'object') return '';
+
+        // Direct checks for image URL
+        if (typeof obj.image_url === 'string' && obj.image_url.startsWith('http')) {
+          console.log('Found image_url at depth', depth, ':', obj.image_url);
+          return obj.image_url;
+        }
+        if (typeof obj.imageUrl === 'string' && obj.imageUrl.startsWith('http')) {
+          console.log('Found imageUrl at depth', depth, ':', obj.imageUrl);
+          return obj.imageUrl;
+        }
+        if (typeof obj.image === 'string' && obj.image.startsWith('http')) {
+          console.log('Found image at depth', depth, ':', obj.image);
+          return obj.image;
+        }
+        if (typeof obj.value === 'string' && obj.value.startsWith('http')) {
+          console.log('Found value at depth', depth, ':', obj.value);
+          return obj.value;
+        }
+
+        // Check if it's a key-value pair object
+        if (obj.key === 'image_url' && typeof obj.value === 'string') {
+          console.log('Found key-value pair at depth', depth, ':', obj.value);
+          return obj.value;
+        }
+
+        // Check nested fields object
+        if (obj.fields) {
+          if (obj.fields.key === 'image_url' && typeof obj.fields.value === 'string') {
+            console.log('Found in fields.key-value at depth', depth, ':', obj.fields.value);
+            return obj.fields.value;
+          }
+          const result = findImageUrl(obj.fields, depth + 1);
+          if (result) return result;
+        }
+
+        // Recursively search arrays
+        if (Array.isArray(obj)) {
+          for (const item of obj) {
+            const result = findImageUrl(item, depth + 1);
+            if (result) return result;
+          }
+        }
+
+        // Recursively search object properties
+        for (const key in obj) {
+          if (obj.hasOwnProperty(key)) {
+            const result = findImageUrl(obj[key], depth + 1);
+            if (result) return result;
+          }
+        }
+
+        return '';
+      };
+
+      // Try to find image URL anywhere in the display object
+      imageUrl = findImageUrl(displayObjectData);
+
+      console.log('Extracted image URL:', imageUrl);
+      } catch (error) {
+        console.error('Error fetching display object data:', error);
+        // Continue without image URL if fetch fails
+      }
+
       // Save display ID to file
       const displayFilePath = path.join(process.cwd(), 'public', 'genesis-displays.json');
       
       // Read existing displays
-      let existingDisplays = {};
+      let existingDisplays: any = {};
       try {
         if (fs.existsSync(displayFilePath)) {
           const existingData = fs.readFileSync(displayFilePath, 'utf-8');
@@ -74,13 +157,14 @@ export async function POST(request: NextRequest) {
         console.log('No existing display file found, creating new one');
       }
       
-      // Add new display
+      // Add new display with image URL
       const updatedDisplays = {
         ...existingDisplays,
         [cardType]: {
           displayId,
           cardType,
           timestamp: new Date().toISOString(),
+          imageUrl: imageUrl || existingDisplays[cardType]?.imageUrl || '',
           packageId: null, // Will be filled by frontend
           publisherId: null // Will be filled by frontend
         }

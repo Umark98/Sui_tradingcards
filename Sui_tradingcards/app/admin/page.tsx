@@ -89,7 +89,7 @@ export default function AdminPanel() {
                 className={`py-2 px-3 border-b-2 font-medium text-xs whitespace-nowrap transition-all rounded-t-lg ${
                   activeTab === tab.id
                     ? 'border-purple-400 text-white bg-white/10'
-                    : 'border-transparent text-gray-300 hover:text-white hover:border-white/30 hover:bg-white/20/5'
+                    : 'border-transparent text-gray-300 hover:text-blue-200 hover:border-blue-400/30 hover:bg-blue-500/10'
                 }`}
               >
                   <span className="mr-1">{tab.icon}</span>

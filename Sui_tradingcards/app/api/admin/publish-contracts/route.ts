@@ -213,13 +213,14 @@ export async function POST(request: NextRequest) {
         version: '1.0'
       };
       
-      // Clear metadata JSON files when new contracts are published
-      // These should start empty and only populate when mint-metadata is called
+      // Clear metadata and display JSON files when new contracts are published
+      // These should start empty and only populate when mint-metadata or create-display is called
       const metadataIdsPath = path.join(config.publicDir, 'metadata-ids.json');
       const frontendMetadataIdsPath = path.join(config.publicDir, 'frontend-metadata-ids.json');
       const genesisDisplaysPath = path.join(config.publicDir, 'genesis-displays.json');
+      const missionDisplaysPath = path.join(config.publicDir, 'mission-displays.json');
       
-      console.log('Clearing metadata and genesis JSON files for fresh deployment...');
+      console.log('Clearing metadata and display JSON files for fresh deployment...');
       
       // Write empty objects to metadata files
       fs.writeFileSync(metadataIdsPath, JSON.stringify({}, null, 2), 'utf-8');
@@ -231,6 +232,10 @@ export async function POST(request: NextRequest) {
       // Clear genesis displays
       fs.writeFileSync(genesisDisplaysPath, JSON.stringify({}, null, 2), 'utf-8');
       console.log('✅ Cleared genesis-displays.json');
+      
+      // Clear mission displays
+      fs.writeFileSync(missionDisplaysPath, JSON.stringify({}, null, 2), 'utf-8');
+      console.log('✅ Cleared mission-displays.json');
       fs.writeFileSync(objectTypesPath, JSON.stringify(freshObjectTypesData, null, 2), 'utf-8');
 
       // Also update the .env.local file for the Next.js app with the new package ID and admin cap

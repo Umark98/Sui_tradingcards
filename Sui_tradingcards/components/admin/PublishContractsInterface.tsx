@@ -377,8 +377,8 @@ export default function PublishContractsInterface() {
 
       {/* Confirmation Popup with Glass Effect */}
       {showConfirmation && existingData && (
-        <div className="fixed inset-0 backdrop-blur-md bg-white/20 flex items-center justify-center z-50">
-          <div className="bg-white/90 backdrop-blur-lg rounded-xl p-6 max-w-md w-full mx-4 shadow-2xl border border-white/20">
+        <div className="fixed inset-0 backdrop-blur-md bg-black/50 flex items-center justify-center z-50 p-4">
+          <div className="bg-gray-900/95 backdrop-blur-lg rounded-xl p-6 max-w-md w-full shadow-2xl border border-purple-500/30 overflow-hidden">
             <h3 className="text-lg font-semibold text-white mb-4">
               Existing Contract Data Found
             </h3>
@@ -386,10 +386,10 @@ export default function PublishContractsInterface() {
               <p className="text-gray-300 mb-2">
                 There is already published contract data:
               </p>
-              <div className="bg-white/60 backdrop-blur-sm p-3 rounded-lg text-sm border border-white/30">
-                <p><strong>Package ID:</strong> {existingData.packageId}</p>
-                <p><strong>Admin Cap ID:</strong> {existingData.adminCapId}</p>
-                <p><strong>Timestamp:</strong> {existingData.timestamp}</p>
+              <div className="bg-white/10 backdrop-blur-sm p-3 rounded-lg text-sm border border-white/20 overflow-hidden">
+                <p className="text-gray-200 break-all"><strong className="text-white">Package ID:</strong> {existingData.packageId}</p>
+                <p className="text-gray-200 break-all mt-1"><strong className="text-white">Admin Cap ID:</strong> {existingData.adminCapId}</p>
+                <p className="text-gray-200 break-words mt-1"><strong className="text-white">Timestamp:</strong> {existingData.timestamp}</p>
               </div>
             </div>
             <p className="text-gray-300 mb-4">
@@ -401,7 +401,7 @@ export default function PublishContractsInterface() {
                   setShowConfirmation(false);
                   setExistingData(null);
                 }}
-                className="flex-1 px-4 py-2 bg-white/60 backdrop-blur-sm text-gray-200 rounded-lg hover:bg-white/20/80 border border-white/30 transition-all duration-200"
+                className="flex-1 px-4 py-2 bg-white/10 backdrop-blur-sm text-white rounded-lg hover:bg-white/20 border border-white/30 transition-all duration-200"
               >
                 Cancel
               </button>

@@ -203,8 +203,8 @@ export default function MintMetadataInterface() {
         ]
       });
 
-      // Set gas budget
-      tx.setGasBudget(10000000);
+      // Set gas budget (increased for metadata minting which can be gas-intensive)
+      tx.setGasBudget(100000000); // 0.1 SUI
 
       // Sign the transaction using the connected wallet
       // Check if the wallet supports signTransactionBlock feature

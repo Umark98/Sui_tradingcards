@@ -1,8 +1,35 @@
 {
+  "MissionParisRare": {
+    "displayId": "0x1e26fdab5b389b472a88e25698008b59e6382b5ba8d08d3e0cea9d0e2a69b8ea",
+    "cardType": "MissionParisRare",
+    "timestamp": "2025-10-13T10:15:52.500Z",
+    "imageUrl": "https://t4.ftcdn.net/jpg/02/96/15/35/360_F_296153501_B34baBHDkFXbl5RmzxpiOumF4LHGCvAE.jpg"
+  },
   "MissionTransylvaniaUltraCommonSigned": {
-    "displayId": "0x30c3587ae392b3f13d44a0a81af6ccfffbf2038d58031d939a9fe6c13521c367",
+    "displayId": "0x2ff85cd48cc6cee3840c0e3d2378c59f89e08612dceb532bd7b67cf592d48bff",
     "cardType": "MissionTransylvaniaUltraCommonSigned",
-    "timestamp": "2025-10-09T14:41:12.207Z",
-    "digest": "8SHsCMDnxThLCivR38jRSAeA7hRAZNPXQVXGthQYtTeH"
+    "timestamp": "2025-10-13T12:00:00.000Z",
+    "imageUrl": "https://thumbs.dreamstime.com/b/corvin-castle-hunedoara-transylvania-romania-hunyad-beautiful-panorama-wooden-bridge-europe-87893425.jpg"
+  },
+  "MissionParisEpic": {
+    "displayId": "0x1d215dbb11c9b0f79566ed338e541cec010d74480ce9cf4d59039a74885bc0c1",
+    "cardType": "MissionParisEpic",
+    "timestamp": "2025-10-13T10:57:48.290Z",
+    "digest": "37Ys44ZCQr6eAUDRU4LqP8rR1fm7nS4oPKrUJqP4WDFF",
+    "imageUrl": "https://media.istockphoto.com/id/639337086/photo/eiffel-tower-in-paris-france.jpg?s=612x612&w=0&k=20&c=OnRS_Z5f8bHEmFb1afXHvoIrRvdcrl2N8rAEvoCWxzM="
+  },
+  "MissionSingaporeUltraCommon": {
+    "displayId": "0x30c3587ae392b3f13d44a0a81af6ccfffbf2038d58031d939a9fe6c13521c367",
+    "cardType": "MissionSingaporeUltraCommon",
+    "timestamp": "2025-10-13T11:19:10.291Z",
+    "digest": "2jrNPBJXZMxTkYjwtph7EmQkvFMeTE1QeBuFoGLjZkUC",
+    "imageUrl": "https://media.istockphoto.com/id/590050726/photo/singapore-glowing-at-night.jpg?s=612x612&w=0&k=20&c=43tSsy1yC0iOAGL3ZVq3-nl84KnmWTnHGI5mwQtp8zo="
+  },
+  "MissionNewYorkCityUltraCommon": {
+    "displayId": "0x1415e6781a59a216da5355db7a2006e508b6476bd57cefec309e30c289e97c21",
+    "cardType": "MissionNewYorkCityUltraCommon",
+    "timestamp": "2025-10-13T11:27:19.855Z",
+    "digest": "DavarBo4DJNRCNYz19QcaSqdYx4gTZLDKdoWnVLj6TdL",
+    "imageUrl": "https://t3.ftcdn.net/jpg/02/09/70/56/360_F_209705645_b78HGJI1i1mxqLwMYA7z1m3VvCxgxJFO.jpg"
   }
 }

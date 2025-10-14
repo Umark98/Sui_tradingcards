@@ -142,7 +142,7 @@ export default function AdminStats() {
           {stats.recentMints.length > 0 ? (
             <div className="space-y-3 max-h-96 overflow-y-auto">
               {stats.recentMints.slice(0, 10).map((mint) => (
-                <div key={mint.id} className="border border-white/10 rounded-lg p-3 hover:bg-white/5 transition">
+                <div key={mint.id} className="border border-white/10 rounded-lg p-3 hover:bg-blue-500/10 transition">
                   <div className="flex items-start justify-between mb-2">
                     <div className="flex-1">
                       <div className="flex items-center gap-2 mb-1">
