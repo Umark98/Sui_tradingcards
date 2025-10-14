@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import NFTReservationCard from './NFTReservationCard';
+import NFTDetailModal from './NFTDetailModal';
 
 interface UserPortalProps {
   user: any;
@@ -37,6 +38,7 @@ export default function UserPortal({ user, onLogout }: UserPortalProps) {
   const [itemsPerPage] = useState(12);
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
   const [searchTerm, setSearchTerm] = useState<string>('');
+  const [selectedReservation, setSelectedReservation] = useState<Reservation | null>(null);
 
   useEffect(() => {
     loadReservations();
@@ -102,28 +104,6 @@ export default function UserPortal({ user, onLogout }: UserPortalProps) {
     }
   };
 
-  const handleCollectAll = () => {
-    // Recalculate filtered reservations to ensure we have the current filter state
-    const currentFiltered = reservations.filter((r) => {
-      let statusMatch = false;
-      if (filter === 'all') {
-        statusMatch = true;
-      } else if (filter === 'reserved') {
-        statusMatch = r.status === 'reserved';
-      } else if (filter === 'claimed') {
-        statusMatch = r.status === 'claimed' || r.status === 'minted';
-      }
-      
-      const categoryMatch = selectedCategory === 'all' || r.collectionName === selectedCategory;
-      return statusMatch && categoryMatch;
-    });
-    
-    const availableIds = currentFiltered
-      .filter((r) => r.status === 'reserved')
-      .map((r) => r.id);
-    handleCollect(availableIds);
-  };
-
   const handleCollectSelected = () => {
     if (selectedIds.length > 0) {
       handleCollect(selectedIds);
@@ -136,8 +116,8 @@ export default function UserPortal({ user, onLogout }: UserPortalProps) {
     );
   };
 
-  // Get unique categories (Genesis, Missions, etc.)
-  const categories = Array.from(new Set(reservations.map(r => r.collectionName))).sort();
+  // Get unique categories from stats (all categories, not just loaded ones)
+  const categories = stats?.byCategory ? Object.keys(stats.byCategory).sort() : [];
 
   // Filter reservations by status, category, and search term
   const filteredReservations = reservations.filter((r) => {
@@ -267,7 +247,7 @@ export default function UserPortal({ user, onLogout }: UserPortalProps) {
                   : 'bg-white/10 text-white hover:bg-blue-500/20 hover:border-blue-400/30'
               }`}
             >
-              All ({reservations.length})
+              All ({stats?.total || 0})
             </button>
             <button
               onClick={() => setFilter('reserved')}
@@ -316,7 +296,9 @@ export default function UserPortal({ user, onLogout }: UserPortalProps) {
               >
                 {category === 'Genesis' ? '🎴 Genesis' : 
                  category === 'Missions' ? '🎯 Missions' : 
-                 category} ({reservations.filter(r => r.collectionName === category).length})
+                 category === 'Gadgets' ? '🔧 Gadgets' :
+                 category === 'Moments' ? '⚡ Moments' :
+                 category} ({stats?.byCategory?.[category]?.total || 0})
               </button>
             ))}
           </div>
@@ -340,15 +322,6 @@ export default function UserPortal({ user, onLogout }: UserPortalProps) {
                   className="bg-purple-600 hover:bg-purple-700 text-white px-6 py-2 rounded-lg font-semibold transition disabled:opacity-50"
                 >
                   Collect Selected ({selectedIds.length})
-                </button>
-              )}
-              {filteredReservations.filter(r => r.status === 'reserved').length > 0 && (
-                <button
-                  onClick={handleCollectAll}
-                  disabled={collecting}
-                  className="bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white px-6 py-2 rounded-lg font-semibold transition-all shadow-lg hover:shadow-xl transform hover:scale-105 active:scale-95 disabled:opacity-50 disabled:hover:scale-100"
-                >
-                  {collecting ? 'Collecting...' : `Collect All (${filteredReservations.filter(r => r.status === 'reserved').length})`}
                 </button>
               )}
             </div>
@@ -395,10 +368,20 @@ export default function UserPortal({ user, onLogout }: UserPortalProps) {
                   reservation={reservation}
                   selected={selectedIds.includes(reservation.id)}
                   onSelect={toggleSelection}
+                  onViewDetails={setSelectedReservation}
                   getRarityColor={getRarityColor}
                 />
               ))}
             </div>
+
+            {/* Detail Modal */}
+            {selectedReservation && (
+              <NFTDetailModal
+                reservation={selectedReservation}
+                onClose={() => setSelectedReservation(null)}
+                getRarityColor={getRarityColor}
+              />
+            )}
 
             {/* Pagination */}
             {totalPages > 1 && (

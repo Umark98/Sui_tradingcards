@@ -6,6 +6,7 @@ interface NFTReservationCardProps {
   reservation: any;
   selected: boolean;
   onSelect: (id: string | number) => void;
+  onViewDetails?: (reservation: any) => void;
   getRarityColor: (rarity: string) => string;
 }
 
@@ -13,21 +14,37 @@ export default function NFTReservationCard({
   reservation,
   selected,
   onSelect,
+  onViewDetails,
   getRarityColor,
 }: NFTReservationCardProps) {
   const isReserved = reservation.status === 'reserved';
 
+  const handleCardClick = (e: React.MouseEvent) => {
+    // If clicking on checkbox area, handle selection
+    if (isReserved && !e.defaultPrevented) {
+      onSelect(reservation.id);
+    }
+  };
+
+  const handleViewDetails = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    if (onViewDetails) {
+      onViewDetails(reservation);
+    }
+  };
+
   return (
     <div
-      className={`bg-white/10 backdrop-blur-lg rounded-xl overflow-hidden border-2 transition-all transform hover:scale-105 ${
+      className={`bg-white/10 backdrop-blur-lg rounded-xl overflow-hidden border-2 transition-all transform hover:scale-105 flex flex-col ${
         selected
           ? 'border-purple-500 shadow-lg shadow-purple-500/50'
           : 'border-white/20 hover:border-white/40'
       } ${isReserved ? 'cursor-pointer' : 'opacity-75'}`}
-      onClick={() => isReserved && onSelect(reservation.id)}
+      onClick={handleCardClick}
     >
       {/* Image */}
-      <div className="relative h-48 bg-gradient-to-br from-purple-900 to-blue-900 flex items-center justify-center">
+      <div className="relative h-48 bg-gradient-to-br from-purple-900 to-blue-900 flex items-center justify-center flex-shrink-0">
         {reservation.imageUrl ? (
           <img
             src={reservation.imageUrl}
@@ -79,7 +96,7 @@ export default function NFTReservationCard({
       </div>
 
       {/* Content */}
-      <div className="p-4">
+      <div className="p-4 flex flex-col flex-grow">
         <h3 className="text-white font-bold text-lg mb-1 break-words">
           {reservation.nftTitle}
         </h3>
@@ -88,14 +105,14 @@ export default function NFTReservationCard({
           {reservation.collectionName || 'Unknown Collection'}
         </p>
 
-        <div className="flex items-center justify-between text-sm mb-2">
-          <span className="text-gray-400">Type:</span>
-          <span className="text-white font-semibold">{reservation.nftType}</span>
+        <div className="flex items-center justify-between text-sm mb-2 gap-2">
+          <span className="text-gray-400 flex-shrink-0">Type:</span>
+          <span className="text-white font-semibold truncate text-right">{reservation.nftType}</span>
         </div>
 
-        <div className="flex items-center justify-between text-sm mb-2">
-          <span className="text-gray-400">Mint Number:</span>
-          <span className="text-white font-semibold">#{reservation.level}</span>
+        <div className="flex items-center justify-between text-sm mb-2 gap-2">
+          <span className="text-gray-400 flex-shrink-0">Mint Number:</span>
+          <span className="text-white font-semibold flex-shrink-0">#{reservation.level}</span>
         </div>
 
         {/* Card Level - Only show for collections that have levels (Gadgets) */}
@@ -124,11 +141,17 @@ export default function NFTReservationCard({
             {reservation.description}
           </p>
         )}
-      </div>
 
-      {/* Footer */}
-      <div className="bg-white/5 px-4 py-2 text-xs text-gray-400">
-        ID: {reservation.id}
+        {/* Spacer to push button to bottom */}
+        <div className="flex-grow"></div>
+
+        {/* View Details Button */}
+        <button
+          onClick={handleViewDetails}
+          className="mt-3 w-full bg-white/10 hover:bg-white/20 text-white text-sm py-2 rounded-lg transition-all border border-white/20 hover:border-white/40"
+        >
+          👁️ View Details
+        </button>
       </div>
     </div>
   );

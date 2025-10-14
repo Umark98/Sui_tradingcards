@@ -1,13 +1,17 @@
 // Get user's NFT reservations
 import { NextRequest, NextResponse } from 'next/server';
 import pool from '@/service/pool';
-import * as fs from 'fs';
-import * as path from 'path';
+import { metadataCache } from '@/utils/metadataCache';
+
+const IS_PRODUCTION = process.env.NODE_ENV === 'production';
 
 export async function GET(request: NextRequest) {
   try {
     const { searchParams } = new URL(request.url);
     const email = searchParams.get('email');
+    const page = parseInt(searchParams.get('page') || '1');
+    const limit = Math.min(parseInt(searchParams.get('limit') || '100'), 1000); // Max 1000 per request
+    const offset = (page - 1) * limit;
 
     if (!email) {
       return NextResponse.json(
@@ -35,7 +39,16 @@ export async function GET(request: NextRequest) {
 
       const user = userResult.rows[0];
 
-      // Get user's NFT reservations from nft_reservations table
+      // Get total count for pagination
+      const countResult = await client.query(
+        `SELECT 
+          (SELECT COUNT(*) FROM nft_reservations WHERE email = $1) +
+          (SELECT COUNT(*) FROM nfts WHERE user_id = $2) as total_count`,
+        [normalizedEmail, user.user_id]
+      );
+      const totalCount = parseInt(countResult.rows[0]?.total_count || '0');
+
+      // Get user's NFT reservations from nft_reservations table (paginated)
       const reservationsResult = await client.query(
         `SELECT 
           id,
@@ -56,79 +69,51 @@ export async function GET(request: NextRequest) {
           minted_at
          FROM nft_reservations
          WHERE email = $1
-         ORDER BY created_at DESC`,
-        [normalizedEmail]
+         ORDER BY created_at DESC
+         LIMIT $2 OFFSET $3`,
+        [normalizedEmail, limit, offset]
       );
 
-      // Get user's NFTs from the nfts table
-      const nftsResult = await client.query(
-        `SELECT 
-          n.nft_id,
-          n.nft_title,
-          n.nft_description,
-          n.nft_serial_number,
-          n.rarity,
-          n.m_level,
-          n.status,
-          n.transaction_digest,
-          n.minted_at,
-          nt.type_name as nft_type,
-          c.name as collection_name
-         FROM nfts n
-         LEFT JOIN nft_types nt ON n.type_id = nt.type_id
-         LEFT JOIN collections c ON n.collection_id = c.collection_id
-         WHERE n.user_id = $1
-         ORDER BY n.nft_id DESC`,
-        [user.user_id]
-      );
+      // Calculate remaining limit for NFTs query
+      const reservationsCount = reservationsResult.rows.length;
+      const nftsLimit = Math.max(0, limit - reservationsCount);
+      const nftsOffset = Math.max(0, offset - reservationsCount);
 
-      // Load display images from JSON files
-      const missionDisplaysPath = path.join(process.cwd(), 'public', 'mission-displays.json');
-      const genesisDisplaysPath = path.join(process.cwd(), 'public', 'genesis-displays.json');
-      const metadataIdsPath = path.join(process.cwd(), 'public', 'frontend-metadata-ids.json');
-      
-      let displayImages: Record<string, string> = {};
-      let gadgetMetadata: Record<string, any> = {};
-      
-      // Load mission displays
-      try {
-        if (fs.existsSync(missionDisplaysPath)) {
-          const missionDisplays = JSON.parse(fs.readFileSync(missionDisplaysPath, 'utf-8'));
-          Object.entries(missionDisplays).forEach(([cardType, data]: [string, any]) => {
-            if (data.imageUrl) {
-              displayImages[cardType] = data.imageUrl;
-            }
-          });
-        }
-      } catch (error) {
-        console.error('Error loading mission displays:', error);
+      // Get user's NFTs from the nfts table (paginated)
+      let nftsResult = { rows: [] };
+      if (nftsLimit > 0) {
+        nftsResult = await client.query(
+          `SELECT 
+            n.nft_id,
+            n.nft_title,
+            n.nft_description,
+            n.nft_serial_number,
+            n.rarity,
+            n.m_level,
+            n.status,
+            n.transaction_digest,
+            n.minted_at,
+            nt.type_name as nft_type,
+            c.name as collection_name
+           FROM nfts n
+           LEFT JOIN nft_types nt ON n.type_id = nt.type_id
+           LEFT JOIN collections c ON n.collection_id = c.collection_id
+           WHERE n.user_id = $1
+           ORDER BY n.nft_id DESC
+           LIMIT $2 OFFSET $3`,
+          [user.user_id, nftsLimit, nftsOffset]
+        );
       }
+
+      // Load metadata from cache (fast, production-ready)
+      const displayImages = metadataCache.loadDisplayImages();
+      const gadgetMetadata = metadataCache.loadGadgetMetadata();
       
-      // Load genesis displays
-      try {
-        if (fs.existsSync(genesisDisplaysPath)) {
-          const genesisDisplays = JSON.parse(fs.readFileSync(genesisDisplaysPath, 'utf-8'));
-          Object.entries(genesisDisplays).forEach(([cardType, data]: [string, any]) => {
-            if (data.imageUrl) {
-              displayImages[cardType] = data.imageUrl;
-            }
-          });
-        }
-      } catch (error) {
-        console.error('Error loading genesis displays:', error);
+      // Only log in development
+      if (!IS_PRODUCTION) {
+        console.log('📦 Cached display images:', Object.keys(displayImages).length, 'types');
+        console.log('📦 Cached gadget metadata:', Object.keys(gadgetMetadata).length, 'types');
       }
-      
-      // Load gadget metadata (for level-specific images)
-      try {
-        if (fs.existsSync(metadataIdsPath)) {
-          gadgetMetadata = JSON.parse(fs.readFileSync(metadataIdsPath, 'utf-8'));
-        }
-      } catch (error) {
-        console.error('Error loading gadget metadata:', error);
-      }
-      
-      console.log('Loaded display images for card types:', Object.keys(displayImages));
-      console.log('Loaded gadget metadata for card types:', Object.keys(gadgetMetadata));
       
       // Helper function to get image URL for a card type and level
       const getImageUrl = (cardType: string, collectionName: string, level?: number): string | null => {
@@ -138,12 +123,10 @@ export async function GET(request: NextRequest) {
           
           // ONLY return image if level-specific image exists
           if (level && metadata.levelImages && metadata.levelImages[level]) {
-            console.log(`Using level-specific image for ${cardType} Level ${level}`);
             return metadata.levelImages[level];
           }
           
           // If level doesn't have an image, return null (no image)
-          console.log(`No image defined for ${cardType} Level ${level}`);
           return null;
         }
         
@@ -277,18 +260,72 @@ export async function GET(request: NextRequest) {
       // Combine both sources
       const reservations = [...reservationsFromReservations, ...reservationsFromNfts];
 
-      // Get summary stats
+      // Get summary stats from database (not from paginated results)
+      const statsResult = await client.query(
+        `SELECT 
+          (SELECT COUNT(*) FROM nft_reservations WHERE email = $1) +
+          (SELECT COUNT(*) FROM nfts WHERE user_id = $2) as total,
+          (SELECT COUNT(*) FROM nft_reservations WHERE email = $1 AND status = 'reserved') +
+          (SELECT COUNT(*) FROM nfts WHERE user_id = $2 AND status IN ('reserved', 'available')) as reserved,
+          (SELECT COUNT(*) FROM nft_reservations WHERE email = $1 AND status IN ('claimed', 'minted')) +
+          (SELECT COUNT(*) FROM nfts WHERE user_id = $2 AND status = 'minted') as claimed`,
+        [normalizedEmail, user.user_id]
+      );
+
+      // Get category breakdown stats
+      const categoryStatsResult = await client.query(
+        `SELECT 
+          collection_name,
+          COUNT(*) as total,
+          COUNT(*) FILTER (WHERE status IN ('reserved', 'available')) as available,
+          COUNT(*) FILTER (WHERE status = 'minted') as collected
+        FROM (
+          SELECT collection_name, status FROM nft_reservations WHERE email = $1
+          UNION ALL
+          SELECT c.name as collection_name, n.status 
+          FROM nfts n
+          LEFT JOIN collections c ON n.collection_id = c.collection_id
+          WHERE n.user_id = $2
+        ) combined
+        GROUP BY collection_name
+        ORDER BY collection_name`,
+        [normalizedEmail, user.user_id]
+      );
+
+      const categoryStats: Record<string, { total: number; available: number; collected: number }> = {};
+      categoryStatsResult.rows.forEach((row: any) => {
+        categoryStats[row.collection_name] = {
+          total: parseInt(row.total || '0'),
+          available: parseInt(row.available || '0'),
+          collected: parseInt(row.collected || '0'),
+        };
+      });
+
       const stats = {
-        total: reservations.length,
-        reserved: reservations.filter(r => r.status === 'reserved').length,
-        claimed: reservations.filter(r => r.status === 'claimed' || r.status === 'minted').length,
-        minted: reservations.filter(r => r.status === 'minted').length,
+        total: parseInt(statsResult.rows[0]?.total || '0'),
+        reserved: parseInt(statsResult.rows[0]?.reserved || '0'),
+        claimed: parseInt(statsResult.rows[0]?.claimed || '0'),
+        minted: parseInt(statsResult.rows[0]?.claimed || '0'),
+        byCategory: categoryStats,
       };
+
+      // Pagination metadata
+      const totalPages = Math.ceil(totalCount / limit);
+      const hasNextPage = page < totalPages;
+      const hasPrevPage = page > 1;
 
       return NextResponse.json({
         success: true,
         reservations,
         stats,
+        pagination: {
+          page,
+          limit,
+          totalCount,
+          totalPages,
+          hasNextPage,
+          hasPrevPage,
+        },
       });
 
     } finally {
@@ -296,9 +333,18 @@ export async function GET(request: NextRequest) {
     }
 
   } catch (error: any) {
-    console.error('Get reservations error:', error);
+    // Always log errors, but with different detail levels
+    if (IS_PRODUCTION) {
+      console.error('❌ Reservations API error:', error.message);
+    } else {
+      console.error('❌ Get reservations error:', error);
+    }
+    
     return NextResponse.json(
-      { error: 'Failed to get reservations', details: error.message },
+      { 
+        error: 'Failed to get reservations', 
+        details: IS_PRODUCTION ? 'Internal server error' : error.message 
+      },
       { status: 500 }
     );
   }

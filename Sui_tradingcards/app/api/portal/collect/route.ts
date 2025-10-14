@@ -131,7 +131,7 @@ export async function POST(request: NextRequest) {
       const errors = [];
 
       // Get admin wallet for signing
-      const adminPrivateKey = process.env.ADMIN_PRIVATE_KEY;
+      const adminPrivateKey = process.env.ADMIN_SIGNER_PRIVATE_KEY;
       if (!adminPrivateKey) {
         return NextResponse.json(
           { error: 'Admin wallet not configured' },
