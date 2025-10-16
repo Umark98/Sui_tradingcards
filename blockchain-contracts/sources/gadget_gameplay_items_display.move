@@ -6,6 +6,61 @@ module tradingcard::gadget_gameplay_items_display {
 
     use tradingcard::gadget_gameplay_items::{ GadgetGameplayItem, TradingCard };
    use tradingcard::gadget_gameplay_items_titles::{
+     Wrench, YellowHandkerchief, Yoyo,
+    Brella, TopSecretGadgetPhone,Mallet,Legs
+}; 
+
+    #[allow(lint(self_transfer))]
+    public(package) fun setup_inspector_gadget_display(publisher: &Publisher, ctx: &mut TxContext) {
+    let legs_display = gadget_gameplay_items_display<TradingCard<Legs>>(publisher, ctx);
+    let brella_display = gadget_gameplay_items_display<TradingCard<Brella>>(publisher, ctx);
+    let mallet_display = gadget_gameplay_items_display<TradingCard<Mallet>>(publisher, ctx);
+    let top_secret_gadget_phone_display = gadget_gameplay_items_display<TradingCard<TopSecretGadgetPhone>>(publisher, ctx);
+     let wrench_display = gadget_gameplay_items_display<TradingCard<Wrench>>(publisher, ctx);
+    let yellow_handkerchief_display = gadget_gameplay_items_display<TradingCard<YellowHandkerchief>>(publisher, ctx);
+     let yoyo_display = gadget_gameplay_items_display<TradingCard<Yoyo>>(publisher, ctx);
+
+     transfer::public_transfer(legs_display,ctx.sender());
+     transfer::public_transfer(brella_display, ctx.sender());
+     transfer::public_transfer(wrench_display, ctx.sender());
+     transfer::public_transfer(yellow_handkerchief_display, ctx.sender());
+     transfer::public_transfer(yoyo_display, ctx.sender());
+    transfer::public_transfer(mallet_display, ctx.sender());
+     transfer::public_transfer(top_secret_gadget_phone_display, ctx.sender());
+       
+    }
+
+    fun gadget_gameplay_items_display<T>(publisher: &Publisher, ctx: &mut TxContext): Display<GadgetGameplayItem<T>> {
+        let keys = vector[
+            utf8(b"creator"),
+            utf8(b"project_url"),
+            utf8(b"intellectual_property"),
+            utf8(b"category"),
+            utf8(b"age_rating"),
+            utf8(b"image_url"),
+            utf8(b"name"),
+            utf8(b"copyright"),
+        ];
+
+        let values = vector[
+            utf8(b"Gamisodes"),
+            utf8(b"https://www.gamisodes.com"),
+            utf8(b"Inspector Gadget"),
+            utf8(b"Collectable"),
+            utf8(b"TV-Y7"),
+            utf8(b"{media_url_primary}"),
+            utf8(b"{title}"),
+            utf8(b"© 2024 Gamisodes & WildBrain. “Inspector Gadget (Classic)” courtesy of DHX Media (Toronto) Ltd. -FR3- Field Communication. All rights reserved."),
+        ];
+
+        let mut display = display::new_with_fields<GadgetGameplayItem<T>>(
+            publisher, keys, values, ctx
+        );
+
+        display.update_version();
+        display
+    }
+}
     // AlarmClock, AmazonFan, Arms, Badge, BallpointPen, BeachShovel, Binoculars, BlackDuster,
     // BlackMagnifyingGlass, BlueBlowDryer, BlueStripedHandkerchief, BoatPropellerFan, BolloBalls,
     // Bone,  BucketOfWater, CanOpener, Candy, Card, CarMechanicFan, ChopSticks, Clippers,
@@ -28,15 +83,6 @@ module tradingcard::gadget_gameplay_items_display {
     // TelescopingLegs, Teeth, Tie, Toothbrush, Toothpaste, TrickFlower,
     // TwoHands, TwoLeftCuffs, WaterCannon, WaterGun, WaterSkiPropeller, WeldingMask,
     // WhiteHandkerchief, WinnerFlag, WorkLight,
-     Wrench, YellowHandkerchief, Yoyo,
-    Brella, TopSecretGadgetPhone,Mallet,Legs
-}; 
-
-    #[allow(lint(self_transfer))]
-    public(package) fun setup_inspector_gadget_display(publisher: &Publisher, ctx: &mut TxContext) {
-    let legs_display = gadget_gameplay_items_display<TradingCard<Legs>>(publisher, ctx);
-    let brella_display = gadget_gameplay_items_display<TradingCard<Brella>>(publisher, ctx);
-    let mallet_display = gadget_gameplay_items_display<TradingCard<Mallet>>(publisher, ctx);
     // let alarm_clock_display = gadget_gameplay_items_display<TradingCard<AlarmClock>>(publisher, ctx);
     // let amazon_fan_display = gadget_gameplay_items_display<TradingCard<AmazonFan>>(publisher, ctx);
     // let arms_display = gadget_gameplay_items_display<TradingCard<Arms>>(publisher, ctx);
@@ -180,7 +226,6 @@ module tradingcard::gadget_gameplay_items_display {
     // let tie_display = gadget_gameplay_items_display<TradingCard<Tie>>(publisher, ctx);
     // let toothbrush_display = gadget_gameplay_items_display<TradingCard<Toothbrush>>(publisher, ctx);
     // let toothpaste_display = gadget_gameplay_items_display<TradingCard<Toothpaste>>(publisher, ctx);
-    let top_secret_gadget_phone_display = gadget_gameplay_items_display<TradingCard<TopSecretGadgetPhone>>(publisher, ctx);
     // let trick_flower_display = gadget_gameplay_items_display<TradingCard<TrickFlower>>(publisher, ctx);
     // let two_hands_display = gadget_gameplay_items_display<TradingCard<TwoHands>>(publisher, ctx);
     // let two_left_cuffs_display = gadget_gameplay_items_display<TradingCard<TwoLeftCuffs>>(publisher, ctx);
@@ -191,11 +236,6 @@ module tradingcard::gadget_gameplay_items_display {
     // let white_handkerchief_display = gadget_gameplay_items_display<TradingCard<WhiteHandkerchief>>(publisher, ctx);
     // let winner_flag_display = gadget_gameplay_items_display<TradingCard<WinnerFlag>>(publisher, ctx);
     // let work_light_display = gadget_gameplay_items_display<TradingCard<WorkLight>>(publisher, ctx);
-     let wrench_display = gadget_gameplay_items_display<TradingCard<Wrench>>(publisher, ctx);
-    let yellow_handkerchief_display = gadget_gameplay_items_display<TradingCard<YellowHandkerchief>>(publisher, ctx);
-     let yoyo_display = gadget_gameplay_items_display<TradingCard<Yoyo>>(publisher, ctx);
-
-     transfer::public_transfer(legs_display,ctx.sender());
     // transfer::public_transfer(alarm_clock_display, ctx.sender());
     // transfer::public_transfer(amazon_fan_display, ctx.sender());
     // transfer::public_transfer(arms_display, ctx.sender());
@@ -210,7 +250,6 @@ module tradingcard::gadget_gameplay_items_display {
     // transfer::public_transfer(boat_propeller_fan_display, ctx.sender());
     // transfer::public_transfer(bollo_balls_display, ctx.sender());
     // transfer::public_transfer(bone_display, ctx.sender());
-     transfer::public_transfer(brella_display, ctx.sender());
     // transfer::public_transfer(bucket_of_water_display, ctx.sender());
     // transfer::public_transfer(can_opener_display, ctx.sender());
     // transfer::public_transfer(candy_display, ctx.sender());
@@ -272,7 +311,18 @@ module tradingcard::gadget_gameplay_items_display {
     // transfer::public_transfer(long_shovel_display, ctx.sender());
     // transfer::public_transfer(magnet_display, ctx.sender());
     // transfer::public_transfer(magnet_shoes_display, ctx.sender());
-     transfer::public_transfer(mallet_display, ctx.sender());
+     
+
+
+
+
+
+
+
+
+
+
+
     // transfer::public_transfer(map_of_south_africa_display, ctx.sender());
     // transfer::public_transfer(map_of_tibet_display, ctx.sender());
     // transfer::public_transfer(match_display, ctx.sender());
@@ -341,7 +391,7 @@ module tradingcard::gadget_gameplay_items_display {
     // transfer::public_transfer(tie_display, ctx.sender());
     // transfer::public_transfer(toothbrush_display, ctx.sender());
     // transfer::public_transfer(toothpaste_display, ctx.sender());
-     transfer::public_transfer(top_secret_gadget_phone_display, ctx.sender());
+    
     // transfer::public_transfer(trick_flower_display, ctx.sender());
     // transfer::public_transfer(two_hands_display, ctx.sender());
     // transfer::public_transfer(two_left_cuffs_display, ctx.sender());
@@ -352,53 +402,3 @@ module tradingcard::gadget_gameplay_items_display {
     // transfer::public_transfer(white_handkerchief_display, ctx.sender());
     // transfer::public_transfer(winner_flag_display, ctx.sender());
     // transfer::public_transfer(work_light_display, ctx.sender());
-     transfer::public_transfer(wrench_display, ctx.sender());
-     transfer::public_transfer(yellow_handkerchief_display, ctx.sender());
-     transfer::public_transfer(yoyo_display, ctx.sender());
-
-    
-       
-    }
-
-    fun gadget_gameplay_items_display<T>(publisher: &Publisher, ctx: &mut TxContext): Display<GadgetGameplayItem<T>> {
-        let keys = vector[
-            utf8(b"creator"),
-            utf8(b"project_url"),
-            utf8(b"intellectual_property"),
-            utf8(b"category"),
-            utf8(b"age_rating"),
-            utf8(b"image_url"),
-            utf8(b"name"),
-            utf8(b"copyright"),
-        ];
-
-        let values = vector[
-            utf8(b"Gamisodes"),
-            utf8(b"https://www.gamisodes.com"),
-            utf8(b"Inspector Gadget"),
-            utf8(b"Collectable"),
-            utf8(b"TV-Y7"),
-            utf8(b"{media_url_primary}"),
-            utf8(b"{title}"),
-            utf8(b"© 2024 Gamisodes & WildBrain. “Inspector Gadget (Classic)” courtesy of DHX Media (Toronto) Ltd. -FR3- Field Communication. All rights reserved."),
-        ];
-
-        let mut display = display::new_with_fields<GadgetGameplayItem<T>>(
-            publisher, keys, values, ctx
-        );
-
-        display.update_version();
-        display
-    }
-}
-
-
-
-
-
-
-
-
-
-
-

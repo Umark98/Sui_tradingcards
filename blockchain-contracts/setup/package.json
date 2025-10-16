@@ -6,11 +6,17 @@
   "type": "module",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "mint-metadata": "node --loader ts-node/esm src/mint_metadata.ts",
+
     "mint-and-transfer": "node --loader ts-node/esm src/mint_and_transfer.ts",
     "mint-genesis": "node --loader ts-node/esm src/mint_genesis_card.ts",
     "mint-mission": "node --loader ts-node/esm src/mint_genesis_missioncards.ts",
-    "display": "node --loader ts-node/esm src/display.ts"
+    "display": "node --loader ts-node/esm src/display.ts",
+   "mint-metadata": "node --loader ts-node/esm src/mint_metadata.ts",
+    "update-image": "node --loader ts-node/esm src/update_card_image.ts",
+    "mint-card": "node --loader ts-node/esm src/mint_and_transfer.ts",
+    "create-display": "node --loader ts-node/esm src/create_display.ts"
+
+
   },
   "keywords": [],
   "author": "",
