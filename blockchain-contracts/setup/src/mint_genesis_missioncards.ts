@@ -79,10 +79,10 @@ async function mintGenesisCard({ cardType, mintNumber, recipient }: MintGenesisC
   // Set gas budget
   tx.setGasBudget(10000000);
 
-  // Call the mint_and_transfer function from genesis_missioncards module
+  // Call the mint_and_transfer function from missioncards module
   tx.moveCall({
-    target: `${PACKAGE_ID}::genesis_missioncards::mint_and_transfer`,
-    typeArguments: [`${PACKAGE_ID}::genesis_missioncards::${cardType}`],
+    target: `${PACKAGE_ID}::missioncards::mint_and_transfer`,
+    typeArguments: [`${PACKAGE_ID}::missioncards::${cardType}`],
     arguments: [
       tx.object(ADMIN_CAP_ID), // AdminCap
       tx.pure.u64(mintNumber), // mint_number

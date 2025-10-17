@@ -29,7 +29,7 @@ module tradingcard::gadget_gameplay_items {
         minted_number: u64,
     }
 
-    public struct GadgetGameplayItemMetadata<phantom T> has key {
+    public struct GadgetGameplayItemMetadata<phantom T> has key, store {
         id: UID,
         version: u16,
         // ig_coin_price: VecMap<u16, u64>,

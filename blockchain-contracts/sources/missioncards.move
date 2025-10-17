@@ -1,4 +1,4 @@
-module tradingcard::missoncards {
+module tradingcard::missioncards {
     use tradingcard::cap::AdminCap;
     use tradingcard::package;
     use sui::object::{Self, UID};

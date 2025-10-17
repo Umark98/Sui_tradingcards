@@ -10,6 +10,7 @@
     "mint-and-transfer": "node --loader ts-node/esm src/mint_and_transfer.ts",
     "mint-genesis": "node --loader ts-node/esm src/mint_genesis_card.ts",
     "mint-mission": "node --loader ts-node/esm src/mint_genesis_missioncards.ts",
+    "edit-metadata": "node --loader ts-node/esm src/edit_metadata.ts",
     "display": "node --loader ts-node/esm src/display.ts"
   },
   "keywords": [],

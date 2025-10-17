@@ -18,8 +18,8 @@ fun test_tradingcard_fail() {
 */
 
 #[test_only]
-module tradingcard::genesis_missioncards_tests {
-    use tradingcard::genesis_missioncards::{Self, MissionParisRare, Genesis};
+module tradingcard::missioncards_tests {
+    use tradingcard::missioncards::{Self, MissionParisRare, Genesis};
     use tradingcard::cap::{Self, AdminCap};
     use sui::test_scenario::{Self as test, Scenario};
     use sui::tx_context;
@@ -35,7 +35,7 @@ module tradingcard::genesis_missioncards_tests {
         test::transfer(admin_cap, @0x1);
 
         // Mint a mission card
-        genesis_missioncards::mint_and_transfer<MissionParisRare>(
+        missioncards::mint_and_transfer<MissionParisRare>(
             &admin_cap,
             1,
             @0x2,
@@ -46,7 +46,7 @@ module tradingcard::genesis_missioncards_tests {
         test::next_tx(scenario, @0x2);
         {
             let card = test::take_from_sender<Genesis<MissionParisRare>>(scenario);
-            assert!(genesis_missioncards::mint_number(&card) == 1, 0);
+            assert!(missioncards::mint_number(&card) == 1, 0);
             test::return_to_sender(scenario, card);
         };
 
