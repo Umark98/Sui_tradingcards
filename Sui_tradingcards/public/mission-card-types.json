@@ -30,6 +30,6 @@
     "MissionTransylvaniaUltraCommon",
     "MissionTransylvaniaUltraCommonSigned"
   ],
-  "description": "Mission card types defined in the genesis_missoncards contract",
-  "contractModule": "tradingcard::genesis_missoncards"
+  "description": "Mission card types defined in the missioncards contract",
+  "contractModule": "tradingcard::missioncards"
 }
