@@ -27,9 +27,9 @@ export default function MintInterface() {
   const [cardType, setCardType] = useState('');
   const [metadataObjectId, setMetadataObjectId] = useState('');
   const [title, setTitle] = useState('');
-  const [level, setLevel] = useState(1);
+  const [level, setLevel] = useState<number | ''>('');
   const [metadataId, setMetadataId] = useState('');
-  const [mintedNumber, setMintedNumber] = useState(1);
+  const [mintedNumber, setMintedNumber] = useState<number | ''>('');
   const [recipient, setRecipient] = useState('');
   
   const [loading, setLoading] = useState(false);
@@ -57,9 +57,36 @@ export default function MintInterface() {
     };
   }, [refetchMetadata]);
 
+  // Function to get level-specific image
+  const getLevelImage = (metadata: any, level: number | '') => {
+    // If no level selected, show base image
+    if (level === '') {
+      return metadata.imageUrl || metadata.mediaUrlPrimary || metadata.mediaUrlDisplay || '';
+    }
+    
+    // Check if metadata has level-specific images
+    if (metadata.levelImages && metadata.levelImages[level.toString()]) {
+      return metadata.levelImages[level.toString()];
+    }
+    
+    // Check if metadata has levels array with images
+    if (metadata.levels && Array.isArray(metadata.levels)) {
+      const levelData = metadata.levels.find((l: any) => l.key === level);
+      if (levelData && levelData.mediaUrlPrimary) {
+        return levelData.mediaUrlPrimary;
+      }
+      if (levelData && levelData.mediaUrlDisplay) {
+        return levelData.mediaUrlDisplay;
+      }
+    }
+    
+    // Fallback to base image
+    return metadata.imageUrl || metadata.mediaUrlPrimary || metadata.mediaUrlDisplay || '';
+  };
+
 
   const handleMint = async () => {
-    if (!currentAccount || !cardType || !metadataObjectId || !title || !metadataId || !recipient) {
+    if (!currentAccount || !cardType || !metadataObjectId || !title || !metadataId || level === '' || mintedNumber === '' || !recipient) {
       setError('Please connect wallet and fill all required fields');
       return;
     }
@@ -158,6 +185,7 @@ export default function MintInterface() {
                   value={cardType}
                   onChange={(value) => {
                     setCardType(value);
+                    setLevel(''); // Reset level when card type changes
                     // Auto-populate metadata object ID when card type is selected
                     if (value && availableCardTypes[value]) {
                       const metadata = availableCardTypes[value];
@@ -193,17 +221,17 @@ export default function MintInterface() {
             </FormField>
 
             {/* Image Preview */}
-            {selectedCardMetadata && selectedCardMetadata.imageUrl && (
+            {selectedCardMetadata && (
               <div>
                 <label className="block text-sm font-medium text-gray-200 mb-2">
-                  Card Preview
+                  Card Preview {level !== '' ? `(Level ${level})` : '(Select Level)'}
                 </label>
                 <div className="border border-white/20 rounded-lg p-4 bg-white/5">
                   <div className="flex items-center space-x-4">
                     <div className="flex-shrink-0">
                       <img
-                        src={selectedCardMetadata.imageUrl}
-                        alt={`${cardType} card preview`}
+                        src={getLevelImage(selectedCardMetadata, level)}
+                        alt={`${cardType} card preview level ${level}`}
                         className="w-20 h-20 object-cover rounded-lg border border-white/30"
                         onError={(e) => {
                           e.currentTarget.src = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iODAiIGhlaWdodD0iODAiIHZpZXdCb3g9IjAgMCA4MCA4MCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3Qgd2lkdGg9IjgwIiBoZWlnaHQ9IjgwIiBmaWxsPSIjRjNGNEY2Ii8+CjxwYXRoIGQ9Ik00MCAyMEMzMS4xNjM0IDIwIDI0IDI3LjE2MzQgMjQgMzZDMjQgNDQuODM2NiAzMS4xNjM0IDUyIDQwIDUyQzQ4LjgzNjYgNTIgNTYgNDQuODM2NiA1NiAzNkM1NiAyNy4xNjM0IDQ4LjgzNjYgMjAgNDAgMjBaIiBmaWxsPSIjOUNBM0FGIi8+CjxwYXRoIGQ9Ik0yNCA2MEMyNCA2OC44MzY2IDMxLjE2MzQgNzYgNDAgNzZINDhDNTYuODM2NiA3NiA2NCA2OC44MzY2IDY0IDYwVjUySDI0VjYwWiIgZmlsbD0iIzlDQTNBRiIvPgo8L3N2Zz4K';
@@ -214,8 +242,16 @@ export default function MintInterface() {
                       <h4 className="text-lg font-semibold text-white">{cardType}</h4>
                       <p className="text-sm text-gray-300">{selectedCardMetadata.description}</p>
                       <p className="text-xs text-gray-300 mt-1">
-                        Version: {selectedCardMetadata.version} • Created: {new Date(selectedCardMetadata.timestamp).toLocaleDateString()}
+                        {level !== '' ? `Level: ${level}` : 'Select a level'} • Version: {selectedCardMetadata.version} • Created: {new Date(selectedCardMetadata.timestamp).toLocaleDateString()}
                       </p>
+                      {level !== '' && selectedCardMetadata.levels && selectedCardMetadata.levels.find((l: any) => l.key === level) && (
+                        <p className="text-xs text-blue-300 mt-1">
+                          {(() => {
+                            const levelData = selectedCardMetadata.levels.find((l: any) => l.key === level);
+                            return `${levelData.rarity} • ${levelData.enhancement} • Threshold: ${levelData.unlockThreshold}`;
+                          })()}
+                        </p>
+                      )}
                     </div>
                   </div>
                 </div>
@@ -256,23 +292,43 @@ export default function MintInterface() {
 
             <div className="grid grid-cols-2 gap-4">
               <FormField label="Level">
-                <InputField
-                  type="number"
+                <select
                   value={level}
-                  onChange={(value) => {
-                    const numValue = parseInt(value);
-                    setLevel(isNaN(numValue) ? 1 : numValue);
+                  onChange={(e) => {
+                    const value = e.target.value;
+                    if (value === '') {
+                      setLevel('');
+                    } else {
+                      const numValue = parseInt(value);
+                      setLevel(isNaN(numValue) ? '' : numValue);
+                    }
                   }}
-                />
+                  className="w-full p-3 border border-white/30 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white/10 text-white"
+                >
+                  <option value="">Select a level</option>
+                  {selectedCardMetadata && selectedCardMetadata.levels && selectedCardMetadata.levels.map((levelData: any) => (
+                    <option key={levelData.key} value={levelData.key}>
+                      Level {levelData.key} - {levelData.rarity} ({levelData.enhancement})
+                    </option>
+                  ))}
+                </select>
               </FormField>
               <FormField label="Minted Number">
-                <InputField
+                <input
                   type="number"
                   value={mintedNumber}
-                  onChange={(value) => {
-                    const numValue = parseInt(value);
-                    setMintedNumber(isNaN(numValue) ? 1 : numValue);
+                  onChange={(e) => {
+                    const value = e.target.value;
+                    if (value === '') {
+                      setMintedNumber('');
+                    } else {
+                      const numValue = parseInt(value);
+                      setMintedNumber(isNaN(numValue) ? '' : numValue);
+                    }
                   }}
+                  className="w-full p-3 border border-white/30 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white/10 text-white placeholder-gray-400 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                  min="1"
+                  placeholder="Enter minted number"
                 />
               </FormField>
             </div>
@@ -389,9 +445,9 @@ export default function MintInterface() {
             setCardType('');
             setMetadataObjectId('');
             setTitle('');
-            setLevel(1);
+            setLevel('');
             setMetadataId('');
-            setMintedNumber(1);
+            setMintedNumber('');
             setRecipient('');
             setSelectedCardMetadata(null);
             setError(null);

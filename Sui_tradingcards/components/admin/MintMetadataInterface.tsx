@@ -351,23 +351,27 @@ export default function MintMetadataInterface() {
 
             <div className="grid grid-cols-2 gap-4">
               <FormField label="Version">
-                <InputField
+                <input
                   type="number"
                   value={version}
-                  onChange={(value) => {
-                    const numValue = parseInt(value);
+                  onChange={(e) => {
+                    const numValue = parseInt(e.target.value);
                     setVersion(isNaN(numValue) ? 1 : numValue);
                   }}
+                  className="w-full p-3 border border-white/30 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white/10 text-white placeholder-gray-400 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                  min="1"
                 />
               </FormField>
               <FormField label="Royalty (basis points)">
-                <InputField
+                <input
                   type="number"
                   value={royalty}
-                  onChange={(value) => {
-                    const numValue = parseInt(value);
+                  onChange={(e) => {
+                    const numValue = parseInt(e.target.value);
                     setRoyalty(isNaN(numValue) ? 500 : numValue);
                   }}
+                  className="w-full p-3 border border-white/30 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white/10 text-white placeholder-gray-400 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                  min="0"
                 />
               </FormField>
             </div>
@@ -482,7 +486,7 @@ export default function MintMetadataInterface() {
                         const value = parseInt(e.target.value);
                         updateLevel(index, 'rank', isNaN(value) ? 1 : value);
                       }}
-                      className="w-full p-2 border border-white/30 rounded text-sm focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
+                      className="w-full p-2 border border-white/30 rounded text-sm focus:ring-1 focus:ring-blue-500 focus:border-blue-500 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
                       min="1"
                     />
                   </div>
@@ -495,7 +499,7 @@ export default function MintMetadataInterface() {
                         const value = parseInt(e.target.value);
                         updateLevel(index, 'unlockThreshold', isNaN(value) ? 100 : value);
                       }}
-                      className="w-full p-2 border border-white/30 rounded text-sm focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
+                      className="w-full p-2 border border-white/30 rounded text-sm focus:ring-1 focus:ring-blue-500 focus:border-blue-500 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
                       min="0"
                     />
                   </div>

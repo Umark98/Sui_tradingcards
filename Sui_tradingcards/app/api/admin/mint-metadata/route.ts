@@ -7,7 +7,7 @@ import * as path from 'path';
 import { getCurrentContractAddresses, generateObjectType } from '@/lib/contract-addresses';
 
 // Sui network configuration
-const SUI_NETWORK = getFullnodeUrl(process.env.SUI_NETWORK || 'testnet');
+const SUI_NETWORK = getFullnodeUrl((process.env.SUI_NETWORK as 'mainnet' | 'testnet' | 'devnet' | 'localnet') || 'testnet');
 const client = new SuiClient({ url: SUI_NETWORK });
 
 // Contract addresses - loaded from .env.local (updated after contract publishing)
@@ -112,7 +112,7 @@ export async function POST(request: NextRequest) {
           console.log('No existing metadata file found, creating new one');
         }
         
-        // Add new metadata ID
+        // Add new metadata ID with all level data
         const updatedMetadata = {
           ...existingMetadata,
           [metadataData.cardType]: {
@@ -120,8 +120,33 @@ export async function POST(request: NextRequest) {
             objectType: (metadataObject as any).objectType || generateObjectType(metadataData.cardType),
             timestamp: new Date().toISOString(),
             version: metadataData.version,
+            game: metadataData.game,
             description: metadataData.description,
-            imageUrl: metadataData.mediaUrlsPrimaryValues?.[0] || metadataData.mediaUrlsDisplayValues?.[0] || ''
+            episodeUtility: metadataData.episodeUtility,
+            transferability: metadataData.transferability,
+            royalty: metadataData.royalty,
+            unlockCurrency: metadataData.unlockCurrency,
+            edition: metadataData.edition,
+            set: metadataData.set,
+            upgradeable: metadataData.upgradeable,
+            subType: metadataData.subType,
+            season: metadataData.season,
+            imageUrl: metadataData.mediaUrlsPrimaryValues?.[0] || metadataData.mediaUrlsDisplayValues?.[0] || '',
+            // Store level-specific data
+            levels: metadataData.keys.map((key, index) => ({
+              key,
+              rarity: metadataData.rarityValues[index],
+              enhancement: metadataData.enhancementValues[index],
+              unlockThreshold: metadataData.unlockThresholdValues[index],
+              mediaUrlPrimary: metadataData.mediaUrlsPrimaryValues[index],
+              mediaUrlDisplay: metadataData.mediaUrlsDisplayValues[index],
+              rank: metadataData.rankValues[index]
+            })),
+            // Also store level images for easy access
+            levelImages: metadataData.keys.reduce((acc, key, index) => {
+              acc[key.toString()] = metadataData.mediaUrlsPrimaryValues[index] || metadataData.mediaUrlsDisplayValues[index];
+              return acc;
+            }, {} as Record<string, string>)
           }
         };
         

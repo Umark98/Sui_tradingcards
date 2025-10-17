@@ -145,6 +145,7 @@ export default function EditMetadataInterface() {
   };
 
   const handleSubmit = async () => {
+
     if (!currentAccount || !cardType || !metadataObjectId || !description) {
       setError('Please connect wallet and fill required fields');
       return;
@@ -173,6 +174,19 @@ export default function EditMetadataInterface() {
       // Get the type argument based on card type
       const TYPE_T = `${PACKAGE_ID}::gadget_gameplay_items::TradingCard<${PACKAGE_ID}::gadget_gameplay_items_titles::${cardType}>`;
       
+      // Sort levels by key to ensure correct order for blockchain
+      const sortedLevels = [...levels].sort((a, b) => a.key - b.key);
+      
+      // Debug: Log the level data being sent
+      console.log('Level data being sent to blockchain:', {
+        keys: sortedLevels.map(l => l.key),
+        mediaUrlPrimary: sortedLevels.map(l => l.mediaUrlPrimary),
+        mediaUrlDisplay: sortedLevels.map(l => l.mediaUrlDisplay),
+        episodeUtility: episodeUtility,
+        game: game,
+        description: description
+      });
+      
       // Call edit_metadata function
       tx.moveCall({
         target: `${PACKAGE_ID}::gadget_gameplay_items::edit_metadata`,
@@ -181,24 +195,24 @@ export default function EditMetadataInterface() {
           tx.object(ADMIN_CAP_ID), // admin_cap
           tx.object(metadataObjectId), // metadata object
           tx.pure.u16(version), // version
-          tx.pure.vector('u16', levels.map(l => l.key)), // keys
-          tx.pure.option('string', game || undefined), // game
+          tx.pure.vector('u16', sortedLevels.map(l => l.key)), // keys
+          tx.pure.option('string', game || null), // game
           tx.pure.string(description), // description
-          tx.pure.vector('string', levels.map(l => l.rarity)), // rarity_values
-          tx.pure.vector('string', levels.map(l => l.enhancement)), // enhancement_values
-          tx.pure.option('u64', episodeUtility), // episode_utility
+          tx.pure.vector('string', sortedLevels.map(l => l.rarity)), // rarity_values
+          tx.pure.vector('string', sortedLevels.map(l => l.enhancement)), // enhancement_values
+          tx.pure.option('u64', episodeUtility || null), // episode_utility
           tx.pure.string(transferability), // transferability
           tx.pure.u16(royalty), // royalty
-          tx.pure.option('string', unlockCurrency || undefined), // unlock_currency
-          tx.pure.vector('u64', levels.map(l => l.unlockThreshold)), // unlock_threshold_values
-          tx.pure.option('string', edition || undefined), // edition
-          tx.pure.option('string', set || undefined), // set
+          tx.pure.option('string', unlockCurrency || null), // unlock_currency
+          tx.pure.vector('u64', sortedLevels.map(l => l.unlockThreshold)), // unlock_threshold_values
+          tx.pure.option('string', edition || null), // edition
+          tx.pure.option('string', set || null), // set
           tx.pure.bool(upgradeable), // upgradeable
-          tx.pure.vector('string', levels.map(l => l.mediaUrlPrimary)), // media_urls_primary_values
-          tx.pure.vector('string', levels.map(l => l.mediaUrlDisplay)), // media_urls_display_values
-          tx.pure.vector('u16', levels.map(l => l.rank)), // rank_values
+          tx.pure.vector('string', sortedLevels.map(l => l.mediaUrlPrimary)), // media_urls_primary_values
+          tx.pure.vector('string', sortedLevels.map(l => l.mediaUrlDisplay)), // media_urls_display_values
+          tx.pure.vector('u16', sortedLevels.map(l => l.rank)), // rank_values
           tx.pure.string(subType), // sub_type
-          tx.pure.option('u16', season), // season
+          tx.pure.option('u16', season || null), // season
         ]
       });
 
@@ -218,6 +232,10 @@ export default function EditMetadataInterface() {
       });
 
       console.log('Transaction signed successfully');
+      console.log('Signed transaction:', {
+        transactionBlockBytes: signedTransaction.transactionBlockBytes,
+        signature: signedTransaction.signature
+      });
 
       // Execute the signed transaction via backend
       const requestData = { 
@@ -242,7 +260,7 @@ export default function EditMetadataInterface() {
         rankValues: levels.map(l => l.rank),
         subType: subType,
         season: season,
-        transactionBytes: signedTransaction.transactionBlockBytes || tx.serialize(),
+        transactionBytes: signedTransaction.transactionBlockBytes,
         signature: signedTransaction.signature
       };
       
@@ -289,6 +307,7 @@ export default function EditMetadataInterface() {
           </p>
         </div>
       )}
+
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Metadata Configuration */}
@@ -339,23 +358,27 @@ export default function EditMetadataInterface() {
 
             <div className="grid grid-cols-2 gap-4">
               <FormField label="Version">
-                <InputField
+                <input
                   type="number"
                   value={version}
-                  onChange={(value) => {
-                    const numValue = parseInt(value);
+                  onChange={(e) => {
+                    const numValue = parseInt(e.target.value);
                     setVersion(isNaN(numValue) ? 1 : numValue);
                   }}
+                  className="w-full p-3 border border-white/30 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white/10 text-white placeholder-gray-400 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                  min="1"
                 />
               </FormField>
               <FormField label="Royalty (basis points)">
-                <InputField
+                <input
                   type="number"
                   value={royalty}
-                  onChange={(value) => {
-                    const numValue = parseInt(value);
+                  onChange={(e) => {
+                    const numValue = parseInt(e.target.value);
                     setRoyalty(isNaN(numValue) ? 500 : numValue);
                   }}
+                  className="w-full p-3 border border-white/30 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white/10 text-white placeholder-gray-400 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                  min="0"
                 />
               </FormField>
             </div>
@@ -470,7 +493,7 @@ export default function EditMetadataInterface() {
                         const value = parseInt(e.target.value);
                         updateLevel(index, 'rank', isNaN(value) ? 1 : value);
                       }}
-                      className="w-full p-2 border border-white/30 rounded text-sm focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
+                      className="w-full p-2 border border-white/30 rounded text-sm focus:ring-1 focus:ring-blue-500 focus:border-blue-500 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
                       min="1"
                     />
                   </div>
@@ -483,7 +506,7 @@ export default function EditMetadataInterface() {
                         const value = parseInt(e.target.value);
                         updateLevel(index, 'unlockThreshold', isNaN(value) ? 100 : value);
                       }}
-                      className="w-full p-2 border border-white/30 rounded text-sm focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
+                      className="w-full p-2 border border-white/30 rounded text-sm focus:ring-1 focus:ring-blue-500 focus:border-blue-500 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
                       min="0"
                     />
                   </div>
@@ -557,6 +580,7 @@ export default function EditMetadataInterface() {
             <p>• Editing metadata will affect all future cards minted with this metadata</p>
             <p>• Existing cards will not be affected by metadata changes</p>
             <p>• Make sure to test your changes before updating production metadata</p>
+            <p>• Requires a connected wallet to sign and execute the transaction</p>
           </div>
         </div>
       </div>
