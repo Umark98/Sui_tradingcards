@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import MintInterface from '@/components/admin/MintInterface';
 import MintMetadataInterface from '@/components/admin/MintMetadataInterface';
+import EditMetadataInterface from '@/components/admin/EditMetadataInterface';
 import PublishContractsInterface from '@/components/admin/PublishContractsInterface';
 import GenesisMintInterface from '@/components/admin/GenesisMintInterface';
 import GenesisDisplayInterface from '@/components/admin/GenesisDisplayInterface';
@@ -11,7 +12,7 @@ import MissionDisplayInterface from '@/components/admin/MissionDisplayInterface'
 import AdminStats from '@/components/admin/AdminStats';
 import WalletDropdown from '@/components/admin/WalletDropdown';
 
-type AdminTab = 'publish' | 'mint' | 'mintMetadata' | 'genesisDisplay' | 'genesisMint' | 'missionDisplay' | 'missionMint' | 'stats';
+type AdminTab = 'publish' | 'mint' | 'mintMetadata' | 'editMetadata' | 'genesisDisplay' | 'genesisMint' | 'missionDisplay' | 'missionMint' | 'stats';
 
 export default function HomePage() {
   // Initialize tab state with default value to avoid hydration issues
@@ -24,14 +25,14 @@ export default function HomePage() {
     
     // First check URL hash for tab
     const urlHash = window.location.hash.replace('#', '') as AdminTab;
-    if (urlHash && ['publish', 'config', 'mint', 'mintMetadata', 'genesisDisplay', 'genesisMint', 'missionDisplay', 'missionMint', 'stats'].includes(urlHash)) {
+    if (urlHash && ['publish', 'config', 'mint', 'mintMetadata', 'editMetadata', 'genesisDisplay', 'genesisMint', 'missionDisplay', 'missionMint', 'stats'].includes(urlHash)) {
       setActiveTab(urlHash);
       return;
     }
     
     // Fallback to localStorage
     const savedTab = localStorage.getItem('adminActiveTab') as AdminTab;
-    if (savedTab && ['publish', 'config', 'mint', 'mintMetadata', 'genesisDisplay', 'genesisMint', 'missionDisplay', 'missionMint', 'stats'].includes(savedTab)) {
+    if (savedTab && ['publish', 'config', 'mint', 'mintMetadata', 'editMetadata', 'genesisDisplay', 'genesisMint', 'missionDisplay', 'missionMint', 'stats'].includes(savedTab)) {
       setActiveTab(savedTab);
     }
   }, []);
@@ -50,6 +51,7 @@ export default function HomePage() {
     { id: 'publish', label: 'Publish Contracts', icon: '🚀' },
     { id: 'mint', label: 'Mint and Transfer', icon: '🪙' },
     { id: 'mintMetadata', label: 'Mint Metadata', icon: '📋' },
+    { id: 'editMetadata', label: 'Edit Metadata', icon: '✏️' },
     { id: 'genesisDisplay', label: 'Genesis Display', icon: '🎨' },
     { id: 'genesisMint', label: 'Genesis Cards', icon: '🎴' },
     { id: 'missionDisplay', label: 'Mission Display', icon: '🎨' },
@@ -104,6 +106,7 @@ export default function HomePage() {
             {isClient && activeTab === 'publish' && <PublishContractsInterface />}
             {isClient && activeTab === 'mint' && <MintInterface />}
             {isClient && activeTab === 'mintMetadata' && <MintMetadataInterface />}
+            {isClient && activeTab === 'editMetadata' && <EditMetadataInterface />}
             {isClient && activeTab === 'genesisDisplay' && <GenesisDisplayInterface />}
             {isClient && activeTab === 'genesisMint' && <GenesisMintInterface />}
             {isClient && activeTab === 'missionDisplay' && <MissionDisplayInterface />}

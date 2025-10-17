@@ -1,4 +1,4 @@
-module tradingcard::genesis_missoncards {
+module tradingcard::missoncards {
     use tradingcard::cap::AdminCap;
     use tradingcard::package;
     use sui::object::{Self, UID};

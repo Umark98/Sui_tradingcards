@@ -14,7 +14,7 @@ export async function POST(request: NextRequest) {
     const client = new SuiClient({ url: getFullnodeUrl(network) });
 
     // Load existing metadata IDs
-    const metadataIdsPath = path.join(process.cwd(), 'public', 'frontend-metadata-ids.json');
+    const metadataIdsPath = path.join(process.cwd(), 'public', 'Gadget-minted-metadata.json');
     
     if (!fs.existsSync(metadataIdsPath)) {
       return NextResponse.json({
@@ -93,7 +93,7 @@ export async function POST(request: NextRequest) {
 
     // Write updated metadata back to file
     fs.writeFileSync(metadataIdsPath, JSON.stringify(updatedMetadata, null, 2), 'utf-8');
-    console.log('Updated frontend-metadata-ids.json with level-specific images');
+    console.log('Updated Gadget-minted-metadata.json with level-specific images');
 
     return NextResponse.json({
       success: true,

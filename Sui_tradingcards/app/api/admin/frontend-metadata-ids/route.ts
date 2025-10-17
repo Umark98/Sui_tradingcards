@@ -4,7 +4,7 @@ import * as path from 'path';
 
 export async function GET(request: NextRequest) {
   try {
-    const metadataFilePath = path.join(process.cwd(), 'public', 'frontend-metadata-ids.json');
+    const metadataFilePath = path.join(process.cwd(), 'public', 'Gadget-minted-metadata.json');
     
     if (!fs.existsSync(metadataFilePath)) {
       return NextResponse.json({});
@@ -35,7 +35,7 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const metadataFilePath = path.join(process.cwd(), 'public', 'frontend-metadata-ids.json');
+    const metadataFilePath = path.join(process.cwd(), 'public', 'Gadget-minted-metadata.json');
     
     // Read existing metadata
     let existingMetadata: Record<string, any> = {};

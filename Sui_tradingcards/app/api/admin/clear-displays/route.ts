@@ -14,7 +14,7 @@ export async function POST(request: NextRequest) {
     const displayFiles = [
       'genesis-displays.json',
       'mission-displays.json',
-      'frontend-metadata-ids.json',
+      'Gadget-minted-metadata.json',
       'contract-objects.json'
     ];
 

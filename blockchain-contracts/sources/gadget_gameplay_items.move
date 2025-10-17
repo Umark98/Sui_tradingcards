@@ -108,6 +108,49 @@ module tradingcard::gadget_gameplay_items {
         transfer::share_object(metadata);
     }
 
+    public fun edit_metadata<T>(
+        _: &AdminCap,
+        metadata: &mut GadgetGameplayItemMetadata<T>,
+        version: u16,
+        keys: vector<u16>,
+        game: Option<String>,
+        description: String,
+        rarity_values: vector<String>,
+        enhancement_values: vector<String>,
+        episode_utility: Option<u64>,
+        transferability: String,
+        royalty: u16,
+        unlock_currency: Option<String>,
+        unlock_threshold_values: vector<u64>,
+        edition: Option<String>,
+        set: Option<String>,
+        upgradeable: bool,
+        media_urls_primary_values: vector<String>,
+        media_urls_display_values: vector<String>,
+        rank_values: vector<u16>,
+        sub_type: String,
+        season: Option<u16>
+    ) {
+        metadata.version = version;
+        metadata.game = game;
+        metadata.description = description;
+        metadata.rarity = create_vecmap(keys, rarity_values);
+        metadata.enhancements = create_vecmap(keys, enhancement_values);
+        metadata.episode_utility = episode_utility;
+        metadata.transferability = transferability;
+        metadata.royalty = royalty;
+        metadata.unlock_currency = unlock_currency;
+        metadata.unlock_threshold = create_vecmap(keys, unlock_threshold_values);
+        metadata.edition = edition;
+        metadata.set = set;
+        metadata.upgradeable = upgradeable;
+        metadata.media_urls_primary = create_vecmap(keys, media_urls_primary_values);
+        metadata.media_urls_display = create_vecmap(keys, media_urls_display_values);
+        metadata.ranks = create_vecmap(keys, rank_values);
+        metadata.sub_type = sub_type;
+        metadata.season = season;
+    }
+
     public fun mint_and_transfer<T>(
         _: &AdminCap,
         item_metadata: &mut GadgetGameplayItemMetadata<T>,

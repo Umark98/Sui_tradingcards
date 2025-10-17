@@ -21,13 +21,13 @@ export function useFrontendMetadata(): UseMetadataReturn {
       if (response.ok) {
         const data = await response.json();
         setMetadata(data);
-        console.log(`Loaded ${Object.keys(data).length} frontend metadata entries`);
+        console.log(`Loaded ${Object.keys(data).length} gadget minted metadata entries`);
       } else {
-        setError(`Failed to load frontend metadata: ${response.status}`);
+        setError(`Failed to load gadget minted metadata: ${response.status}`);
       }
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : 'Unknown error';
-      setError(`Failed to load frontend metadata: ${errorMessage}`);
+        setError(`Failed to load gadget minted metadata: ${errorMessage}`);
     } finally {
       setLoading(false);
     }
@@ -162,14 +162,14 @@ export function useAvailableCardTypes(): UseMetadataReturn {
       if (response.ok) {
         const allCardTypes = await response.json();
         
-        // Load existing frontend metadata to filter out already created ones
+        // Load existing gadget minted metadata to filter out already created ones
         const frontendResponse = await fetch('/api/admin/frontend-metadata-ids');
         let existingFrontendMetadata = {};
         if (frontendResponse.ok) {
           existingFrontendMetadata = await frontendResponse.json();
         }
         
-        // Filter out card types that already have frontend metadata
+        // Filter out card types that already have gadget minted metadata
         const filteredCardTypes = Object.keys(allCardTypes).reduce((acc: Record<string, any>, cardType) => {
           if (!(existingFrontendMetadata as Record<string, any>)[cardType]) {
             acc[cardType] = allCardTypes[cardType];
@@ -178,7 +178,7 @@ export function useAvailableCardTypes(): UseMetadataReturn {
         }, {} as Record<string, any>);
         
         setMetadata(filteredCardTypes);
-        console.log(`Loaded ${Object.keys(filteredCardTypes).length} available card types for mint metadata creation (filtered out ${Object.keys(existingFrontendMetadata).length} existing)`);
+        console.log(`Loaded ${Object.keys(filteredCardTypes).length} available card types for mint metadata creation (filtered out ${Object.keys(existingFrontendMetadata).length} existing gadget minted metadata)`);
       } else {
         setError(`Failed to load display metadata: ${response.status}`);
       }

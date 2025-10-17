@@ -271,8 +271,8 @@ export async function POST(request: NextRequest) {
           
           // Handle Gadgets differently (requires metadata)
           if (requiresMetadata) {
-            // Load metadata IDs from frontend-metadata-ids.json
-            const metadataPath = path.join(process.cwd(), 'public', 'frontend-metadata-ids.json');
+            // Load metadata IDs from Gadget-minted-metadata.json
+            const metadataPath = path.join(process.cwd(), 'public', 'Gadget-minted-metadata.json');
             let metadataIds: any = {};
             try {
               if (fs.existsSync(metadataPath)) {

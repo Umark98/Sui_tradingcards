@@ -113,6 +113,7 @@ export async function GET(request: NextRequest) {
       if (!IS_PRODUCTION) {
         console.log('📦 Cached display images:', Object.keys(displayImages).length, 'types');
         console.log('📦 Cached gadget metadata:', Object.keys(gadgetMetadata).length, 'types');
+        console.log('📦 Gadget metadata content:', gadgetMetadata);
       }
       
       // Helper function to get image URL for a card type and level
@@ -120,6 +121,16 @@ export async function GET(request: NextRequest) {
         // For Gadgets, ONLY show image if level-specific image exists
         if (collectionName === 'Gadgets' && gadgetMetadata[cardType]) {
           const metadata = gadgetMetadata[cardType];
+          
+          // Debug logging for development
+          if (!IS_PRODUCTION) {
+            console.log(`🔍 Image lookup for ${cardType} (${collectionName}) level ${level}:`, {
+              hasMetadata: !!metadata,
+              hasLevelImages: !!metadata.levelImages,
+              levelImages: metadata.levelImages,
+              requestedLevel: level
+            });
+          }
           
           // ONLY return image if level-specific image exists
           if (level && metadata.levelImages && metadata.levelImages[level]) {

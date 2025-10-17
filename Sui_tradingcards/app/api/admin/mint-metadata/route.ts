@@ -99,7 +99,7 @@ export async function POST(request: NextRequest) {
       
       // Save metadata ID to JSON file
       if (metadataObject && metadataObject.reference?.objectId) {
-        const metadataFilePath = path.join(process.cwd(), 'public', 'frontend-metadata-ids.json');
+        const metadataFilePath = path.join(process.cwd(), 'public', 'Gadget-minted-metadata.json');
         
         // Read existing metadata IDs
         let existingMetadata = {};

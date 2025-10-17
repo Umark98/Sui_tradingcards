@@ -216,7 +216,7 @@ export async function POST(request: NextRequest) {
       // Clear metadata and display JSON files when new contracts are published
       // These should start empty and only populate when mint-metadata or create-display is called
       const metadataIdsPath = path.join(config.publicDir, 'metadata-ids.json');
-      const frontendMetadataIdsPath = path.join(config.publicDir, 'frontend-metadata-ids.json');
+      const frontendMetadataIdsPath = path.join(config.publicDir, 'Gadget-minted-metadata.json');
       const genesisDisplaysPath = path.join(config.publicDir, 'genesis-displays.json');
       const missionDisplaysPath = path.join(config.publicDir, 'mission-displays.json');
       
@@ -227,7 +227,7 @@ export async function POST(request: NextRequest) {
       console.log('✅ Cleared metadata-ids.json');
       
       fs.writeFileSync(frontendMetadataIdsPath, JSON.stringify({}, null, 2), 'utf-8');
-      console.log('✅ Cleared frontend-metadata-ids.json');
+      console.log('✅ Cleared Gadget-minted-metadata.json');
       
       // Clear genesis displays
       fs.writeFileSync(genesisDisplaysPath, JSON.stringify({}, null, 2), 'utf-8');

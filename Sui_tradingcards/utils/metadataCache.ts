@@ -75,7 +75,7 @@ class MetadataCache {
    * Load gadget metadata (for level-specific images)
    */
   loadGadgetMetadata(): Record<string, any> {
-    const metadataPath = path.join(process.cwd(), 'public', 'frontend-metadata-ids.json');
+    const metadataPath = path.join(process.cwd(), 'public', 'Gadget-minted-metadata.json');
     return this.getCachedOrLoad('gadget-metadata', metadataPath, {});
   }
 
